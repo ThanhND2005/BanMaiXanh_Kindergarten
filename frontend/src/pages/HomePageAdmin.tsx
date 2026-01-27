@@ -4,7 +4,7 @@ import Class from "@/components/admin/Class"
 import Finance from '@/components/admin/Finance';
 import Menu from '@/components/admin/Menu';
 import Notification from '@/components/admin/Notification';
-import StudentManagement from '@/components/admin/StudentManagement';
+import {StudentManagement} from '@/components/admin/StudentManagement';
 import TeacherManagement from '@/components/admin/TeacherManagement';
 import { Home, Bell,School,CircleDollarSign,ShieldUser,CookingPot} from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -99,7 +99,7 @@ export default function HomePageAdmin() {
       </nav>
 
       {/* Main Content */}
-      <main className="w-full p-12">
+      <main className="w-full min-h-screen p-12 bg-[#f0fdf4]">
         {tabActive === 'dashboard' && <Dashboard />}
         {tabActive === 'notification' && <Notification />}
         {tabActive === 'class' && <Class />}

@@ -1,10 +1,9 @@
 import React from "react";
 import { Card, CardContent } from "../ui/card";
 import { Users, Baby } from "lucide-react";
-import { Navigate } from "react-router-dom";
 import { useTabAdminStore } from "@/stores/useTabStore";
 export function Dashboard() {
-  const student = [
+  const students = [
     {
       studentid: "02222",
       name: "Bảo Hân",
@@ -26,7 +25,7 @@ export function Dashboard() {
       name: "Bảo Hân",
     },
   ];
-  const teacher = [
+  const teachers = [
     {
       teacherid: "002",
       name: "Danh thanh",
@@ -48,13 +47,13 @@ export function Dashboard() {
       name: "Danh thanh",
     },
   ];
-  const Student_attedance = 2;
-  const Techer_attendance = 2;
-  const { tabActive, setTabActive } = useTabAdminStore();
+  const students_attedance = 2;
+  const techers_attendance = 2;
+  const {setTabActive } = useTabAdminStore();
 
   return (
     <>
-      <div className="space-y-6 mb-3">
+      <div className="space-y-6 mb-3 bg-[#f0fdf4]">
         {/* Stats Grid */}
         <div className="flex gap-12">
           <Card className="w-150 h-auto">
@@ -63,7 +62,7 @@ export function Dashboard() {
                 <div className="space-y-2">
                   <p className="text-2xl text-gray-500">Số lượng giáo viên</p>
                   <p className="text-black text-4xl font-bold">
-                    {teacher.length}
+                    {teachers.length}
                   </p>
                 </div>
                 <button onClick={() => setTabActive("teachermanagement")}>
@@ -80,7 +79,7 @@ export function Dashboard() {
                 <div className="space-y-2">
                   <p className="text-2xl text-gray-500">Số lượng học sinh</p>
                   <p className="text-black font-bold text-4xl">
-                    {student.length}
+                    {students.length}
                   </p>
                 </div>
                 <button onClick={() => setTabActive("studentmanagement")}>
@@ -104,7 +103,7 @@ export function Dashboard() {
                     Số lượng giáo viên đã đến
                   </p>
                   <p className="text-black text-4xl font-bold">
-                    {Techer_attendance}
+                    {techers_attendance}
                   </p>
                 </div>
                 <div className=" bg-blue-500 w-24 h-24 rounded-lg flex items-center justify-center">
@@ -121,7 +120,7 @@ export function Dashboard() {
                     Số lượng học sinh đã đến
                   </p>
                   <p className="text-black font-bold text-4xl">
-                    {Student_attedance}
+                    {students_attedance}
                   </p>
                 </div>
                 <div className=" bg-red-500 w-24 h-24 rounded-lg flex items-center justify-center">
