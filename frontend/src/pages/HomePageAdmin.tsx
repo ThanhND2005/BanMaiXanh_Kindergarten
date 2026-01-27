@@ -1,18 +1,22 @@
 import { useState } from 'react';
-import { Dashboard } from '@/components/admin/dashboard';
+import { Dashboard } from '@/components/admin/Dashboard';
 import Class from "@/components/admin/Class"
 import Finance from '@/components/admin/Finance';
 import Menu from '@/components/admin/Menu';
 import Notification from '@/components/admin/Notification';
+import StudentManagement from '@/components/admin/StudentManagement';
+import TeacherManagement from '@/components/admin/TeacherManagement';
 import { Home, Bell,School,CircleDollarSign,ShieldUser,CookingPot} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useTabAdminStore } from '@/stores/useTabStore';
 export default function HomePageAdmin() {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const {tabActive,setTabActive} = useTabAdminStore()
   const navigate = useNavigate()
   const handleClick = () =>{
     navigate('/signin')
   }
+ 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -35,9 +39,9 @@ export default function HomePageAdmin() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-1 overflow-x-auto">
             <button
-              onClick={() => setActiveTab('dashboard')}
+              onClick={() => setTabActive('dashboard')}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === 'dashboard'
+                tabActive === 'dashboard'
                   ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
@@ -46,9 +50,9 @@ export default function HomePageAdmin() {
               Trang chủ
             </button>
             <button
-              onClick={() => setActiveTab('notification')}
+              onClick={() => setTabActive('notification')}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === 'notification'
+                tabActive === 'notification'
                   ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
@@ -57,9 +61,9 @@ export default function HomePageAdmin() {
               Thông báo
             </button>
             <button
-              onClick={() => setActiveTab('class')}
+              onClick={() => setTabActive('class')}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === 'class'
+                tabActive === 'class'
                   ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
@@ -68,9 +72,9 @@ export default function HomePageAdmin() {
               Lớp học
             </button>
             <button
-              onClick={() => setActiveTab('menu')}
+              onClick={() => setTabActive('menu')}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === 'menu'
+                tabActive === 'menu'
                   ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
@@ -79,9 +83,9 @@ export default function HomePageAdmin() {
               Thực đơn
             </button>
             <button
-              onClick={() => setActiveTab('finance')}
+              onClick={() => setTabActive('finance')}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === 'finance'
+                tabActive === 'finance'
                   ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
@@ -96,11 +100,13 @@ export default function HomePageAdmin() {
 
       {/* Main Content */}
       <main className="w-full p-12">
-        {activeTab === 'dashboard' && <Dashboard />}
-        {activeTab === 'notification' && <Notification />}
-        {activeTab === 'class' && <Class />}
-        {activeTab === 'menu' && <Menu />}
-        {activeTab === 'finance' && <Finance/>}
+        {tabActive === 'dashboard' && <Dashboard />}
+        {tabActive === 'notification' && <Notification />}
+        {tabActive === 'class' && <Class />}
+        {tabActive === 'menu' && <Menu />}
+        {tabActive === 'finance' && <Finance/>}
+        {tabActive === 'studentmanagement' && <StudentManagement/>}
+        {tabActive === 'teachermanagement' && <TeacherManagement/>}
       </main>
     </div>
   );
