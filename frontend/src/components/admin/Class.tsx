@@ -130,7 +130,7 @@ const Class = () => {
             <DialogTrigger asChild>
               <Button
                 variant="outline"
-                className="w-full rounded-2xl bg-[#05D988] text-[#ffffff] hover:bg-[#02B671] focus:bg-[#05D988]  transition all"
+                className="w-full    transition all"
               >
                 Tạo lớp học
               </Button>

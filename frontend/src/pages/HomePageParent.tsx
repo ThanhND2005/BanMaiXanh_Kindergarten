@@ -19,42 +19,42 @@ const HomePageParent = () => {
         <nav className="flex-1 mt-4 space-y-2 overflow-y-auto custom-scrollbar">
           <button
             onClick={() => setTabActive("dashboard")}
-            className={`w-full flex items-center px-6 py-3 justify-start gap-2 border-b-2 itim-regular text-2xl ${tabActive === "dashboard" ? "border-white" : "border-transparent"} transition-all duration-500`}
+            className={`w-full rounded-2xl flex items-center px-6 py-3 justify-start gap-2 itim-regular text-2xl ${tabActive === "dashboard" ? "bg-white text-[#15803D]" : "bg-transparent"} transition-all duration-500`}
           >
             <Home className="h-6 w-6" />
             Trang chủ
           </button>
           <button
             onClick={() => setTabActive("class")}
-            className={`w-full flex items-center px-6 py-3 justify-start gap-2 border-b-2 itim-regular text-2xl ${tabActive === "class" ? "border-white" : "border-transparent"} transition-all duration-500`}
+            className={`w-full rounded-2xl flex items-center px-6 py-3 justify-start gap-2 itim-regular text-2xl ${tabActive === "class" ? "bg-white text-[#15803D]" : "bg-transparent"} transition-all duration-500`}
           >
             <School className="h-6 w-6" />
             Lớp học
           </button>
           <button
             onClick={() => setTabActive("teacher")}
-            className={`w-full flex items-center px-6 py-3 justify-start gap-2 border-b-2 itim-regular text-2xl ${tabActive === "teacher" ? "border-white" : "border-transparent"} transition-all duration-500`}
+            className={`w-full rounded-2xl flex items-center px-6 py-3 justify-start gap-2 itim-regular text-2xl ${tabActive === "teacher" ? "bg-white text-[#15803D]" : "border-transparent"} transition-all duration-500`}
           >
             <Users className="h-6 w-6" />
             Giáo viên
           </button>
           <button
             onClick={() => setTabActive("notification")}
-            className={`w-full flex items-center px-6 py-3 justify-start gap-2 border-b-2 itim-regular text-2xl ${tabActive === "notification" ? "border-white" : "border-transparent"} transition-all duration-500`}
+            className={`w-full rounded-2xl flex items-center px-6 py-3 justify-start gap-2  itim-regular text-2xl ${tabActive === "notification" ? "bg-white text-[#15803D]" : "border-transparent"} transition-all duration-500`}
           >
             <MessageSquareDot className="h-6 w-6" />
             Thông báo
           </button>
           <button
             onClick={() => setTabActive("tuition")}
-            className={`w-full flex items-center px-6 py-3 justify-start gap-2 border-b-2 itim-regular text-2xl ${tabActive === "tuition" ? "border-white" : "border-transparent"} transition-all duration-500`}
+            className={`w-full rounded-2xl flex items-center px-6 py-3 justify-start gap-2  itim-regular text-2xl ${tabActive === "tuition" ? "bg-white text-[#15803D]" : "border-transparent"} transition-all duration-500`}
           >
             <HandCoins className="h-6 w-6" />
-            Lương
+            Học phí
           </button>
           <button
             onClick={() => setTabActive("menu")}
-            className={`w-full flex items-center px-6 py-3 justify-start gap-2 border-b-2 itim-regular text-2xl ${tabActive === "menu" ? "border-white" : "border-transparent"} transition-all duration-500`}
+            className={`w-full rounded-2xl flex items-center px-6 py-3 justify-start gap-2 itim-regular text-2xl ${tabActive === "menu" ? "bg-white text-[#15803D]" : "border-transparent"} transition-all duration-500`}
           >
             <CookingPot className="h-6 w-6" />
             Thực đơn
