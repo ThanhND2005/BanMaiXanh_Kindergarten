@@ -3,6 +3,8 @@ import {Toaster} from 'sonner'
 import {SigninPage} from './pages/SigninPage'
 import {SignupPage} from './pages/SignupPage'
 import HomePageAdmin from './pages/HomePageAdmin'
+import HomePageTeacher from './pages/HomePageTeacher'
+import HomePageParent from './pages/HomePageParent'
 function App() {
 
 
@@ -14,6 +16,8 @@ function App() {
           <Route path='/signup' element={<SignupPage/>}/>
           <Route path='/signin' element={<SigninPage/>}/>
           <Route path='/admin' element={<HomePageAdmin/>}/>
+          <Route path='/teacher' element={<HomePageTeacher/>}/>
+          <Route path='/' element={<HomePageParent/>}/>
         </Routes>
       </BrowserRouter>
     </>

@@ -10,6 +10,8 @@ import { Home, Bell,School,CircleDollarSign,ShieldUser,CookingPot} from 'lucide-
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useTabAdminStore } from '@/stores/useTabStore';
+import TeacherFinance from '@/components/admin/TeacherFinance';
+import StudentFinance from '@/components/admin/StudentFinance';
 export default function HomePageAdmin() {
   const {tabActive,setTabActive} = useTabAdminStore()
   const navigate = useNavigate()
@@ -41,7 +43,7 @@ export default function HomePageAdmin() {
             <button
               onClick={() => setTabActive('dashboard')}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
-                tabActive === 'dashboard'
+                (tabActive === 'dashboard' || tabActive === 'studentmanagement' || tabActive === 'teachermanagement')
                   ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
@@ -85,7 +87,7 @@ export default function HomePageAdmin() {
             <button
               onClick={() => setTabActive('finance')}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
-                tabActive === 'finance'
+                (tabActive === 'finance' || tabActive === 'teacherfinance' || tabActive === 'studentfinance')
                   ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
@@ -107,6 +109,8 @@ export default function HomePageAdmin() {
         {tabActive === 'finance' && <Finance/>}
         {tabActive === 'studentmanagement' && <StudentManagement/>}
         {tabActive === 'teachermanagement' && <TeacherManagement/>}
+        {tabActive === 'teacherfinance' && <TeacherFinance/>}
+        {tabActive === 'studentfinance' && <StudentFinance/>}
       </main>
     </div>
   );
