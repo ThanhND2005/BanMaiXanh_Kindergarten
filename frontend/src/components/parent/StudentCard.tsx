@@ -87,7 +87,7 @@ const StudentCard = ({student} : IStudentProps) => {
                 <DialogContent>
                     <form className="flex flex-col justify-center gap-3" onSubmit={handleSubmit(onUpdate)}>
               <h1 className="text-xl font-bold text-center">
-                Đăng ký thông tin cho học sinh
+                Chỉnh sửa thông tin cho học sinh
               </h1>
               <div>
                 <Label htmlFor="name" className="text-sm block">
