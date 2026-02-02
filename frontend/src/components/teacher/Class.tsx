@@ -59,7 +59,7 @@ const students = [
 const Class = () => {
   
   
-  const {teacher} = useTeacherStore()
+  
   return (
     <div className='p-4'>
       <ul className='space-y-6'>

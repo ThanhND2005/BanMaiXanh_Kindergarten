@@ -80,6 +80,7 @@ const RegisterFormSchema = z.object({
 });
 type RegisterFormValues = z.infer<typeof RegisterFormSchema>
 const DashBoard = () => {
+  
   const {
     register,
     handleSubmit,

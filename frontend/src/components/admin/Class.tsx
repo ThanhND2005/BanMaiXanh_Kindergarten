@@ -17,6 +17,7 @@ import {
   CommandItem,
   CommandList,
 } from "../ui/command";
+import ClassCard from "./ClassCard";
 const ClassFormSchema = z.object({
   imageurl: z
     .any()
@@ -59,49 +60,123 @@ const classes = [
     classid: "001",
     name: "Mam 1",
     age: 3,
-    members: 16,
-    currentmambers: 12,
+    member: 16,
+    currentmember: 12,
     tuition: 1600000,
     teachername: "Nguyen Thi Van",
     teacherid:'001',
     imageurl:
       "https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg",
+    schedule: 'Thứ 2 đến thức 6',
+    type:'Chính khóa',
+    deleted: 'false'
   },
   {
     classid: "002",
     name: "Mam 1",
     age: 3,
-    members: 16,
-    currentmambers: 12,
+    member: 16,
+    currentmember: 12,
     tuition: 1600000,
     teacherid:'002',
     teachername: "Nguyen Thi Van",
     imageurl:
       "https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg",
+    schedule: 'Thứ 2 đến thức 6',
+    type:'Chính khóa',
+    deleted: 'false'
   },
   {
     classid: "003",
     name: "Mam 1",
     age: 3,
-    members: 16,
-    currentmambers: 12,
+    member: 16,
+    currentmember: 12,
     tuition: 1600000,
     teacherid:'003',
     teachername: "Nguyen Thi Van",
     imageurl:
       "https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg",
+    schedule: 'Thứ 2 đến thức 6',
+    type:'Chính khóa',
+    deleted: 'false'
   },
   {
     classid: "004",
     name: "Mam 1",
     age: 3,
-    members: 16,
-    currentmambers: 12,
+    member: 16,
+    currentmember: 12,
     tuition: 1600000,
     teachername: "Nguyen Thi Van",
     teacherid: '004',
     imageurl:
       "https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg",
+    schedule: 'Thứ 2 đến thức 6',
+    type:'Chính khóa',
+    deleted: 'false'
+  },
+];
+const extraclasses = [
+  {
+    classid: "001",
+    name: "Võ thuật",
+    age: 3,
+    member: 16,
+    currentmember: 12,
+    tuition: 1600000,
+    teachername: "Nguyen Thi Van",
+    teacherid:'001',
+    imageurl:
+      "https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg",
+    schedule: 'Thứ 2 đến thức 6',
+    type:'Năng khiếu',
+    deleted: 'false'
+  },
+  {
+    classid: "002",
+    name: "Mĩ thuật",
+    age: 3,
+    member: 16,
+    currentmember: 12,
+    tuition: 1600000,
+    teacherid:'002',
+    teachername: "Nguyen Thi Van",
+    imageurl:
+      "https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg",
+    schedule: 'Thứ 2 đến thức 6',
+    type:'Năng khiếu',
+    deleted: 'false'
+  },
+  {
+    classid: "003",
+    name: "Âm nhạc",
+    age: 3,
+    member: 16,
+    currentmember: 12,
+    tuition: 1600000,
+    teacherid:'003',
+    teachername: "Nguyen Thi Van",
+    imageurl:
+      "https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg",
+    schedule: 'Thứ 2 đến thức 6',
+    type:'Năng khiếu',
+    deleted: 'false'
+  },
+  {
+    classid: "004",
+    name: "Tiếng anh",
+    age: 3,
+    member: 16,
+    currentmember: 12,
+    tuition: 1600000,
+    teachername: "Nguyen Thi Van",
+    teacherid: '004',
+    imageurl:
+      "https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg",
+    schedule: 'Thứ 2 đến thức 6',
+    type:'Năng khiếu',
+    deleted: 'false'
   },
 ];
 const Class = () => {
@@ -112,18 +187,13 @@ const Class = () => {
   } = useForm<ClassFormValues>({
     resolver: zodResolver(ClassFormSchema),
   });
-  const {
-    register: reg,
-    handleSubmit: had,
-    formState: { errors: err, isSubmitting: isSub },
-  } = useForm<ClassCard>();
+  
   const onSubmit1 = async (data: ClassFormValues) => {};
-  const onSubmit2 = async (data: ClassCard) => {};
   const [open, setOpen] = useState(false);
   const [teacherid, setTeacherId] = useState("");
   return (
     <>
-      <div className="w-full flex justify-between">
+      <div className="flex justify-between">
         <h1 className="text-2xl itim-regular">Các lớp học trong hệ thống:</h1>
         <div>
           <Dialog>
@@ -318,28 +388,13 @@ const Class = () => {
       </div>
       <ul className="grid grid-cols-4 gap-8 mt-4">
         {classes.map((mainclass) => (
-          <li>
-            <form onSubmit={had(onSubmit2)} className="rounded-xl bg-[#ffffff] shadow-md flex flex-wrap ">
-               <Input type="hidden" id="classid" value={mainclass.classid} {...reg("classid")}/>
-               <div className="w-full h-25 overflow-hidden mb-3">
-                  <img src={mainclass.imageurl} alt="anh lop hoc" className="w-full object-cover"/>
-               </div>
-               <div className="px-8 gap-4">
-      
-                     <h2 className="text-md font-bold">Tên lớp: {mainclass.name}</h2>
-                     <h2 className="text-md font-bold">Giáo viên: {mainclass.teachername}</h2>
-                     <h2 className="text-md font-bold">Độ tuổi: {mainclass.age}</h2>
-                     <h2 className="text-md font-bold">Số lượng trẻ: {mainclass.members}</h2>
-                     <h2 className="text-md font-bold">Học phí: {mainclass.tuition}</h2>
-                     <h2 className="text-md font-bold">Tình trạng: {`${mainclass.currentmambers}/${mainclass.members}`}</h2>
-               
-
-               </div>
-               <div className="w-full px-8 flex justify-end">
-                  <Button type="submit" className="mt-3 mb-3 bg-[#f52121] rounded-2xl shadow-sm hover:bg-[#9E0C0C] focus:bg-[#f52121] transition all" disabled={isSub}>Xóa</Button>
-               </div>
-            </form>
-          </li>
+          <ClassCard key={mainclass.classid} class1={mainclass}/>
+        ))}
+      </ul>
+      <h2 className="text-2xl itim-regular mt-3">Các lớp học năng khiếu:</h2>
+      <ul className="grid grid-cols-4 gap-8">
+        {extraclasses.map((extraclass) =>(
+          <ClassCard key={extraclass.classid} class1={extraclass}/>
         ))}
       </ul>
     </>

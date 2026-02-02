@@ -18,6 +18,14 @@ import Salary from "@/components/teacher/Salary";
 import Menu from "@/components/teacher/Menu";
 const HomePageTeacher = () => {
   const { tabActive, setTabActive } = useTabTeacherStore();
+  const now = new Date();
+    const dateformat = new Intl.DateTimeFormat('vi-VN',{
+      weekday: 'long',
+      day :'2-digit',
+      month:'2-digit',
+      year:'numeric',
+    }).format(now)
+    const final = dateformat.replace(', ',', ngày ')
   return (
     <div className="flex min-h-screen bg-[#E8F5E9]">
       <aside className="w-64 bg-[#2E7D32] text-white flex flex-col h-screen sticky top-0 left-0 shadow-xl z-30 shrink-0">
@@ -73,7 +81,7 @@ const HomePageTeacher = () => {
         <header className="sticky top-0 z-20 w-full bg-white h-20 px-8 flex justify-between items-center shadow-sm border-b border-gray-100">
           <div>
             <h2 className="text-2xl font-bold text-gray-800">
-              Thứ 6, ngày 23/01/2026
+              {final}
             </h2>
           </div>
           <div className="flex items-center gap-4">

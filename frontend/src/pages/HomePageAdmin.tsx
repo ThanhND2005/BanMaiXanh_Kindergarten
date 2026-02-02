@@ -18,8 +18,16 @@ export default function HomePageAdmin() {
   const handleClick = () =>{
     navigate('/signin')
   }
- 
+  const now = new Date();
+    const dateformat = new Intl.DateTimeFormat('vi-VN',{
+      weekday: 'long',
+      day :'2-digit',
+      month:'2-digit',
+      year:'numeric',
+    }).format(now)
+    const final = dateformat.replace(', ',', ngày ')
   return (
+    
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
@@ -32,7 +40,9 @@ export default function HomePageAdmin() {
               <h1 className="text-gray-900 font-bold">Admin</h1>
             </div>
           </div>
-          <Button type='button' onClick={handleClick} className='bg-[#05d988] hover:bg-[#006f44] focus:bg-[#05d988] transition all '>Đăng xuất</Button>
+          <div className='flex items-center'>
+            <h1 className='text-2xl font-bold'>{final}</h1>
+          </div>
         </div>
       </header>
 
@@ -95,7 +105,9 @@ export default function HomePageAdmin() {
               <CircleDollarSign className="w-4 h-4" />
               Tài chính
             </button>
-            
+            <div className='flex ml-auto items-center'>
+              <Button type='button' onClick={handleClick} className='bg-[#05d988] hover:bg-[#006f44] focus:bg-[#05d988] transition all '>Đăng xuất</Button>
+            </div>
           </div>
         </div>
       </nav>

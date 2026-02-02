@@ -51,7 +51,7 @@ const TeacherFinance = () => {
   const {register, handleSubmit, formState :{errors, isSubmitting}} = useForm<SalaryFormValues>()
   const onUpdate = async () =>{
   }
-  const onDelete = async (data: SalaryFormValues) => {
+  const onDelete = async (salaryid : string) => {
     
   }
   return (
@@ -66,9 +66,8 @@ const TeacherFinance = () => {
       </div>
       <ul className='grid grid-cols-4 gap-6'>
         {tuitions.map((tuition) =>(
-          <li>
-            <form className='bg-[#ffffff] rounded-xl flex flex-wrap justify-center shadow-md p-6 gap-4' onSubmit={handleSubmit(onDelete)}>
-              <Input type='hidden' id='salaryid' value={tuition.salaryid} {...register("salaryid")}/>
+          <li key={tuition.salaryid}>
+            <div className='bg-[#ffffff] rounded-xl flex flex-col justify-center items-center shadow-md p-6 gap-4'>
               <div className='w-24 h-24 rounded-full overflow-hidden'>
                   <img src={tuition.avatarUrl} alt="w-full object-cover" />
               </div>
@@ -82,10 +81,10 @@ const TeacherFinance = () => {
                 <h2 className='text-md font-bold'>Phụ cấp: {tuition.allowance}</h2>
                 <h2 className='text-md font-bold'>Tổng lương: {tuition.amount}</h2>
               </div>
-              <div className='w-full flex justify-end px-4'>
-                <Button type='submit' className='bg-[#EB5757] hover:bg-[#B22626] focus:bg-[#EB5757]' disabled={isSubmitting}>Xóa</Button>
+              <div>
+                <Button type='button' className='bg-[#EB5757] hover:bg-[#B22626] focus:bg-[#EB5757]' onClick={() => onDelete(tuition.salaryid)}>Xóa</Button>
               </div>
-            </form>
+            </div>
           </li>
         ))}
       </ul>
