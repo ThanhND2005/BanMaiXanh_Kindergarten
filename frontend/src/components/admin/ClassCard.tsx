@@ -1,25 +1,18 @@
 import type { Class } from '@/types/Class'
-import React from 'react'
-import {useForm} from 'react-hook-form'
+import { Button } from '../ui/button'
 interface IClassProps {
     class1 : Class
 }
-import { Button } from '../ui/button'
-import { Input } from '../ui/input'
 const ClassCard = ({class1} : IClassProps) => {
-  const {
-      register: reg,
-      handleSubmit: had,
-      formState: { errors: err, isSubmitting: isSub },
-    } = useForm<Class>();
-  const onSubmit2 = async (data : Class) =>{
-
+ 
+  const onDelete = async (classid) =>{
+    //goi backend
   }
   return (
     <div>
       <li>
-            <form onSubmit={had(onSubmit2)} className="rounded-xl bg-[#ffffff] shadow-md flex flex-wrap ">
-               <Input type="hidden" id="classid" value={class1.classid} {...reg("classid")}/>
+            <div  className="rounded-xl bg-[#ffffff] shadow-md flex flex-wrap ">
+               
                <div className="w-full h-25 overflow-hidden mb-3">
                   <img src={class1.imageurl} alt="anh lop hoc" className="w-full object-cover"/>
                </div>
@@ -35,9 +28,9 @@ const ClassCard = ({class1} : IClassProps) => {
 
                </div>
                <div className="w-full px-8 flex justify-end">
-                  <Button type="submit" className="mt-3 mb-3 bg-[#f52121] rounded-2xl shadow-sm hover:bg-[#9E0C0C] focus:bg-[#f52121] transition all" disabled={isSub}>Xóa</Button>
+                  <Button type="button" className="mt-3 mb-3 bg-[#f52121] rounded-2xl shadow-sm hover:bg-[#9E0C0C] focus:bg-[#f52121] transition all" onClick={() => onDelete(class1.classid)}>Xóa</Button>
                </div>
-            </form>
+            </div>
           </li>
     </div>
   )

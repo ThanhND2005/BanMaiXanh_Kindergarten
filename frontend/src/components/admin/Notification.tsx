@@ -8,42 +8,14 @@ import { RadioGroup, RadioGroupItem } from '../ui/radio-group'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import NotificationItem from './NotificationItem'
+import { useAdminStore } from '@/stores/useAdminStore'
 const NotificationFormSchema = z.object({
     title: z.string().min(1,"Tiêu đề không được để trống"),
     content: z.string().min(1,"Nội dung không được để trống"),
     receiver: z.string()
 })
 type NotificationFormValues = z.infer<typeof NotificationFormSchema>
-const notifications = [
-  {
-    notificationid : '001',
-    receiver: 'phụ huynh',
-    title: 'Đóng tiền học',
-    content:'Hiện đã đến kì đóng tiền học, yêu cầu phụ huynh nhanh chóng đóng tiền cho con về phía nhà trường a',
-    createdat:new Date('2026-01-01')
-  },
-  {
-    notificationid : '002',
-    receiver: 'phụ huynh',
-    title: 'Đóng tiền học',
-    content:'Hiện đã đến kì đóng tiền học, yêu cầu phụ huynh nhanh chóng đóng tiền cho con về phía nhà trường a',
-    createdat:new Date('2026-01-01')
-  },
-  {
-    notificationid : '003',
-    receiver: 'phụ huynh',
-    title: 'Đóng tiền học',
-    content:'Hiện đã đến kì đóng tiền học, yêu cầu phụ huynh nhanh chóng đóng tiền cho con về phía nhà trường a',
-    createdat:new Date('2026-01-01')
-  },
-  {
-    notificationid : '004',
-    receiver: 'phụ huynh',
-    title: 'Đóng tiền học',
-    content:'Hiện đã đến kì đóng tiền học, yêu cầu phụ huynh nhanh chóng đóng tiền cho con về phía nhà trường a',
-    createdat: new Date('2026-01-01')
-  },
-]
+
 const Notification = () => {
   const {register, handleSubmit, formState: {errors, isSubmitting}} = useForm<NotificationFormValues>({
     resolver : zodResolver(NotificationFormSchema)
@@ -53,7 +25,7 @@ const Notification = () => {
       const {title,content,receiver} = data;
       console.log(title + ' ' + content +' ' +receiver)
   }
-
+  const notifications =  useAdminStore((state) => state.notifications)
   return (
     <>
       <div className='flex justify-between '>

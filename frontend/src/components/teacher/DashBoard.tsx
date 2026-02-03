@@ -5,16 +5,11 @@ import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Megaphone, Users } from 'lucide-react'
+import { useAdminStore } from '@/stores/useAdminStore'
 
 type TeacherForm = {
   teacherid : string,
   code : string
-}
-const classes = {
-  classid : '001',
-  className :'Mầm 1',
-  members :16,
-  currentmember: 12, 
 }
 const menu = {
   day : '2',
@@ -23,10 +18,15 @@ const menu = {
   dish3 :'Canh cà chua',
   dish4 :'Rau cải luộc'
 }
-const notifications = 12
+
+
+
 const DashBoard = () => {
+  const notifications = useTeacherStore((state) => state.notifications)
+  const teacher = useTeacherStore((state) => state.teacher)
+  const students = useAdminStore((state) => state.students).filter(student => student.classname === teacher.classname)
+  
   const {register, handleSubmit, formState :{errors, isSubmitting}} = useForm<TeacherForm>()
-  const {teacher} = useTeacherStore()
   const onTimekeeping = async (data : TeacherForm) =>{
 
   }
@@ -38,9 +38,9 @@ const DashBoard = () => {
             <h2 className='text-md itim-regular text-[#828282]'>Chúc {teacher.gender === 'Name' ? 'thầy' : 'cô'} có một buổi sáng thật nhiều năng lượng nhé !</h2>
           </div>
           <div className='w-full flex justify-end items-center'>
-            <Dialog>
+            {teacher.timekeeping === null ?  <Dialog>
               <DialogTrigger asChild>
-                <Button variant='outline' className='bg-[#05d988] hover:bg-[#006f44] focus:bg-[#05d988]'>Chấm Công</Button>
+                <Button variant='outline' className='bg-[#05d988] text-white hover:text-white hover:bg-[#006f44] focus:bg-[#05d988]'>Chấm Công</Button>
               </DialogTrigger>
               <DialogContent className='flex flex-wrap justify-center p-4 gap-4'>
                 <h1 className='text-2xl font-bold'> Vui lòng nhập mã bảo mật</h1>
@@ -50,15 +50,16 @@ const DashBoard = () => {
                   <Button type='submit' className='rounded-xl bg-[#05d988] hover:bg-[#006f44] focus:bg-[#05d988]' disabled={isSubmitting}>Chấm công</Button>
                 </form>
               </DialogContent>
-            </Dialog>
+            </Dialog>: <Button type='button' className='bg-[#66B2FF] rounded-xl shadow-md'>Đã chấm công</Button>}
+            
           </div>
         </div>
         <div className='grid grid-cols-2 w-full mt-6 '>
           <div className='flex flex-wrap justify-start space-y-12'>
-            <div className='grid grid-cols-2 p-4 bg-[#ffffff] rounded-xl shadow-md'>
-              <div className='flex flex-wrap justify-start'>
-                <h2 className='text-xl text-[#828282] w-full'>Lớp {classes.className}</h2>
-                <h2 className='text-2xl font-bold w-full'>{classes.currentmember}/{classes.members}</h2>
+            <div className='w-90 grid grid-cols-2 p-4 bg-[#ffffff] rounded-xl shadow-md'>
+              <div className='flex flex-col items-center justify-center'>
+                <h2 className='text-xl text-[#828282] w-full'>Lớp {teacher.classname}</h2>
+                <h2 className='text-2xl font-bold w-full'>{students.filter(student => student.checkin !== null).length}/{students.length}</h2>
               </div>
               <div className='flex justify-end'>
                 <div className='h-20 w-20 rounded-full overflow-hidden bg-[#2E7D32] flex justify-center items-center opacity-60'>
@@ -66,10 +67,10 @@ const DashBoard = () => {
                 </div>
               </div>
             </div>
-            <div className='grid grid-cols-2 p-4 bg-[#ffffff] rounded-xl shadow-md w-91'>
+            <div className='w-90 grid grid-cols-2 p-4 bg-[#ffffff] rounded-xl shadow-md w-91'>
               <div className='flex flex-wrap justify-start'>
                 <h2 className='text-xl text-[#828282] w-full'>Thông báo</h2>
-                <h2 className='text-2xl font-bold w-full'>{notifications}</h2>
+                <h2 className='text-2xl font-bold w-full'>{notifications.length}</h2>
               </div>
               <div className='flex justify-end'>
                 <div className='h-20 w-20 rounded-full overflow-hidden bg-[#F59E0B] flex justify-center items-center opacity-60'>

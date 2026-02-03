@@ -12,10 +12,11 @@ import { useNavigate } from 'react-router-dom';
 import { useTabAdminStore } from '@/stores/useTabStore';
 import TeacherFinance from '@/components/admin/TeacherFinance';
 import StudentFinance from '@/components/admin/StudentFinance';
+import { useAdminStore } from '@/stores/useAdminStore';
 export default function HomePageAdmin() {
   const {tabActive,setTabActive} = useTabAdminStore()
   const navigate = useNavigate()
-  const handleClick = () =>{
+  const onLogout = () =>{
     navigate('/signin')
   }
   const now = new Date();
@@ -25,11 +26,12 @@ export default function HomePageAdmin() {
       month:'2-digit',
       year:'numeric',
     }).format(now)
-    const final = dateformat.replace(', ',', ngày ')
+  const final = dateformat.replace(', ',', ngày ')
+  const admin = useAdminStore((state) => state.admin)
   return (
     
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+      
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between">
           <div className="flex items-center gap-3">
@@ -37,7 +39,8 @@ export default function HomePageAdmin() {
               <ShieldUser className="w-10 h-10 text-black" />
             </div>
             <div>
-              <h1 className="text-gray-900 font-bold">Admin</h1>
+              <h1 className="text-gray-900 font-bold">{admin.name}</h1>
+              <h2 className='text-sm text-[#828282]'>{admin.email}</h2>
             </div>
           </div>
           <div className='flex items-center'>
@@ -46,7 +49,6 @@ export default function HomePageAdmin() {
         </div>
       </header>
 
-      {/* Navigation */}
       <nav className="bg-white border-b sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-1 overflow-x-auto">
@@ -106,7 +108,7 @@ export default function HomePageAdmin() {
               Tài chính
             </button>
             <div className='flex ml-auto items-center'>
-              <Button type='button' onClick={handleClick} className='bg-[#05d988] hover:bg-[#006f44] focus:bg-[#05d988] transition all '>Đăng xuất</Button>
+              <Button type='button' onClick={() => onLogout()} className='bg-[#05d988] hover:bg-[#006f44] focus:bg-[#05d988] transition all '>Đăng xuất</Button>
             </div>
           </div>
         </div>

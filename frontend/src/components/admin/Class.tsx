@@ -18,6 +18,7 @@ import {
   CommandList,
 } from "../ui/command";
 import ClassCard from "./ClassCard";
+import { useAdminStore } from "@/stores/useAdminStore";
 const ClassFormSchema = z.object({
   imageurl: z
     .any()
@@ -55,130 +56,8 @@ const teachers: Teacher[] = [
     name: "Nguyen Thi Oanh   ",
   },
 ];
-const classes = [
-  {
-    classid: "001",
-    name: "Mam 1",
-    age: 3,
-    member: 16,
-    currentmember: 12,
-    tuition: 1600000,
-    teachername: "Nguyen Thi Van",
-    teacherid:'001',
-    imageurl:
-      "https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg",
-    schedule: 'Thứ 2 đến thức 6',
-    type:'Chính khóa',
-    deleted: 'false'
-  },
-  {
-    classid: "002",
-    name: "Mam 1",
-    age: 3,
-    member: 16,
-    currentmember: 12,
-    tuition: 1600000,
-    teacherid:'002',
-    teachername: "Nguyen Thi Van",
-    imageurl:
-      "https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg",
-    schedule: 'Thứ 2 đến thức 6',
-    type:'Chính khóa',
-    deleted: 'false'
-  },
-  {
-    classid: "003",
-    name: "Mam 1",
-    age: 3,
-    member: 16,
-    currentmember: 12,
-    tuition: 1600000,
-    teacherid:'003',
-    teachername: "Nguyen Thi Van",
-    imageurl:
-      "https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg",
-    schedule: 'Thứ 2 đến thức 6',
-    type:'Chính khóa',
-    deleted: 'false'
-  },
-  {
-    classid: "004",
-    name: "Mam 1",
-    age: 3,
-    member: 16,
-    currentmember: 12,
-    tuition: 1600000,
-    teachername: "Nguyen Thi Van",
-    teacherid: '004',
-    imageurl:
-      "https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg",
-    schedule: 'Thứ 2 đến thức 6',
-    type:'Chính khóa',
-    deleted: 'false'
-  },
-];
-const extraclasses = [
-  {
-    classid: "001",
-    name: "Võ thuật",
-    age: 3,
-    member: 16,
-    currentmember: 12,
-    tuition: 1600000,
-    teachername: "Nguyen Thi Van",
-    teacherid:'001',
-    imageurl:
-      "https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg",
-    schedule: 'Thứ 2 đến thức 6',
-    type:'Năng khiếu',
-    deleted: 'false'
-  },
-  {
-    classid: "002",
-    name: "Mĩ thuật",
-    age: 3,
-    member: 16,
-    currentmember: 12,
-    tuition: 1600000,
-    teacherid:'002',
-    teachername: "Nguyen Thi Van",
-    imageurl:
-      "https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg",
-    schedule: 'Thứ 2 đến thức 6',
-    type:'Năng khiếu',
-    deleted: 'false'
-  },
-  {
-    classid: "003",
-    name: "Âm nhạc",
-    age: 3,
-    member: 16,
-    currentmember: 12,
-    tuition: 1600000,
-    teacherid:'003',
-    teachername: "Nguyen Thi Van",
-    imageurl:
-      "https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg",
-    schedule: 'Thứ 2 đến thức 6',
-    type:'Năng khiếu',
-    deleted: 'false'
-  },
-  {
-    classid: "004",
-    name: "Tiếng anh",
-    age: 3,
-    member: 16,
-    currentmember: 12,
-    tuition: 1600000,
-    teachername: "Nguyen Thi Van",
-    teacherid: '004',
-    imageurl:
-      "https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg",
-    schedule: 'Thứ 2 đến thức 6',
-    type:'Năng khiếu',
-    deleted: 'false'
-  },
-];
+
+
 const Class = () => {
   const {
     register,
@@ -187,7 +66,7 @@ const Class = () => {
   } = useForm<ClassFormValues>({
     resolver: zodResolver(ClassFormSchema),
   });
-  
+  const classes  = useAdminStore((state) => state.classes)
   const onSubmit1 = async (data: ClassFormValues) => {};
   const [open, setOpen] = useState(false);
   const [teacherid, setTeacherId] = useState("");
@@ -200,7 +79,7 @@ const Class = () => {
             <DialogTrigger asChild>
               <Button
                 variant="outline"
-                className="w-full    transition all"
+                className="rounded-2xl shadow-md text-white bg-[#05d988] hover:bg-[#006f44] hover:text-white focus:bg-[#05d988]"
               >
                 Tạo lớp học
               </Button>
@@ -387,13 +266,13 @@ const Class = () => {
         </div>
       </div>
       <ul className="grid grid-cols-4 gap-8 mt-4">
-        {classes.map((mainclass) => (
+        {classes.filter(mainclass => mainclass.type === 'Chính khóa').map((mainclass) => (
           <ClassCard key={mainclass.classid} class1={mainclass}/>
         ))}
       </ul>
       <h2 className="text-2xl itim-regular mt-3">Các lớp học năng khiếu:</h2>
       <ul className="grid grid-cols-4 gap-8">
-        {extraclasses.map((extraclass) =>(
+        {classes.filter(extraclass => extraclass.type ==='Năng khiếu').map((extraclass) =>(
           <ClassCard key={extraclass.classid} class1={extraclass}/>
         ))}
       </ul>

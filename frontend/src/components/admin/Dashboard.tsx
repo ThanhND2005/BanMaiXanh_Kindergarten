@@ -2,53 +2,11 @@ import React from "react";
 import { Card, CardContent } from "../ui/card";
 import { Users, Baby } from "lucide-react";
 import { useTabAdminStore } from "@/stores/useTabStore";
+import { useAdminStore } from "@/stores/useAdminStore";
 export function Dashboard() {
-  const students = [
-    {
-      studentid: "02222",
-      name: "Bảo Hân",
-    },
-    {
-      studentid: "02222",
-      name: "Bảo Hân",
-    },
-    {
-      studentid: "02222",
-      name: "Bảo Hân",
-    },
-    {
-      studentid: "02222",
-      name: "Bảo Hân",
-    },
-    {
-      studentid: "02222",
-      name: "Bảo Hân",
-    },
-  ];
-  const teachers = [
-    {
-      teacherid: "002",
-      name: "Danh thanh",
-    },
-    {
-      teacherid: "002",
-      name: "Danh thanh",
-    },
-    {
-      teacherid: "002",
-      name: "Danh thanh",
-    },
-    {
-      teacherid: "002",
-      name: "Danh thanh",
-    },
-    {
-      teacherid: "002",
-      name: "Danh thanh",
-    },
-  ];
-  const students_attedance = 2;
-  const techers_attendance = 2;
+  const students = useAdminStore((state) => state.students)
+  const teachers = useAdminStore((state)  => state.teachers)
+
   const {setTabActive } = useTabAdminStore();
 
   return (
@@ -103,7 +61,7 @@ export function Dashboard() {
                     Số lượng giáo viên đã đến
                   </p>
                   <p className="text-black text-4xl font-bold">
-                    {techers_attendance}
+                    {teachers.filter(teacher => teacher.timekeeping !== null).length}
                   </p>
                 </div>
                 <div className=" bg-blue-500 w-24 h-24 rounded-lg flex items-center justify-center">
@@ -120,7 +78,7 @@ export function Dashboard() {
                     Số lượng học sinh đã đến
                   </p>
                   <p className="text-black font-bold text-4xl">
-                    {students_attedance}
+                    {students.filter(student => student.checkin !== null).length}
                   </p>
                 </div>
                 <div className=" bg-red-500 w-24 h-24 rounded-lg flex items-center justify-center">

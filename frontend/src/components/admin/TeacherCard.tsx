@@ -27,29 +27,24 @@ const TeacherCard = ({ teacher }: ITeacher) => {
   } = useForm<UpdateForm>({
     resolver: zodResolver(UpdateSchema),
     defaultValues:{
-        
+        userid : teacher.userid,
+        name : teacher.name,
+        dob : teacher.dob.toLocaleDateString('vi-VN'),
+        gender : teacher.gender,
+        address : teacher.address
     }
   });
-  const {
-    register: re,
-    handleSubmit: ha,
-    formState: { errors: er, isSubmitting: is },
-  } = useForm<Teacher>({
-    defaultValues: {
-      userid: teacher.userid,
-      name : teacher.name,
-      dob : teacher.dob,
-      gender: teacher.gender,
-      address: teacher.address
-    },
-  });
-  const onSubmit1 = async () => {};
-  const onSubmit2 = async () => {};
+
+  const onDelete = async (userid) => {
+    //goi backend xoa
+  };
+  const onUpdate = async (data : UpdateForm) => {
+    //goi backend cap nhap
+  };
   return (
     <div>
       <li>
-        <form
-          onSubmit={ha(onSubmit1)}
+        <div
           className="flex flex-col justify-center p-4 items-center justify-center bg-[#ffffff] rounded-2xl shadow-md gap-3"
         >
           <div className="w-24 h-24 rounded-full overflow-hidden">
@@ -82,9 +77,9 @@ const TeacherCard = ({ teacher }: ITeacher) => {
           <div className='flex space-x-10'>
             <div>
               <Button
-                type="submit"
+                type="button"
                 className=" bg-[#f52121] rounded-2xl shadow-sm hover:bg-[#9E0C0C] focus:bg-[#f52121]"
-                disabled={is}
+                onClick={() => onDelete(teacher.userid)}
               >
                 Xóa
               </Button>
@@ -101,7 +96,7 @@ const TeacherCard = ({ teacher }: ITeacher) => {
                 </DialogTrigger>
                 <DialogContent>
                   <form
-                    onSubmit={handleSubmit(onSubmit2)}
+                    onSubmit={handleSubmit(onUpdate)}
                     className="flex flex-col rounded-xl  bg-[#ffffff]  justify-center items-center gap-4"
                   >
                     <div className="h-24 w-24 rounded-full overflow-hidden">
@@ -187,7 +182,7 @@ const TeacherCard = ({ teacher }: ITeacher) => {
               </Dialog>
             </div>
           </div>
-        </form>
+        </div>
       </li>
     </div>
   );

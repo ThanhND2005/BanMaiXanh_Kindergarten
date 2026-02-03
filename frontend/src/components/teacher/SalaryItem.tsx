@@ -1,20 +1,10 @@
 
-import { CircleDollarSign, DollarSign } from 'lucide-react'
-import React from 'react'
+import { DollarSign } from 'lucide-react'
 import { Button } from '../ui/button'
+import type { TeacherBill } from '@/types/store'
 
-interface Salary {
-    salaryid: string, 
-    month: number,
-    className: string, 
-    timekeeping: number,
-    salary : number, 
-    alowance: number,
-    amount: number,
-    status: string
-}
 interface SalaryProps {
-    salary : Salary
+    salary : TeacherBill    
 }
 const SalaryItem = ({salary} : SalaryProps) => {
   const onConfirm = async (salaryid) => {
@@ -39,7 +29,7 @@ const SalaryItem = ({salary} : SalaryProps) => {
             </div>
             <div className='flex space-x-2'>
                 <h2 className='text-xl font-bold text-[#828282]'>Phụ cấp:</h2>
-                <h2 className='text-xl font-bold '>{salary.alowance} vnđ</h2>
+                <h2 className='text-xl font-bold '>{salary.allowance} vnđ</h2>
             </div>
             <h1 className='text-4xl font-bold text-[#2E7D32] opacity-80'>Tổng: {salary.amount} vnđ</h1>
         </div>

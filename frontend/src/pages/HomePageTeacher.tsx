@@ -1,7 +1,5 @@
-import React, { useState } from "react";
 import {
   Home,
-  School,
   Users,
   MessageSquareDot,
   HandCoins,
@@ -16,8 +14,12 @@ import Class from "@/components/teacher/Class";
 import Notification from "@/components/teacher/Notification";
 import Salary from "@/components/teacher/Salary";
 import Menu from "@/components/teacher/Menu";
+import { useTeacherStore } from "@/stores/useTeacherStore";
+import { useNavigate } from "react-router-dom";
 const HomePageTeacher = () => {
   const { tabActive, setTabActive } = useTabTeacherStore();
+  const teacher = useTeacherStore((state) => state.teacher)
+  const navigate = useNavigate()
   const now = new Date();
     const dateformat = new Intl.DateTimeFormat('vi-VN',{
       weekday: 'long',
@@ -25,7 +27,10 @@ const HomePageTeacher = () => {
       month:'2-digit',
       year:'numeric',
     }).format(now)
-    const final = dateformat.replace(', ',', ngày ')
+  const final = dateformat.replace(', ',', ngày ')
+  const onLogout = () =>{
+    navigate("/signin")
+  }
   return (
     <div className="flex min-h-screen bg-[#E8F5E9]">
       <aside className="w-64 bg-[#2E7D32] text-white flex flex-col h-screen sticky top-0 left-0 shadow-xl z-30 shrink-0">
@@ -71,7 +76,7 @@ const HomePageTeacher = () => {
           </button>
         </nav>
         <div className="p-4 border-t border-white/10">
-          <button className="flex items-center w-full px-4 py-3 text-white/90 hover:bg-white/10 hover:text-white rounded-lg transition-colors">
+          <button className="flex items-center w-full px-4 py-3 text-white/90 hover:bg-white/10 hover:text-white rounded-lg transition-colors" onClick={onLogout}>
             <LogOut size={20} className="mr-3" />
             <span className="font-medium">Đăng xuất</span>
           </button>
@@ -86,7 +91,7 @@ const HomePageTeacher = () => {
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right hidden md:block">
-              <p className="font-bold text-gray-800 text-sm">Nguyễn Thị Vân</p>
+              <p className="font-bold text-gray-800 text-sm">{teacher.name}</p>
               <p className="text-xs text-gray-500">Giáo viên</p>
             </div>
             <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border border-gray-300">

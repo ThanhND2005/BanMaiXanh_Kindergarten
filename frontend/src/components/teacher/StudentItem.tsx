@@ -7,19 +7,10 @@ import { Label } from '../ui/label'
 import { Button } from '../ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import { Input } from '../ui/input'
-interface IStudent {
-  studentid: string;
-  name: string;
-  height: number;
-  weight: number;
-  parentName: string;
-  avatarurl: string;
-  date: string;
-  checkin: string | null; // Có thể null
-  checkout: string | null; // Có thể null
-}
+import type { Student } from '@/types/Student'
+
 interface StudentItemProps {
-  student: IStudent;
+  student: Student
 }
 const UpdateFormSchema = z.object({
   studentid : z.string(),
@@ -71,7 +62,7 @@ const StudentItem = ({student} : StudentItemProps) => {
             <div className='flex justify-start w-40'>
               <div className='flex flex-wrap justify-center space-y-3 '>
                 <div className='h-20 w-20 rounded-full overflow-hidden'>
-                  <img src={student.avatarurl} alt="avatar" className='w-full object-cover' />
+                  <img src={student.avatarUrl} alt="avatar" className='w-full object-cover' />
                 </div>
                 <div className='w-full flex justify-center'>
                   <Dialog>
@@ -82,7 +73,7 @@ const StudentItem = ({student} : StudentItemProps) => {
                       <form className='grid grid-cols-3 p-2' onSubmit={handleSubmit(onUpdate)}>
                         <div className='flex justify-center w-20 items-center '>
                           <div className='h-20 w-20 rounded-full overflow-hidden'>
-                            <img src={student.avatarurl} alt="avatar" className='w-full h-auto object-cover'/>
+                            <img src={student.avatarUrl} alt="avatar" className='w-full h-auto object-cover'/>
                           </div>
                         </div>
                         <div>
@@ -135,14 +126,14 @@ const StudentItem = ({student} : StudentItemProps) => {
             </div>
             <div className='flex flex-wrap space-y-2 items-center'>
                 <h1 className='text-2xl font-bold w-full'>{student.name}</h1>
-                <h2 className='text-xl font-bold w-full'>Chiều cao: {student.height}</h2>
-                <h2 className='text-xl font-bold w-full'>Cân nặng: {student.weight}</h2>
-                <h2 className='text-xl font-bold w-full'>Họ tên phụ huynh: {student.parentName}</h2>
+                <h2 className='text-xl font-bold w-full'>Chiều cao: {student.height} m</h2>
+                <h2 className='text-xl font-bold w-full'>Cân nặng: {student.weight} kg</h2>
+                <h2 className='text-xl font-bold w-full'>Họ tên phụ huynh: {student.parentname}</h2>
             </div>
             <div className='flex flex-col justify-center px-4  space-y-3'>
                 <Button type='button' onClick={() => onCheckin(student.studentid)} className={`${student.checkin === null ? 'bg-[#ffffff] text-[#828282]' : 'bg-[#2E7D32]'} rounded-xl shadow-md `}>Đã đến</Button>
                 <Button type='button' onClick={() => onCheckout(student.studentid)} className={`${student.checkout === null ? 'bg-[#ffffff] text-[#828282]' : 'bg-[#2E7D32]'} rounded-xl shadow-md `}>Đã về</Button>
-                <Button type='button' onClick={() => onDelete(student.studentid,teacher.classid)} className={`bg-[#FB3C1A] rounded-xl shadow-md`}>Xóa</Button>
+                <Button type='button' onClick={() => onDelete(student.studentid,student.classid)} className={`bg-[#FB3C1A] rounded-xl shadow-md`}>Xóa</Button>
             </div>
           </li>
     </div>
