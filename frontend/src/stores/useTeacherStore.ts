@@ -11,6 +11,7 @@ export const useTeacherStore = create<teacherState>((set) => ({
         dob: new Date('2005-01-01'),
         address: "Hà Đông",
         classname: 'Mầm 1',
+        classid:'001',
         timekeeping: null,
         createdat: new Date('2020-01-01'),
         deleted: 'false'

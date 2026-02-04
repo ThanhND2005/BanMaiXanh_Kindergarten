@@ -8,64 +8,9 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import StudentCard from "./StudentCard";
-const students = [
-  {
-    studentid :'001',
-    age:6,
-    gender: 'Nữ',
-    dob: '01/01/2020',
-    name :'Trần Hà Anh',
-    height: 0.8,
-    weight: 9,
-    parentName:'Nguyễn Văn An',
-    avatarurl :'https://i.pinimg.com/736x/7d/78/d5/7d78d5e2016f277d6e5174d55e8395ba.jpg',
-    date : '2005-01-01',
-    checkin :'10:00',
-    checkout :'17:00'
-  },
-  {
-    studentid :'002',
-    age:6,
-    dob: '01/01/2020',
-    gender: 'Nữ',
-    name :'Nguyễn Vân Anh',
-    height: 0.8,
-    weight: 9,
-    parentName:'Nguyễn Văn An',
-    avatarurl:'https://i.pinimg.com/736x/ca/df/db/cadfdb55f90859315a604ff316b775c4.jpg',
-    date : '2005-01-01',
-    checkin :null,
-    checkout :null
-  },
-  {
-    studentid :'003',
-    age:6,
-    dob: '01/01/2020',
-    gender: 'Nữ',
-    name :'Nguyễn Thảo Linh',
-    height: 0.8,
-    weight: 9,
-    parentName:'Nguyễn Văn An',
-    avatarurl:'https://i.pinimg.com/736x/3f/0c/ae/3f0cae6ef757529c0ad31a255879a07e.jpg',
-    date : '2005-01-01',
-    checkin :'10:00',
-    checkout :null
-  },
-  {
-    studentid :'004',
-    age:6,
-    dob: '01/01/2020',
-    gender: 'Nữ',
-    name :'Phạm Bảo Hân',
-    height: 0.8,
-    weight: 9,
-    parentName:'Nguyễn Văn An',
-    avatarurl: 'https://i.pinimg.com/736x/4b/9e/de/4b9ede583bcba788cffe46beaad3cb58.jpg',
-    date : '2005-01-01',
-    checkin :'10:00',
-    checkout :'17:00'
-  },
-]
+import { useAdminStore } from "@/stores/useAdminStore";
+import { useParentStore } from "@/stores/useParentStore";
+
 const RegisterFormSchema = z.object({
   name: z.string().min(1, "Không được để trống thông tin"),
   gender: z.string().min(1, "Không được để trống thông tin"),
@@ -80,7 +25,8 @@ const RegisterFormSchema = z.object({
 });
 type RegisterFormValues = z.infer<typeof RegisterFormSchema>
 const DashBoard = () => {
-  
+  const parent = useParentStore((state) => state.parent)
+  const students = useAdminStore((state => state.students)).filter(student => student.parentid === parent.userid)
   const {
     register,
     handleSubmit,

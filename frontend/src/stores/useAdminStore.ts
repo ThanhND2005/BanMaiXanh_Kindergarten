@@ -11,6 +11,7 @@ export const useAdminStore = create<adminState>((set) => ({
             dob: new Date("2005-01-01"),
             gender: "Nam",
             address: "Ha Noi",
+            classid:'001',
             classname: "Vo",
             createdat: new Date("2025-01-02"),
             avatarurl:
@@ -25,6 +26,7 @@ export const useAdminStore = create<adminState>((set) => ({
             gender: "Nu",
             address: "Nghe An",
             classname: "Mi Thuat",
+            classid:'002',
             createdat: new Date("2025-01-02"),
             avatarurl:
                 "https://i.pinimg.com/1200x/b3/c2/77/b3c2779d6b6195793b72bf73e284b3e8.jpg",
@@ -38,6 +40,7 @@ export const useAdminStore = create<adminState>((set) => ({
             gender: "Nu",
             address: "Nghe An",
             classname: "Mam 2",
+            classid:'003',
             createdat: new Date("2025-01-02"),
             avatarurl:
                 "https://i.pinimg.com/1200x/b3/c2/77/b3c2779d6b6195793b72bf73e284b3e8.jpg",
@@ -51,6 +54,7 @@ export const useAdminStore = create<adminState>((set) => ({
             gender: "Nu",
             address: "Ha Noi",
             classname: "Choi 1",
+            classid:'004',
             createdat: new Date("2025-01-02"),
             avatarurl:
                 "https://i.pinimg.com/1200x/b3/c2/77/b3c2779d6b6195793b72bf73e284b3e8.jpg",
@@ -64,6 +68,7 @@ export const useAdminStore = create<adminState>((set) => ({
             gender: "Nu",
             address: "Nghe An",
             classname: "Am nhac",
+            classid:'005',
             createdat: new Date("2025-01-02"),
             avatarurl:
                 "https://i.pinimg.com/1200x/b3/c2/77/b3c2779d6b6195793b72bf73e284b3e8.jpg",
@@ -270,10 +275,11 @@ export const useAdminStore = create<adminState>((set) => ({
             avatarUrl: "https://i.pinimg.com/736x/f2/f4/23/f2f423b704aea4e2b33eaf5ea4639020.jpg",
             name: "Thanh Hà",
             classid: '001',
+            parentid:'001',
             classname: "Mầm 1",
             date: new Date('2026-01-01'),
             checkin: '10:00',
-            checkout: '17:00'
+            checkout: null
         },
         {
             studentid: "002",
@@ -285,10 +291,11 @@ export const useAdminStore = create<adminState>((set) => ({
             gender: "Nữ",
             height: 0.8,
             weight: 10,
-            parentname: 'Nguyễn Thị Tâm',
+            parentname: 'Nguyễn Hà Trang',
+            parentid:'001',
             date: new Date('2026-01-01'),
-            checkin: '10:00',
-            checkout: '17:00'
+            checkin: null,
+            checkout: null
         },
         {
             studentid: "003",
@@ -300,6 +307,7 @@ export const useAdminStore = create<adminState>((set) => ({
             gender: 'Nam',
             height: 0.8,
             weight: 16,
+            parentid:'002',
             parentname: 'Nguyễn Thành Nhân',
             date: new Date('2026-01-01'),
             checkin: '10:00',
@@ -316,6 +324,7 @@ export const useAdminStore = create<adminState>((set) => ({
             height: 0.8,
             weight: 16,
             parentname: 'Nguyễn Thanh Vân',
+            parentid:'003',
             date: new Date('2026-01-01'),
             checkin: null,
             checkout: null
@@ -331,6 +340,7 @@ export const useAdminStore = create<adminState>((set) => ({
             height: 1,
             weight: 10,
             parentname: 'Nguyễn Thị Thanh',
+            parentid:'004',
             date: new Date('2026-01-01'),
             checkin: '10:00',
             checkout: null
@@ -339,7 +349,7 @@ export const useAdminStore = create<adminState>((set) => ({
     studentbills: [
         {
             tuitionid: '001',
-            month: 1,
+            month: 12,
             parentName: 'Nguyễn Thị Thắm',
             studentName: 'Nguyễn Gia Hân',
             dob: new Date('2021-01-01'),
@@ -350,6 +360,7 @@ export const useAdminStore = create<adminState>((set) => ({
             status: 'Đã hoàn thành',
             avatarUrl: 'https://i.pinimg.com/1200x/af/6b/13/af6b1344fc3a40799fcff65832f53af4.jpg',
             billUrl: 'https://res.cloudinary.com/dhylrhxsa/image/upload/v1769681751/526e6a2c-0d51-44db-8465-75610de7ebc6_xipwh6.jpg',
+            qrurl:'https://res.cloudinary.com/dhylrhxsa/image/upload/v1769957733/vpbank-0354445956-print_u5m5bf.png'
         },
         {
             tuitionid: '002',
@@ -363,7 +374,8 @@ export const useAdminStore = create<adminState>((set) => ({
             tuition: 4000000,
             status: 'Đang thực hiện',
             avatarUrl: 'https://i.pinimg.com/736x/55/98/6c/55986c6b13f28e0a87085243d5bc5b57.jpg',
-            billUrl: null
+            billUrl: null,
+            qrurl:'https://res.cloudinary.com/dhylrhxsa/image/upload/v1769957733/vpbank-0354445956-print_u5m5bf.png'
         },
     ],
     teacherbills: [

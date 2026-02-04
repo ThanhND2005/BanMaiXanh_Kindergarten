@@ -7,20 +7,10 @@ import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import { Button } from '../ui/button'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
-interface Tuition {
-    tuitionid: string, 
-    studentname: string, 
-    classname: string, 
-    amount: number,
-    status: string,
-    qrurl: string, 
-    billurl: string | null,
-    month:number,
-    attendance : number
-}
+import type { StudentBill } from '@/types/store'
 
 interface ITuitionCard {
-    tuition: Tuition
+    tuition: StudentBill
 }
 const ComfirmFormSchema = z.object({
     tuitionid: z.string(),
@@ -42,10 +32,10 @@ const TuitionCard = ({tuition} :ITuitionCard) => {
       <li className='flex py-4 px-10 bg-white rounded-2xl shadow-md'>
         <div className='flex flex-col space-y-1'>
             <h2 className='text-2xl itim-regular'> Tháng {tuition.month}</h2>
-            <h2 className='text-xl itim-regular'> Bé: {tuition.studentname}</h2>
-            <h2 className='text-xl itim-regular'> Lớp: {tuition.classname}</h2>
+            <h2 className='text-xl itim-regular'> Bé: {tuition.studentName}</h2>
+            <h2 className='text-xl itim-regular'> Lớp: {tuition.className}</h2>
             <h2 className='text-xl itim-regular'> Số ngày đi học: {tuition.attendance}</h2>
-            <h2 className='text-4xl itim-regular text-[#FB3C1A]'> Học phí: {tuition.amount} vnđ</h2>
+            <h2 className='text-4xl itim-regular text-[#FB3C1A]'> Học phí: {tuition.tuition} vnđ</h2>
             {tuition.status === 'Đã hoàn thành'? <div className='flex gap-2'>
                 <div className='h-5 w-5 bg-[#15803D] rounded-full flex justify-center items-center'>
                     <Check className='h-4 w-4 text-white'/>

@@ -10,20 +10,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { RadioGroup,RadioGroupItem } from '../ui/radio-group'
-interface Student {
-    studentid :string,
-    age : number,
-    dob: string,
-    gender: string,
-    name :string,
-    height: number,
-    weight: number,
-    parentName:string,
-    avatarurl:string,
-    date : string,
-    checkin : string | null,
-    checkout :string | null
-}
+import type { Student } from '@/types/Student'
+
 interface IStudentProps {
     student : Student
 }
@@ -31,7 +19,6 @@ const UpdateFormSchema = z.object({
   studentid: z.string().min(1,"Không để trống thông tin"),
   name: z.string().min(1, "Không được để trống thông tin"),
   gender: z.string().min(1, "Không được để trống thông tin"),
-  dob: z.string().date("Yêu cầu nhập đúng định dạng"),
   height: z.coerce.number({ message: "Yêu cầu nhập đúng định dạng" }),
   weight: z.coerce.number({ message: "Yêu cầu nhập đúng định dạng" }),
 })
@@ -43,7 +30,6 @@ const StudentCard = ({student} : IStudentProps) => {
         studentid : student.studentid,
         name : student.name,
         gender: student.gender,
-        dob : student.dob,
         height : student.height,
         weight: student.height
     }
@@ -55,7 +41,7 @@ const StudentCard = ({student} : IStudentProps) => {
     <div>
       <li className='flex p-4 w-200 bg-[#ffffff] rounded-xl shadow-md items-center'>
         <div className='h-30 w-30 rounded-full overflow-hidden'>
-            <img src={student.avatarurl} alt="logo" />
+            <img src={student.avatarUrl} alt="logo" />
         </div>
         <div className='flex flex-col ml-20 space-y-2'>
             <h1 className='text-2xl itim-regular'> Bé {student.name}</h1>
@@ -128,19 +114,6 @@ const StudentCard = ({student} : IStudentProps) => {
 
                   </div>
                 </RadioGroup>
-              </div>
-              <div>
-                <Label htmlFor="dob" className="text-sm block">
-                  Ngày sinh
-                </Label>
-                <Input
-                  type="text"
-                  id="dob"
-                  className="rounded-2xl shadow-md p-2"
-                  placeholder="Nhập ngày sinh"
-                  {...register("dob")}
-                />
-                {errors.dob && <p className="text-destructive text-sm">{errors.dob.message}</p>}
               </div>
               <div>
                 <Label htmlFor="height" className="text-sm block">Chiều cao</Label>

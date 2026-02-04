@@ -5,7 +5,6 @@ import {
   HandCoins,
   CookingPot,
   LogOut,
-  User,
   Leaf,
 } from "lucide-react";
 import { useTabTeacherStore } from "@/stores/useTabStore";
@@ -16,10 +15,32 @@ import Salary from "@/components/teacher/Salary";
 import Menu from "@/components/teacher/Menu";
 import { useTeacherStore } from "@/stores/useTeacherStore";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog,DialogTrigger,DialogContent } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {z} from 'zod'
+import {useForm} from 'react-hook-form'
+import { zodResolver } from "@hookform/resolvers/zod";
+const AvatarFormSchema = z.object({
+  avatar: z
+    .any()
+    .refine((file) => file?.length > 0, {
+      message: "Không để trống thông tin",
+    }),
+});
+type AvatarFromValues = z.infer<typeof AvatarFormSchema>;
 const HomePageTeacher = () => {
   const { tabActive, setTabActive } = useTabTeacherStore();
   const teacher = useTeacherStore((state) => state.teacher)
   const navigate = useNavigate()
+  const {
+      register,
+      handleSubmit,
+      formState: { errors, isSubmitting },
+    } = useForm<AvatarFromValues>({
+      resolver: zodResolver(AvatarFormSchema),
+    });
   const now = new Date();
     const dateformat = new Intl.DateTimeFormat('vi-VN',{
       weekday: 'long',
@@ -31,6 +52,7 @@ const HomePageTeacher = () => {
   const onLogout = () =>{
     navigate("/signin")
   }
+  const onUpdate = (data: AvatarFromValues) => {};
   return (
     <div className="flex min-h-screen bg-[#E8F5E9]">
       <aside className="w-64 bg-[#2E7D32] text-white flex flex-col h-screen sticky top-0 left-0 shadow-xl z-30 shrink-0">
@@ -94,9 +116,41 @@ const HomePageTeacher = () => {
               <p className="font-bold text-gray-800 text-sm">{teacher.name}</p>
               <p className="text-xs text-gray-500">Giáo viên</p>
             </div>
-            <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border border-gray-300">
-              <User className="w-full h-full p-2 text-gray-500 bg-gray-100" />
-            </div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-300">
+                  <img
+                    src={teacher.avatarurl}
+                    alt="ảnh đại diện"
+                    className="w-full h-auto object-cover"
+                  />
+                </div>
+              </DialogTrigger>
+              <DialogContent>
+                <h1 className="text-2xl text-center font-bold">
+                  Cập nhập ảnh đại diện
+                </h1>
+                <form
+                  onSubmit={handleSubmit(onUpdate)}
+                  className="flex flex-col justify-center gap-3"
+                >
+                  <div>
+                    <Label htmlFor="avatar" className="text-sm block">
+                      Ảnh đại diện
+                    </Label>
+                    <Input type="file" id="avatar" className="rounded-2xl" {...register("avatar")}/>
+                    {errors.avatar && <p className="text-destructive text-sm">{errors.avatar.message as string}</p> }
+                  </div>
+                  <Button
+                    type="submit"
+                    className="rounded-2xl bg-[#05d988] hover:bg-[#006f44] hover:text-white focus:bg-[#05d988] transition all"
+                    disabled={isSubmitting}
+                  >
+                    Cập nhập
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
         </header>
 

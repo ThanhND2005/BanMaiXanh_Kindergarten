@@ -6,16 +6,9 @@ import { Input } from '../ui/input'
 import {z} from 'zod'
 import {useForm} from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-interface Teacher{
-    userid : string, 
-    name : string, 
-    exp : number,
-    gender: string,
-    phone : string, 
-    age: number,
-    classname: string,
-    avatarurl: string,
-}
+import { useParentStore } from '@/stores/useParentStore'
+import type { Teacher } from '@/types/Teacher'
+
 interface ITeacherProps {
   teacher : Teacher
 }
@@ -26,10 +19,9 @@ const NotificationFormSchema = z.object({
   content : z.string().min(1,"Nội dung không được để trống"),
 })
 type NotificationFormValues = z.infer<typeof NotificationFormSchema>
-const parent = {
-  userid : '001'
-}
+
 const TeacherCard = ({teacher} : ITeacherProps) => {
+  const parent = useParentStore((state) => state.parent)
   const {register : reg ,handleSubmit :had, formState :{errors :err, isSubmitting: isSub}} = useForm<NotificationFormValues>({
         resolver : zodResolver(NotificationFormSchema),
         defaultValues : {
@@ -46,9 +38,8 @@ const TeacherCard = ({teacher} : ITeacherProps) => {
           <div className='flex flex-col gap-3'>
             <h2 className='text-4xl itim-regular'>{teacher.name}</h2>
             <h2 className='text-2xl itim-regular'>Lớp: {teacher.classname}</h2>
-            <h2 className='text-2xl itim-regular'>Kinh nghiệm: {teacher.exp}</h2>
-            <h2 className='text-2xl itim-regular'>Số điện thoại: {teacher.phone}</h2>
-            <h2 className='text-2xl itim-regular'>Tuổi: {teacher.age}</h2>
+            <h2 className='text-2xl itim-regular'>Ngày sinh: {teacher.dob.toLocaleDateString('vi-VN')}</h2>
+            <h2 className='text-2xl itim-regular'>Ngày tham gia: {teacher.createdat.toLocaleDateString('vi-VN')}</h2>
           </div>
           <div className='flex flex-col items-center justify-center ml-auto gap-3'>
             <div className='h-30 w-30 rounded-full overflow-hidden'>

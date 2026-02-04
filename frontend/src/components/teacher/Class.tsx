@@ -6,7 +6,7 @@ import { useTeacherStore } from '@/stores/useTeacherStore'
 
 const Class = () => {
   const teacher = useTeacherStore((state) => state.teacher)
-  const students = useAdminStore((state) => state.students).filter(student => student.classname === teacher.classname)
+  const students = useAdminStore((state) => state.students).filter(student => student.classid === teacher.classid)
   
   return (
     <div className='p-4'>

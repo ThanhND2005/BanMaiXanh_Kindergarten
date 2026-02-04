@@ -1,22 +1,58 @@
-import { useTabParentStore } from '@/stores/useTabStore'
-import React from 'react'
-import { Leaf,Home, Users,MessageSquareDot,HandCoins,CookingPot,LogOut,User,School } from 'lucide-react'
-import DashBoard from '@/components/parent/DashBoard'
-import Class from '@/components/parent/Class'
-import Teacher from '@/components/parent/Teacher'
-import Notification from '@/components/parent/Notification'
-import Tuition from '@/components/parent/Tuition'
-import Menu from '@/components/teacher/Menu'
+import { useTabParentStore } from "@/stores/useTabStore";
+import React from "react";
+import {
+  Leaf,
+  Home,
+  Users,
+  MessageSquareDot,
+  HandCoins,
+  CookingPot,
+  LogOut,
+  User,
+  School,
+} from "lucide-react";
+import DashBoard from "@/components/parent/DashBoard";
+import Class from "@/components/parent/Class";
+import Teacher from "@/components/parent/Teacher";
+import Notification from "@/components/parent/Notification";
+import Tuition from "@/components/parent/Tuition";
+import Menu from "@/components/teacher/Menu";
+import { useParentStore } from "@/stores/useParentStore";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+const AvatarFormSchema = z.object({
+  avatar: z
+    .any()
+    .refine((file) => file?.length > 0, {
+      message: "Không để trống thông tin",
+    }),
+});
+type AvatarFromValues = z.infer<typeof AvatarFormSchema>;
 const HomePageParent = () => {
-  const {tabActive, setTabActive } = useTabParentStore()
+  const { tabActive, setTabActive } = useTabParentStore();
+  const parent = useParentStore((state) => state.parent);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<AvatarFromValues>({
+    resolver: zodResolver(AvatarFormSchema),
+  });
   const now = new Date();
-    const dateformat = new Intl.DateTimeFormat('vi-VN',{
-      weekday: 'long',
-      day :'2-digit',
-      month:'2-digit',
-      year:'numeric',
-    }).format(now)
-    const final = dateformat.replace(', ',', ngày ')
+  const dateformat = new Intl.DateTimeFormat("vi-VN", {
+    weekday: "long",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(now);
+  const final = dateformat.replace(", ", ", ngày ");
+  const onUpdate = (data: AvatarFromValues) => {};
   return (
     <div className="flex min-h-screen bg-[#E8F5E9]">
       <aside className="w-64 bg-[#2E7D32] text-white flex flex-col h-screen sticky top-0 left-0 shadow-xl z-30 shrink-0">
@@ -75,36 +111,66 @@ const HomePageParent = () => {
           </button>
         </div>
       </aside>
-      <div className="flex-1 flex flex-col min-w-0">  
+      <div className="flex-1 flex flex-col min-w-0">
         <header className="sticky top-0 z-20 w-full bg-white h-20 px-8 flex justify-between items-center shadow-sm border-b border-gray-100">
           <div>
-            <h1 className='text-2xl font-bold '>Xin chào, mẹ bé Hân</h1>
-            <h2 className="text-md font-bold text-[#828282]">
-              {final}
-            </h2>
+            <h1 className="text-2xl font-bold ">Xin chào phụ huynh 🌞</h1>
+            <h2 className="text-md font-bold text-[#828282]">{final}</h2>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right hidden md:block">
-              <p className="font-bold text-gray-800 text-sm">Nguyễn Thị Vân</p>
+              <p className="font-bold text-gray-800 text-sm">{parent.name}</p>
               <p className="text-xs text-gray-500">Phụ huynh</p>
             </div>
-            <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border border-gray-300">
-              <User className="w-full h-full p-2 text-gray-500 bg-gray-100" />
-            </div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-300">
+                  <img
+                    src={parent.avatarurl}
+                    alt="ảnh đại diện"
+                    className="w-full h-auto object-cover"
+                  />
+                </div>
+              </DialogTrigger>
+              <DialogContent>
+                <h1 className="text-2xl text-center font-bold">
+                  Cập nhập ảnh đại diện
+                </h1>
+                <form
+                  onSubmit={handleSubmit(onUpdate)}
+                  className="flex flex-col justify-center gap-3"
+                >
+                  <div>
+                    <Label htmlFor="avatar" className="text-sm block">
+                      Ảnh đại diện
+                    </Label>
+                    <Input type="file" id="avatar" className="rounded-2xl" {...register("avatar")}/>
+                    {errors.avatar && <p className="text-destructive text-sm">{errors.avatar.message as string}</p>}
+                  </div>
+                  <Button
+                    type="submit"
+                    className="rounded-2xl bg-[#05d988] hover:bg-[#006f44] hover:text-white focus:bg-[#05d988] transition all"
+                    disabled={isSubmitting}
+                  >
+                    Cập nhập
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
         </header>
 
         <main className="flex-1 p-8 overflow-y-auto">
-          {tabActive === 'dashboard' && <DashBoard/>}
-          {tabActive === 'class' && <Class/>}
-          {tabActive === 'teacher' && <Teacher/>}
-          {tabActive === 'notification' && <Notification/>}
-          {tabActive === 'tuition' && <Tuition/>}
-          {tabActive === 'menu' && <Menu/>}
+          {tabActive === "dashboard" && <DashBoard />}
+          {tabActive === "class" && <Class />}
+          {tabActive === "teacher" && <Teacher />}
+          {tabActive === "notification" && <Notification />}
+          {tabActive === "tuition" && <Tuition />}
+          {tabActive === "menu" && <Menu />}
         </main>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HomePageParent
+export default HomePageParent;

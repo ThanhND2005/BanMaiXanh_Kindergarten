@@ -6,6 +6,7 @@ export interface Student {
     parentname: string, 
     avatarUrl: string, 
     name: string,
+    parentid:string,
     classid: string,
     classname: string,
     date: Date|null, 

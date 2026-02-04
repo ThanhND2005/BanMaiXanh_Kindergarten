@@ -29,7 +29,8 @@ export interface StudentBill {
     tuition: number,
     status: string,
     avatarUrl: string | 'https://i.pinimg.com/1200x/24/9f/ae/249fae081d976169452038569b8de507.jpg',
-    billUrl: string | null
+    billUrl: string | null,
+    qrurl: string
 }
 export interface TeacherBill {
     salaryid : string,
