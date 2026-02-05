@@ -96,13 +96,13 @@ export const signin = async (req : Request, res: Response) => {
 }
 export const refresh = async (req: Request,res : Response) =>{
   try {
-    const request = new sql.Request()
+    const request1 = new sql.Request()
     const refreshToken = req.cookies?.refreshtoken 
     if(!refreshToken)
     {
       return res.status(401).send('Token không tồn tại')
     }
-    const res1 = await request.input('refreshtoken',sql.VarChar,refreshToken)
+    const res1 = await request1.input('refreshtoken',sql.VarChar,refreshToken)
     .query(`SELECT * FROM Session WHERE refreshtoken = @refreshtoken`)
     const session = res1.recordset[0]
     if(!session)
@@ -113,7 +113,8 @@ export const refresh = async (req: Request,res : Response) =>{
     {
       return res.status(403).send('token đã hết hạn')
     }
-    const res2 = await request
+    const request2 = new sql.Request()
+    const res2 = await request2
     .input('userid',sql.UniqueIdentifier,session.userid)
     .query(`SELECT * FROM Account WHERE userid = @userid`)
     const account = res2.recordset[0]
@@ -137,5 +138,4 @@ export const signout = async (req : Request, res: Response) =>{
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')
   }
-
 }

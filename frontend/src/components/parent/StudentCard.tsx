@@ -1,7 +1,6 @@
 
 import { Check } from 'lucide-react'
 import React from 'react'
-import { check } from 'zod'
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import { Button } from '../ui/button'
 import {z} from 'zod'
@@ -15,6 +14,14 @@ import type { Student } from '@/types/Student'
 interface IStudentProps {
     student : Student
 }
+const UpdateAvatarSchema = z.object({
+  avatarurl: z
+    .any()
+    .refine((file) => file?.length > 0, {
+      message: "Không để trống thông tin",
+    }),
+});
+type UpdateAvatarValues = z.infer<typeof UpdateAvatarSchema>;
 const UpdateFormSchema = z.object({
   studentid: z.string().min(1,"Không để trống thông tin"),
   name: z.string().min(1, "Không được để trống thông tin"),
@@ -34,15 +41,38 @@ const StudentCard = ({student} : IStudentProps) => {
         weight: student.height
     }
   })
+  const {
+    register: reg,
+    handleSubmit: had,
+    formState: { errors: err, isSubmitting: isSub },
+  } = useForm<UpdateAvatarValues>({
+    resolver: zodResolver(UpdateAvatarSchema),
+  });
   const onUpdate = async (data : UpdateFormValues) =>{
 
   }
+  const onUpdateAvatar = async (data: UpdateAvatarValues) => {};
   return (
     <div>
       <li className='flex p-4 w-200 bg-[#ffffff] rounded-xl shadow-md items-center'>
-        <div className='h-30 w-30 rounded-full overflow-hidden'>
-            <img src={student.avatarUrl} alt="logo" />
-        </div>
+        <Dialog>
+          <DialogTrigger asChild>
+            <div className='h-30 w-30 rounded-full overflow-hidden'>
+                <img src={student.avatarUrl} alt="logo" />
+            </div>
+
+          </DialogTrigger>
+          <DialogContent>
+            <h1 className='text-2xl font-bold text-center'>Cập nhập ảnh đại diện cho bé</h1>
+            <form onSubmit={had(onUpdateAvatar)} className='space-y-3'>
+               <Input type='file' id='avatarurl' {...reg("avatarurl")}/>
+               {err.avatarurl && <p className='text-destructive text-sm'>{err.avatarurl.message as string}</p>}
+               <div className='flex justify-center items-center'>
+                <Button type='submit' className='rounded-2xl bg-[#05D988] text-[#ffffff] hover:bg-[#02B671] focus:bg-[#05D988] shadow-md' disabled={isSub}>Cập nhập</Button>
+               </div>
+            </form>
+          </DialogContent>
+        </Dialog>
         <div className='flex flex-col ml-20 space-y-2'>
             <h1 className='text-2xl itim-regular'> Bé {student.name}</h1>
             <h2 className='text-xl itim-regular'>Chiều cao: {student.height}</h2>
