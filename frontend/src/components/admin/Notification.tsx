@@ -47,6 +47,9 @@ const Notification = () => {
               <div className='flex items-center gap-2'>
                 <RadioGroupItem id='parent' value='Phụ huynh'/>
                 <Label htmlFor='parent' className='text-base'>Phụ huynh</Label>
+              </div><div className='flex items-center gap-2'>
+                <RadioGroupItem id='all' value='Tất cả'/>
+                <Label htmlFor='all' className='text-base'>Mọi người</Label>
               </div>
             </RadioGroup>
          
