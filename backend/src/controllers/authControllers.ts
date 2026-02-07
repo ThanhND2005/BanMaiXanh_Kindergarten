@@ -46,7 +46,7 @@ export const signup = async (req : Request, res : Response) =>{
       .input('gender',sql.NVarChar,gender)
       .input('address', sql.NVarChar,address)
       .input('dob',sql.Date,dateDob)
-      .query(`INSERT INTO Teacher (userid,name,dob, gender,address,name) VALUES(@userid, @name,@dob,@gender,@address)`)
+      .query(`INSERT INTO Teacher (userid,name,dob, gender,address  ) VALUES(@userid, @name,@dob,@gender,@address)`)
     }
     await transaction.commit()
     return res.sendStatus(204)

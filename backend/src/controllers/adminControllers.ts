@@ -10,9 +10,9 @@ export const getNotificationList = async (req: Request, res: Response) => {
     const result = await request
       .input('userid', sql.UniqueIdentifier, userid)
       .query(`SELECT m.senderid, m.receiveid ,m.notificationid,n.title, n.content,n.createdat from NotificationManagement m
-  join Account a on a.@userid = m.senderid 
+  join Account a on a.userid = m.senderid 
   join Notification n  on n.notificationid  = m.notificationid 
-  where m.deleted = 'false'`)
+  where a.userid = @userid AND m.deleted = 'false'`)
     const notifications = result.recordset
     if (!notifications) {
       return res.status(404).send('Không có thông báo liên quan đến đối tượng')
@@ -25,14 +25,18 @@ export const getNotificationList = async (req: Request, res: Response) => {
 }
 export const postNotification = async (req: Request, res: Response) => {
   try {
-    const { userid, title, content, receiver } = req.body
+    const userid = (req as any).user.userid
+    const { title, content, receiver } = req.body
     const request1 = new sql.Request()
     const res1 = await request1
       .input('title', sql.NVarChar, title)
       .input('content', sql.NVarChar, content)
       .query(`INSERT INTO Notification (title, content) OUTPUT INSERTED.notificationid VALUES(@title,@content)`)
     const notificationid = res1.recordset[0].notificationid
-
+    if (!notificationid) {
+      return res.sendStatus(404)
+    }
+    console.log(notificationid)
     if (receiver === 'Giáo viên') {
       const request2 = new sql.Request()
       const res2 = await request2.query(`SELECT * FROM Account WHERE userrole = 'teacher' AND deleted = 'false'`)
@@ -43,7 +47,7 @@ export const postNotification = async (req: Request, res: Response) => {
           .input('userid', sql.UniqueIdentifier, userid)
           .input('receiverid', sql.UniqueIdentifier, user.userid)
           .input('notificationid', sql.UniqueIdentifier, notificationid)
-          .query(`INSERT INTO NotificationManagement (senderid, notificationid, receiveid) VALUES (@userid, @receiverid, @notificationid)`)
+          .query(`INSERT INTO NotificationManagement (senderid, notificationid, receiveid) VALUES (@userid, @notificationid, @receiverid)`)
 
       })
       await Promise.all(insertPromise)
@@ -115,8 +119,8 @@ export const getClassList = async (req: Request, res: Response) => {
     const request1 = new sql.Request()
     const res1 = await request1
       .query(
-        `SELECT c.classid, t.teachername, c.teacherid, c.age,c.member, c.currentmember, c.tuition,c.schedule,c.name, c.type,c.deleted FROM Class c
-      JOIN Teacher t on t.userid = c.teacherid WHERE deleted = 'false'`
+        `SELECT c.classid, t.name as teachername, c.teacherid, c.age,c.member, c.currentmember, c.tuition,c.schedule,c.name as classname, c.type,c.deleted FROM Class c
+      JOIN Teacher t on t.userid = c.teacherid WHERE c.deleted = 'false'`
       )
     const classes = res1.recordset
     return res.status(200).json({ classes })
@@ -184,7 +188,7 @@ export const getMenu = async (req: Request, res: Response) => {
 
 export const patchMenu = async (req: Request, res: Response) => {
   try {
-    const { day } = req.params
+    const day  = req.params.day
     const { dish1, dish2, dish3, dish4 } = req.body
     const request = new sql.Request()
     const res1 = await request
@@ -218,16 +222,17 @@ export const getStudentBill = async (req: Request, res: Response) => {
       s.name as studentName, 
       s.dob,
       s.gender,
-      s.avatarurl,
       t.status,
-      c.className, 
+      s.avatarurl,
+      c.name as className, 
       (
             SELECT COUNT(*) 
             FROM Attendance a 
             WHERE a.studentid = t.studentid 
             AND a.month = t.month 
             AND a.check_in_time IS NOT NULL
-        ) as attendance FROM Tuition t
+        ) as attendance 
+      FROM Tuition t
       JOIN Student s on t.studentid = s.studentid
       JOIN Parent p on p.userid = s.parentid
       JOIN Class c on c.classid = t.classid
@@ -296,7 +301,7 @@ export const deleteStudentBill = async (req: Request, res: Response) => {
     const request = new sql.Request()
     await request
       .input('tuitionid', sql.UniqueIdentifier, tuitionid)
-      .query(`UPDATE Tuition SET deleted ='false' WHERE tuitionid = @tuitionid`)
+      .query(`UPDATE Tuition SET deleted ='true' WHERE tuitionid = @tuitionid`)
     return res.sendStatus(204)
   } catch (error) {
     console.error(error)
@@ -344,10 +349,10 @@ export const postStudentBill = async (req: Request, res: Response) => {
 
 export const postTeacherBill = async (req: Request, res: Response) => {
   try {
-    const month = req.params
+    const {month} = req.params
     const request1 = new sql.Request()
     const res1 = await request1.query(
-      `SELECT * FROM Class WHERE deleted ='false`
+      `SELECT * FROM Class WHERE deleted ='false'`
     )
     const classes = res1.recordset
     const insertPromise = classes.map(async (classmanagement) => {
@@ -356,9 +361,9 @@ export const postTeacherBill = async (req: Request, res: Response) => {
         .input('teacherid', sql.UniqueIdentifier, classmanagement.teacherid)
         .input('month', sql.Int, month)
         .query(
-          `SELECT COUNT(*) FROM TimeKeeping WHERE teacherid = @teacherid AND month=@month`
+          `SELECT COUNT(*) as timekeeping FROM TimeKeeping WHERE teacherid = @teacherid AND month=@month`
         )
-      const timekeeping: number = res2.recordset[0]
+      const timekeeping = res2.recordset[0].timekeeping
       const allowance = 200000
       const amount = 200000 * timekeeping + allowance
       const request3 = new sql.Request()
@@ -380,15 +385,15 @@ export const postTeacherBill = async (req: Request, res: Response) => {
     return res.status(500).send('Lỗi hệ thống')
   }
 }
-export const deleteTeacherBill = async (req : Request, res : Response) =>{
+export const deleteTeacherBill = async (req: Request, res: Response) => {
   try {
-    const salaryid = req.params
+    const {salaryid} = req.params
     const request = new sql.Request()
     await request
-    .input('salaryid',sql.UniqueIdentifier,salaryid)
-    .query(
-      `DELETE FROM Salary WHERE salaryid = @salaryid`
-    )
+      .input('salaryid', sql.UniqueIdentifier, salaryid)
+      .query(
+        `UPDATE Salary SET deleted = 'true' WHERE salaryid = @salaryid`
+      )
     return res.sendStatus(204)
   } catch (error) {
     console.error(error)
