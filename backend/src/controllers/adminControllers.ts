@@ -1,7 +1,7 @@
-import { Input } from '@/components/ui/input';
 import { Request, Response, NextFunction } from "express"
 import { sql } from "~/libs/DB"
-import { Account } from '~/type';
+import { qrStorage } from "~/middlewares/cloudMiddleware";
+import { Account, ClassManagement } from '~/type';
 
 export const getNotificationList = async (req: Request, res: Response) => {
   try {
@@ -272,6 +272,124 @@ export const getTeacherBill = async (req: Request, res: Response) => {
     )
     const teacherbills = res1.recordset
     return res.status(200).json({ teacherbills })
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send('Lỗi hệ thống')
+  }
+}
+export const verifyStudentBill = async (req: Request, res: Response) => {
+  try {
+    const { tuitionid } = req.params
+    const request1 = new sql.Request()
+    await request1
+      .input('tuitionid', sql.UniqueIdentifier, tuitionid)
+      .query(`UPDATE Tuition SET status = 'Đã hoàn thành' WHERE tuitionid = @tuitionid`)
+    return res.sendStatus(204)
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send('Lỗi hệ thống')
+  }
+}
+export const deleteStudentBill = async (req: Request, res: Response) => {
+  try {
+    const { tuitionid } = req.params
+    const request = new sql.Request()
+    await request
+      .input('tuitionid', sql.UniqueIdentifier, tuitionid)
+      .query(`UPDATE Tuition SET deleted ='false' WHERE tuitionid = @tuitionid`)
+    return res.sendStatus(204)
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send('Lỗi hệ thống')
+  }
+}
+export const postStudentBill = async (req: Request, res: Response) => {
+  try {
+    const { month } = req.params
+    const request1 = new sql.Request()
+    const res1 = await request1.query(
+      `SELECT * FROM ClassManagement WHERE deleted = 'false'`
+    )
+    const classes = res1.recordset
+    const insertPromise = classes.map(async (classmanagement: ClassManagement) => {
+      const request2 = new sql.Request()
+      const res2 = await request2
+        .input('classid', sql.UniqueIdentifier, classmanagement.classid)
+        .query(
+          `SELECT * FROM Class WHERE classid = @classid`
+        )
+      const amount = res2.recordset[0].tuition
+      const url = `https://img.vietqr.io/image/vpbank-0354445956-print.png?amount=${amount}&addInfo=HOC%20PHI%20THANG%20${month}&accountName=MAM%20NON%20BAN%20MAI%20XANH`
+      const qrUrl = await qrStorage(url)
+
+      const request3 = new sql.Request()
+      return request3
+        .input('studentid', sql.UniqueIdentifier, classmanagement.studentid)
+        .input('classid', sql.UniqueIdentifier, classmanagement.classid)
+        .input('tuition', sql.Int, amount)
+        .input('qrUrl', sql.NVarChar, qrUrl)
+        .input('month', sql.Int, month)
+        .query(
+          `INSERT INTO Tuition (studentid, classid, amount, qrurl,month) VALUES (@studentid, @classid, @tuition, @qrUrl, @month)`
+        )
+    })
+    await Promise.all(insertPromise)
+    return res.sendStatus(201)
+
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send('Lỗi hệ thống')
+  }
+}
+
+export const postTeacherBill = async (req: Request, res: Response) => {
+  try {
+    const month = req.params
+    const request1 = new sql.Request()
+    const res1 = await request1.query(
+      `SELECT * FROM Class WHERE deleted ='false`
+    )
+    const classes = res1.recordset
+    const insertPromise = classes.map(async (classmanagement) => {
+      const request2 = new sql.Request()
+      const res2 = await request2
+        .input('teacherid', sql.UniqueIdentifier, classmanagement.teacherid)
+        .input('month', sql.Int, month)
+        .query(
+          `SELECT COUNT(*) FROM TimeKeeping WHERE teacherid = @teacherid AND month=@month`
+        )
+      const timekeeping: number = res2.recordset[0]
+      const allowance = 200000
+      const amount = 200000 * timekeeping + allowance
+      const request3 = new sql.Request()
+      return request3
+        .input('teacherid', sql.UniqueIdentifier, classmanagement.teacherid)
+        .input('allowance', sql.Int, allowance)
+        .input('amount', sql.Int, amount)
+        .input('timekeeping', sql.Int, timekeeping)
+        .input('month', sql.Int, month)
+        .query(
+          `INSERT INTO Salary (teacherid, allowance, amount, timekeeping, month) VALUES (@teacherid, @allowance, @amount, @timekeeping, @month)`
+        )
+
+    })
+    await Promise.all(insertPromise)
+    return res.sendStatus(201)
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send('Lỗi hệ thống')
+  }
+}
+export const deleteTeacherBill = async (req : Request, res : Response) =>{
+  try {
+    const salaryid = req.params
+    const request = new sql.Request()
+    await request
+    .input('salaryid',sql.UniqueIdentifier,salaryid)
+    .query(
+      `DELETE FROM Salary WHERE salaryid = @salaryid`
+    )
+    return res.sendStatus(204)
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')
