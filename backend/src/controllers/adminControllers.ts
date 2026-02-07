@@ -170,3 +170,110 @@ export const deleteClass = async (req: Request, res: Response) => {
     return res.status(500).send('Lỗi hệ thống')
   }
 }
+export const getMenu = async (req: Request, res: Response) => {
+  try {
+    const request = new sql.Request()
+    const res1 = await request.query(`SELECT * FROM Menu`)
+    const menu = res1.recordset
+    return res.status(200).json({ menu })
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send('Lỗi hệ thống')
+  }
+}
+
+export const patchMenu = async (req: Request, res: Response) => {
+  try {
+    const { day } = req.params
+    const { dish1, dish2, dish3, dish4 } = req.body
+    const request = new sql.Request()
+    const res1 = await request
+      .input('day', sql.Int, day)
+      .input('dish1', sql.NVarChar, dish1)
+      .input('dish2', sql.NVarChar, dish2)
+      .input('dish3', sql.NVarChar, dish3)
+      .input('dish4', sql.NVarChar, dish4)
+      .query(
+        `UPDATE Menu set dish1 = @dish1, dish2 = @dish2, dish3 = @dish3, dish4 = @dish4 WHERE day = @day`
+      )
+    return res.sendStatus(204)
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send('Lỗi hệ thống')
+  }
+}
+export const getStudentBill = async (req: Request, res: Response) => {
+  try {
+    const request = new sql.Request()
+    const res1 = await request.query(
+      ` SELECT t.tuitionid, 
+      t.studentid, 
+      t.classid, 
+      t.amount, 
+      t.billurl, 
+      t.qrurl, 
+      t.paidat, 
+      t.month, 
+      p.name as parentName, 
+      s.name as studentName, 
+      s.dob,
+      s.gender,
+      s.avatarurl,
+      t.status,
+      c.className, 
+      (
+            SELECT COUNT(*) 
+            FROM Attendance a 
+            WHERE a.studentid = t.studentid 
+            AND a.month = t.month 
+            AND a.check_in_time IS NOT NULL
+        ) as attendance FROM Tuition t
+      JOIN Student s on t.studentid = s.studentid
+      JOIN Parent p on p.userid = s.parentid
+      JOIN Class c on c.classid = t.classid
+      WHERE t.deleted = 'false'
+      `
+    )
+    const studentbills = res1.recordset
+    return res.status(200).json({ studentbills })
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send('Lỗi hệ thống')
+  }
+}
+
+export const getTeacherBill = async (req: Request, res: Response) => {
+  try {
+    const request = new sql.Request()
+    const res1 = await request.query(
+      `SELECT
+      t.salaryid,
+      t.teacherid,
+      t.month,
+      tc.name,
+      tc.userid,
+      tc.dob,
+      tc.gender,
+      tc.address,
+      c.name,
+      t.allowance,
+      t.status,
+      tc.avatarurl,
+      t.amount,
+      (
+      SELECT COUNT(*) FROM TimeKeeping tk
+      WHERE tk.teacherid = t.teacherid AND tk.month = t.month
+      )
+      FROM Salary t
+      JOIN Teacher tc on t.teacherid = tc.userid
+      JOIN Class c on c.teacherid = tc.userid
+      WHERE t.deleted = 'false'
+      `
+    )
+    const teacherbills = res1.recordset
+    return res.status(200).json({ teacherbills })
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send('Lỗi hệ thống')
+  }
+}
