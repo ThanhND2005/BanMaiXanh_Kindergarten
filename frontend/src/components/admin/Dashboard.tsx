@@ -18,10 +18,10 @@ export function Dashboard() {
             <CardContent className="p-6">
               <div className="flex space-x-40 justify-between">
                 <div className="space-y-2">
-                  <p className="text-2xl text-gray-500">Số lượng giáo viên</p>
-                  <p className="text-black text-4xl font-bold">
-                    {10}
-                  </p>
+                  <h1 className="text-2xl text-gray-500">Số lượng giáo viên</h1>
+                  <h1 className="text-black text-4xl font-bold">
+                    {teachers?.length || 0}
+                  </h1>
                 </div>  
                 <button onClick={() => setTabActive("teachermanagement")}>
                   <div className=" bg-blue-500 w-24 h-24 rounded-lg flex items-center justify-center">
@@ -36,9 +36,9 @@ export function Dashboard() {
               <div className="flex items-start justify-between">
                 <div className="space-y-2">
                   <p className="text-2xl text-gray-500">Số lượng học sinh</p>
-                  <p className="text-black font-bold text-4xl">
+                  <h1 className="text-black font-bold text-4xl">
                     {students?.length || 0}
-                  </p>
+                  </h1>
                 </div>
                 <button onClick={() => setTabActive("studentmanagement")}>
                   <div className=" bg-red-500 w-24 h-24 rounded-lg flex items-center justify-center">

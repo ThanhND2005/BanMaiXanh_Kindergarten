@@ -29,7 +29,8 @@ export const deleteTeacher = async (req: Request, res: Response) =>{
     await request
     .input('userid',sql.UniqueIdentifier,teacherid)
     .query(
-      `UPDATE Teacher SET deleted='true' WHERE userid = @userid`
+      `UPDATE Teacher SET deleted='true' WHERE userid = @userid
+      UPDATE Account SET deleted = 'true' WHERE userid=@userid`
     )
     return res.sendStatus(204)
   } catch (error) {

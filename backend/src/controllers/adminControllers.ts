@@ -64,7 +64,7 @@ export const postNotification = async (req: Request, res: Response) => {
           .input('receiverid', sql.UniqueIdentifier, user.userid)
           .input('notificationid', sql.UniqueIdentifier, notificationid)
           .query(
-            `INSERT INTO NotificationManagement (senderid, notificationid, receiveid) VALUES (@userid, @receiverid, @notificationid)`
+            `INSERT INTO NotificationManagement (senderid, notificationid, receiveid) VALUES (@userid,  @notificationid,@receiverid)`
           )
 
       })
@@ -82,7 +82,7 @@ export const postNotification = async (req: Request, res: Response) => {
           .input('receiverid', sql.UniqueIdentifier, user.userid)
           .input('notificationid', sql.UniqueIdentifier, notificationid)
           .query(
-            `INSERT INTO NotificationManagement (senderid, notificationid, receiveid) VALUES (@userid, @receiverid, @notificationid)`
+            `INSERT INTO NotificationManagement (senderid, notificationid, receiveid) VALUES (@userid, @notificationid, @receiverid)`
           )
 
       })
@@ -98,7 +98,8 @@ export const postNotification = async (req: Request, res: Response) => {
 }
 export const deleteNotification = async (req: Request, res: Response) => {
   try {
-    const { userid, receiverid, notificationid } = req.body
+    const userid = (req as any).user.userid 
+    const { receiverid, notificationid } = req.body
     const request1 = new sql.Request()
     await request1
       .input('userid', sql.UniqueIdentifier, userid)

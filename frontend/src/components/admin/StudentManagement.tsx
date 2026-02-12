@@ -11,7 +11,7 @@ export function StudentManagement() {
       <h1 className="text-2xl font-bold text-[#006F44] itim-regular mb-8">
         Các học sinh trong hệ thống:
       </h1>
-      <ul className="grid grid-cols-4 gap-8">
+      <ul className="grid grid-cols-3 gap-6">
         {students?.map((student) => (
           <StudentCard key={student.studentid} student={student}/>
         ))}

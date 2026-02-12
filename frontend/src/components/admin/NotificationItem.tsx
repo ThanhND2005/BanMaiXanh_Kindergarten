@@ -1,12 +1,16 @@
+import { useAdminStore } from "@/stores/useAdminStore";
 import { Button } from "../ui/button";
 import type { Notification } from "@/types/Admin";
+import { adminService } from "@/services/adminService";
 
 interface INotificationProps {
   notification: Notification;
 }
 const NotificationItem = ({ notification }: INotificationProps) => {
-  const onDelete = async (notificationid) => {
-    //goi backend
+  const {refreshNotifications} = useAdminStore()
+  const onDelete = async (notificationid : string,receiverid : string) => {
+    await adminService.deleteNotification(notificationid,receiverid)
+    await refreshNotifications()
   };
   return (
     <div>
@@ -30,7 +34,7 @@ const NotificationItem = ({ notification }: INotificationProps) => {
             <Button
               type="button"
               className="w-20 bg-[#f52121] rounded-2xl shadow-sm hover:bg-[#9E0C0C] focus:bg-[#f52121] transition all"
-              onClick={() => onDelete(notification.notificationid)}
+              onClick={() => onDelete(notification.notificationid,notification.receiveid)}
             >
               Xóa
             </Button>

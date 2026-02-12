@@ -2,13 +2,15 @@ import React from 'react'
 import { Button } from '../ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import {z} from 'zod'
-import {useForm} from 'react-hook-form'
+import {Controller, useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import NotificationItem from './NotificationItem'
 import { useAdminStore } from '@/stores/useAdminStore'
+import { adminService } from '@/services/adminService'
+import {toast} from 'sonner'
 const NotificationFormSchema = z.object({
     title: z.string().min(1,"Tiêu đề không được để trống"),
     content: z.string().min(1,"Nội dung không được để trống"),
@@ -17,13 +19,21 @@ const NotificationFormSchema = z.object({
 type NotificationFormValues = z.infer<typeof NotificationFormSchema>
 
 const Notification = () => {
-  const {register, handleSubmit, formState: {errors, isSubmitting}} = useForm<NotificationFormValues>({
+  const {control,register, handleSubmit, formState: {errors, isSubmitting}} = useForm<NotificationFormValues>({
     resolver : zodResolver(NotificationFormSchema)
   })
-  
+  const {refreshNotifications} = useAdminStore()
   const onSubmit2 = async (data: NotificationFormValues) =>{
       const {title,content,receiver} = data;
-      console.log(title + ' ' + content +' ' +receiver)
+      try {
+        await adminService.postNotification(title,content,receiver)
+        await refreshNotifications()
+        toast.success("Gửi thông báo thành công !")
+      } catch (error) {
+        console.error(error)
+        toast.error("Xảy ra lỗi khi tạo thông báo !")
+      }
+      
   }
   const notifications =  useAdminStore((state) => state.notifications)
   return (
@@ -39,7 +49,13 @@ const Notification = () => {
           <form className='w-full gap-6 flex flex-wrap ' onSubmit={handleSubmit(onSubmit2)}>
 
             <h2 className='text-lg font-medium'>Người nhận:</h2>
-            <RadioGroup defaultValue='Giáo viên' id='receiver' className='flex gap-3' {...register("receiver")}>
+            <Controller
+            name='receiver'
+            control={control}
+            defaultValue="Giáo viên"
+            render={({field}) =>(
+
+            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className='flex gap-3' {...register("receiver")}>
               <div className='flex items-center gap-2'>
                 <RadioGroupItem id='teacher' value='Giáo viên'/>
                 <Label htmlFor='teacher' className='text-base'>Giáo viên</Label>
@@ -52,6 +68,10 @@ const Notification = () => {
                 <Label htmlFor='all' className='text-base'>Mọi người</Label>
               </div>
             </RadioGroup>
+            )}
+            
+            
+            />
          
             <div className='w-full'>
               <Label htmlFor='title' className='text-sm block font-bold'>Tiêu đề</Label>
@@ -75,8 +95,8 @@ const Notification = () => {
       
     </div>
     <ul className='mt-4'>
-      {notifications.map(notification => (
-        <NotificationItem key={notification.notificationid} notification={notification}/>
+      {notifications?.map(notification => (
+        <NotificationItem key={`${notification.notificationid}-${notification.receiveid}`} notification={notification}/>
       ))}
     </ul>
     </>

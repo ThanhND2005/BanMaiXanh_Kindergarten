@@ -59,7 +59,7 @@ export const signin = async (req: Request, res: Response) => {
     const request = new sql.Request()
     const res1 = await request
       .input('username', sql.VarChar, username)
-      .query(`SELECT * FROM Account WHERE username = @username`)
+      .query(`SELECT * FROM Account WHERE username = @username AND deleted ='false'`)
     const account = res1.recordset[0]
     if (!account) {
       return res.status(401).send('Thông tin tài khoản hoặc mật khẩu không chính xác !')
