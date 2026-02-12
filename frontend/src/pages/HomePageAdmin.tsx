@@ -13,10 +13,13 @@ import { useTabAdminStore } from '@/stores/useTabStore';
 import TeacherFinance from '@/components/admin/TeacherFinance';
 import StudentFinance from '@/components/admin/StudentFinance';
 import { useAdminStore } from '@/stores/useAdminStore';
+import { useAuthStore } from '@/stores/useAuthStore';
 export default function HomePageAdmin() {
   const {tabActive,setTabActive} = useTabAdminStore()
   const navigate = useNavigate()
-  const onLogout = () =>{
+  const signout = useAuthStore((state) => state.signout)
+  const onLogout = async () =>{
+    await signout()
     navigate('/signin')
   }
   const now = new Date();
@@ -27,7 +30,7 @@ export default function HomePageAdmin() {
       year:'numeric',
     }).format(now)
   const final = dateformat.replace(', ',', ngày ')
-  const admin = useAdminStore((state) => state.admin)
+  const admin = useAuthStore((state) => state.user)
   return (
     
     <div className="min-h-screen bg-gray-50">
@@ -39,8 +42,8 @@ export default function HomePageAdmin() {
               <ShieldUser className="w-10 h-10 text-black" />
             </div>
             <div>
-              <h1 className="text-gray-900 font-bold">{admin.name}</h1>
-              <h2 className='text-sm text-[#828282]'>{admin.email}</h2>
+              <h1 className="text-gray-900 font-bold">{admin?.name}</h1>
+              <h2 className='text-sm text-[#828282]'>{admin?.role}</h2>
             </div>
           </div>
           <div className='flex items-center'>

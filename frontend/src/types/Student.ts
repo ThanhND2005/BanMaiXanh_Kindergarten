@@ -4,12 +4,14 @@ export interface Student {
     height: number,
     weight: number,
     parentname: string, 
-    avatarUrl: string, 
+    avatarurl: string, 
     name: string,
     parentid:string,
     classid: string,
     classname: string,
     date: Date|null, 
-    checkin: string|null,
-    checkout: string|null
+    check_in_time: string|null,
+    check_out_time: string|null,
+    dob: Date,
+    age : number
 }

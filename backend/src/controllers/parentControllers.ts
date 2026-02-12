@@ -9,7 +9,7 @@ export const postNotification = async (req : Request, res: Response) =>{
     .input('title',sql.NVarChar,title)
     .input('content',sql.NVarChar,content)
     .query(
-      `INSERT INTO Notification (title, content) OUTPUT INSERTED.notificationid (@title,@content)`
+      `INSERT INTO Notification (title, content) OUTPUT INSERTED.notificationid VALUES (@title,@content)`
     )
     const newNotificationid = res1.recordset[0].notificationid 
     const request2 = new sql.Request()
@@ -18,10 +18,10 @@ export const postNotification = async (req : Request, res: Response) =>{
     .input('notificationid',sql.UniqueIdentifier,newNotificationid)
     .input('receiveid',sql.UniqueIdentifier,teacherid)
     .query(
-      `INSERT INTO NotificationManagement (senderid,notificationid,receiveid) (@senderid,@notificationid,@receiveid)`
+      `INSERT INTO NotificationManagement (senderid,notificationid,receiveid) VALUES (@senderid,@notificationid,@receiveid)`
     )
-    const notification = res2.recordset[0]
-    return res.status(201).send({notification})
+    
+    return res.status(201).send('Tạo thông báo thành công')
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')

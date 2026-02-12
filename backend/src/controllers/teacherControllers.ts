@@ -8,7 +8,7 @@ export const getTeacherList = async (req : Request, res : Response) =>{
       const res1 = await request
       .input('date',sql.Date,dates)
       .query(
-        `SELECT t.userid, t.name,t.dob,t.gender,t.address,c.name as classname,c.classid,t.createdat,t.avatarurl,t.date as timekeeping
+        `SELECT t.userid, t.name,t.dob,t.gender,t.address,c.name as classname,c.classid,t.createdat,t.avatarurl,tk.date as timekeeping
         FROM Teacher t 
         LEFT JOIN Class c on c.teacherid = t.userid
         LEFT JOIN TimeKeeping tk on tk.teacherid = t.userid AND tk.date = @date
@@ -140,7 +140,7 @@ export const postCheckin = async (req : Request, res : Response) =>{
   try {
     const {studentid}= req.params
     const {classid} =req.body
-    const getTime = new Date().toLocaleTimeString('vi-VN')
+    const getTime = new Date()
     const getDate = new Date()
     const month = Number(getDate.toISOString().slice(5,7))
     const request = new sql.Request()
@@ -162,11 +162,11 @@ export const postCheckin = async (req : Request, res : Response) =>{
 export const postCheckout = async (req: Request ,res: Response) =>{
   try {
     const {attendanceid} = req.params 
-    const getTime = new Date().toLocaleTimeString('vi-VN')
+    const getTime = new Date()
     const request =  new sql.Request()
     await request 
     .input('attendanceid',sql.UniqueIdentifier,attendanceid)
-    .input('time', sql.UniqueIdentifier, getTime)
+    .input('time', sql.Time, getTime)
     .query(
       `UPDATE Attendance SET check_out_time = @time WHERE attendanceid = @attendanceid`
     )
@@ -180,11 +180,13 @@ export const postCheckout = async (req: Request ,res: Response) =>{
 export const deleteStudent = async (req : Request, res : Response) =>{
   try {
     const {studentid} = req.params
+    const {classid} =req.body
     const request = new sql.Request()
     await request 
     .input('studentid',sql.UniqueIdentifier,studentid)
+    .input('classid',sql.UniqueIdentifier,classid)
     .query(
-      `UPDATE Student SET deleted ='true' WHERE studentid = @studentid`
+      `UPDATE ClassManagement SET deleted ='true' WHERE studentid = @studentid AND classid = @classid`
     )
     return res.sendStatus(204)
   } catch (error) {
@@ -221,7 +223,7 @@ export const postNotification = async (req : Request, res: Response) =>{
     .input('title',sql.NVarChar,title)
     .input('content',sql.NVarChar,content)
     .query(
-      `INSERT INTO Notification (title, content) OUTPUT INSERTED.notificationid (@title,@content)`
+      `INSERT INTO Notification (title, content) OUTPUT INSERTED.notificationid VALUES (@title,@content)`
     )
     const newNotificationid = res1.recordset[0].notificationid 
     const request2 = new sql.Request()
@@ -230,10 +232,9 @@ export const postNotification = async (req : Request, res: Response) =>{
     .input('notificationid',sql.UniqueIdentifier,newNotificationid)
     .input('receiveid',sql.UniqueIdentifier,parentid)
     .query(
-      `INSERT INTO NotificationManagement (senderid,notificationid,receiveid) (@senderid,@notificationid,@receiveid)`
+      `INSERT INTO NotificationManagement (senderid,notificationid,receiveid) VALUES (@senderid,@notificationid,@receiveid)`
     )
-    const notification = res2.recordset[0]
-    return res.status(201).send({notification})
+    return res.status(201).send('Tạo thông báo thành công')
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')

@@ -1,7 +1,7 @@
 import type { Teacher } from "./Teacher"
 
 export interface Parent{
-    userid: string, 
+   
     name:string,
     dob: Date,
     gender: string,

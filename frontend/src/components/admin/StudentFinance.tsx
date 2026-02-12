@@ -30,12 +30,12 @@ const StudentFinance = () => {
         </div>
       </div>
       <ul className="grid grid-cols-2 gap-8 ">
-        {studentbills.map((studentbill) => (
-          <li className="grid grid-cols-2 bg-[#ffffff] rounded-xl shadow-md p-8">
+        {studentbills?.map((studentbill) => (
+          <li className="grid grid-cols-2 bg-[#ffffff] rounded-xl shadow-md p-8" key={studentbill.tuitionid}>
             <div className="flex flex-wrap gap-6 justify-center">
               <div className="h-24 w-24 rounded-full overflow-hidden">
                 <img
-                  src={studentbill.avatarUrl}
+                  src={studentbill.avatarurl}
                   alt="Chưa có bill"
                   className="w-full h-auto object-cover"
                 />
@@ -48,7 +48,7 @@ const StudentFinance = () => {
                   Họ tên học sinh: {studentbill.studentName}
                 </h2>
                 <h2 className="text-md font-bold w-full">
-                  Ngày sinh: {studentbill.dob.toLocaleDateString("vi-VN")}
+                  Ngày sinh: {new Date(studentbill.dob).toLocaleDateString("vi-VN")}
                 </h2>
                 <h2 className="text-md font-bold w-full">
                   Giới tính: {studentbill.gender}
@@ -90,13 +90,13 @@ const StudentFinance = () => {
             <div className="flex flex-wrap justify-center gap-3 p-4">
               <h1 className="text-2xl font-bold">Ảnh hóa đơn</h1>
               <div className="w-full h-auto overflow-hidden">
-                {studentbill.billUrl === null ? (
+                {studentbill.billurl === null ? (
                   <h2 className="text-2xl font-bold text-center text-[#828282]">
                     Phụ huynh chưa gửi ảnh
                   </h2>
                 ) : (
                   <img
-                    src={studentbill.billUrl}
+                    src={studentbill.billurl}
                     alt="Không có hóa đơn"
                     className="w-full h-auto"
                   />

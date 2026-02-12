@@ -12,7 +12,7 @@ const TeacherManagement = () => {
         Các giáo viên trong hệ thống:
       </h1>
       <ul className="grid grid-cols-4 gap-8">
-        {teachers.map((teacher) => (
+        {teachers?.map((teacher) => (
           <TeacherCard key={teacher.userid} teacher={teacher}/>
         ))}
       </ul>

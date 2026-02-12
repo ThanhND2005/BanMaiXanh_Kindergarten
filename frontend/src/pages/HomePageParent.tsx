@@ -25,6 +25,8 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const AvatarFormSchema = z.object({
   avatar: z
@@ -53,6 +55,12 @@ const HomePageParent = () => {
   }).format(now);
   const final = dateformat.replace(", ", ", ngày ");
   const onUpdate = (data: AvatarFromValues) => {};
+  const navigate = useNavigate()
+   const signout = useAuthStore((state) => state.signout)
+  const onLogout = async () =>{
+    await signout()
+    navigate('/signin')
+  }
   return (
     <div className="flex min-h-screen bg-[#E8F5E9]">
       <aside className="w-64 bg-[#2E7D32] text-white flex flex-col h-screen sticky top-0 left-0 shadow-xl z-30 shrink-0">
@@ -105,7 +113,7 @@ const HomePageParent = () => {
           </button>
         </nav>
         <div className="p-4 border-t border-white/10">
-          <button className="flex items-center w-full px-4 py-3 text-white/90 hover:bg-white/10 hover:text-white rounded-lg transition-colors">
+          <button className="flex items-center w-full px-4 py-3 text-white/90 hover:bg-white/10 hover:text-white rounded-lg transition-colors" onClick={() => onLogout()}>
             <LogOut size={20} className="mr-3" />
             <span className="font-medium">Đăng xuất</span>
           </button>

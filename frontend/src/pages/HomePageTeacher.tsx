@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label";
 import {z} from 'zod'
 import {useForm} from 'react-hook-form'
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuthStore } from "@/stores/useAuthStore";
 const AvatarFormSchema = z.object({
   avatar: z
     .any()
@@ -49,7 +50,9 @@ const HomePageTeacher = () => {
       year:'numeric',
     }).format(now)
   const final = dateformat.replace(', ',', ngày ')
-  const onLogout = () =>{
+  const signout = useAuthStore((state) => state.signout)
+  const onLogout = async () =>{
+    await signout()
     navigate("/signin")
   }
   const onUpdate = (data: AvatarFromValues) => {};

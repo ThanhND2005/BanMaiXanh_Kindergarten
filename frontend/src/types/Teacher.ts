@@ -1,7 +1,7 @@
 import type { Notification } from "./store"
 
 export interface Teacher {
-    userid : string, 
+    userid: string,
     name : string, 
     dob : Date,
     gender: string, 
@@ -10,7 +10,6 @@ export interface Teacher {
     classid : string,
     createdat : Date,
     avatarurl: string | 'https://i.pinimg.com/736x/e9/e0/7d/e9e07de22e3ef161bf92d1bcf241e4d0.jpg',
-    deleted: string,
     timekeeping: Date | null,
 }
 export interface teacherState {

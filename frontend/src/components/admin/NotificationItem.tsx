@@ -14,7 +14,7 @@ const NotificationItem = ({ notification }: INotificationProps) => {
         <div className="grid grid-cols-2 justify-between gap-6 rounded-2xl w-full shadow-md bg-[#ffffff] px-4 py-2">
           <div className="flex flex-col gap-3">
             <h1 className="text-xl font-medium text-[#828282]">
-              Người nhận: {notification.receiver}
+              Người nhận: {notification.receiveid}
             </h1>
             <h1 className="text-xl font-medium">
               Tiêu đề: {notification.title}
@@ -23,7 +23,7 @@ const NotificationItem = ({ notification }: INotificationProps) => {
               Nội dung: {notification.content}
             </h1>
             <h1 className="text-xl font-medium text-[#828282]">
-              ngày gửi: {notification.createdat.toLocaleDateString("vi-VN")}
+              ngày gửi: {new Date(notification.createdat).toLocaleDateString("vi-VN")}
             </h1>
           </div>
           <div className="flex justify-end items-center">

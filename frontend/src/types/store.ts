@@ -28,8 +28,8 @@ export interface StudentBill {
     attendance: number,
     tuition: number,
     status: string,
-    avatarUrl: string | 'https://i.pinimg.com/1200x/24/9f/ae/249fae081d976169452038569b8de507.jpg',
-    billUrl: string | null,
+    avatarurl: string | 'https://i.pinimg.com/1200x/24/9f/ae/249fae081d976169452038569b8de507.jpg',
+    billurl: string | null,
     qrurl: string
 }
 export interface TeacherBill {
@@ -46,7 +46,7 @@ export interface TeacherBill {
     salary : number,
     amount: number,
     status: string, 
-    avatarUrl: string | 'https://i.pinimg.com/736x/e9/e0/7d/e9e07de22e3ef161bf92d1bcf241e4d0.jpg',
+    avatarurl: string | 'https://i.pinimg.com/736x/e9/e0/7d/e9e07de22e3ef161bf92d1bcf241e4d0.jpg',
 }
 export interface Notification {
     notificationid:string, 
@@ -54,4 +54,24 @@ export interface Notification {
     title: string,
     content: string, 
     createdat: Date,
+}
+export interface User {
+    userid : string, 
+    name : string, 
+    gender: string,
+    avatarurl : string | 'https://i.pinimg.com/736x/e9/e0/7d/e9e07de22e3ef161bf92d1bcf241e4d0.jpg',
+    role : 'admin' | 'teacher' | 'parent'
+}
+export interface authState {
+    accessToken : string|null,
+    user : User | null,
+    loading : boolean,
+    setAccessToken : (accessToken : string) => void
+    clearState : () => void
+    signup :(name : string, address : string, dob: Date,gender: string,username: string,password:string,role: string) => Promise<void>
+    signin :(username : string, password : string) => Promise<void>
+    signout :() => Promise<void>
+    getMe: () => Promise<void>
+    refresh: () => Promise<void>
+    
 }

@@ -28,7 +28,7 @@ export function SignupPage({
     resolver: zodResolver(SignupSchema),
   });
   const onSubmit = async (data: SignupFormValues) => {
-    //goi backend.
+    
   };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -205,7 +205,7 @@ export function SignupPage({
           <div className="relative w-full max-w-sm h-auto">
             {/* Thay đổi URL ảnh bên dưới thành ảnh thực tế của bạn */}
             <img
-              src="https://res.cloudinary.com/dhylrhxsa/image/upload/v1769423947/6cb54c22dd7b53250a6a-removebg-preview_ilwqum.png"
+              src="https://res.cloudinary.com/dhylrhxsa/image/upload/v1770804395/535c4358-c9a9-4d9b-88be-7f33caf74de7-removebg-preview_t7xbgy.png"
               alt="Minh họa giáo viên và học sinh"
               className="rounded-xl w-full h-auto"
             />

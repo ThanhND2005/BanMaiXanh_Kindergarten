@@ -29,7 +29,7 @@ const TeacherCard = ({ teacher }: ITeacher) => {
     defaultValues:{
         userid : teacher.userid,
         name : teacher.name,
-        dob : teacher.dob.toLocaleDateString('vi-VN'),
+        dob : new Date(teacher.dob).toLocaleDateString('vi-VN'),
         gender : teacher.gender,
         address : teacher.address
     }
@@ -59,7 +59,7 @@ const TeacherCard = ({ teacher }: ITeacher) => {
               Họ và tên: {teacher.name}{" "}
             </div>
             <div className=" text-base font-medium">
-              Ngày sinh: {teacher.dob.toLocaleDateString("vi-VN")}
+              Ngày sinh: {new Date(teacher.dob).toLocaleDateString("vi-VN")}
             </div>
             <div className=" text-base font-medium">
               Giới tính: {teacher.gender}
@@ -71,7 +71,7 @@ const TeacherCard = ({ teacher }: ITeacher) => {
               Lớp: {teacher.classname}
             </div>
             <div className=" text-base font-medium">
-              Ngày tham gia: {teacher.createdat.toLocaleDateString("vi-VN")}
+              Ngày tham gia: {new Date(teacher.createdat).toLocaleDateString("vi-VN")}
             </div>
           </div>
           <div className='flex space-x-10'>
@@ -129,7 +129,7 @@ const TeacherCard = ({ teacher }: ITeacher) => {
                       <Input
                         type="text"
                         id="dob"
-                        placeholder={teacher.dob.toLocaleDateString("vi-VN")}
+                        placeholder={new Date(teacher.dob).toLocaleDateString("vi-VN")}
                         className="rounded-xl shadow-xl"
                         {...register("dob")}
                       />

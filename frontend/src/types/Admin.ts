@@ -4,33 +4,28 @@ import type { Menu, StudentBill, TeacherBill } from "./store"
 import type { Student } from "./Student"
 import type { Teacher } from "./Teacher"
 
-export interface Admin {
-    userid: string, 
-    name: string, 
-    email: string
-}
 export interface Notification {
     notificationid: string, 
-    receiver: string, 
+    receiveid: string, 
     title: string, 
     content: string, 
     createdat: Date
 }
 export interface adminState {
-    admin: Admin
-    teachers : Teacher[]
-    notifications: Notification[]
-    classes : Class[]
-    menuday : Menu[]
-    students : Student[]
-    studentbills: StudentBill[]
-    teacherbills: TeacherBill[]
-    setAdmin : (admin : Admin) => void
-    refreshTeachers : (teachers : Teacher[]) => void
-    refreshNotifications: (notifications : Notification[]) => void 
-    refreshClasses : (classes : Class[]) => void
-    refreshMenu : (menuday : Menu[]) => void
-    refreshStudents : (students : Student[]) => void
-    refreshStudentBills: (studentbills: StudentBill[]) => void
-    refreshTeacherBills: (teacherbills : TeacherBill[]) => void
+    loading : boolean,
+    teachers : Teacher[] | null
+    notifications: Notification[] | null
+    classes : Class[] | null
+    menuday : Menu[] | null
+    students : Student[] | null
+    studentbills: StudentBill[] | null
+    teacherbills: TeacherBill[] | null
+    clearState: () => void
+    refreshTeachers : () => void
+    refreshNotifications: () => void 
+    refreshClasses : () => void
+    refreshMenu : () => void
+    refreshStudents : () => void
+    refreshStudentBills: () => void
+    refreshTeacherBills: () => void
 }

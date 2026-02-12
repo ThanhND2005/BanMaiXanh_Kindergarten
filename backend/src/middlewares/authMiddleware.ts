@@ -29,7 +29,9 @@ export const protectedRoute = async (req : Request , res : Response,next : NextF
       {
         const res1 = await request1
         .input('userid',sql.UniqueIdentifier,payload.userid)
-        .query(`SELECT * FROM Admin WHERE userid = @userid`)
+        .query(`SELECT a.userid, a.userrole as role,ad.name,ad.gender,ad.avatarurl FROM Account a
+          JOIN Admin ad on ad.userid = a.userid
+           WHERE a.userid = @userid`)
         const user = res1.recordset[0]
         if(!user){
           return res.status(404)
@@ -41,7 +43,9 @@ export const protectedRoute = async (req : Request , res : Response,next : NextF
       {
         const res1 = await request1
         .input('userid',sql.UniqueIdentifier,payload.userid)
-        .query(`SELECT * FROM Teacher WHERE userid = @userid`)
+        .query(`SELECT a.userid, a.userrole as role,t.name,t.gender,t.avatarurl FROM Account a
+          JOIN Teacher t on t.userid = a.userid
+           WHERE a.userid = @userid`)
         const user = res1.recordset[0]
         if(!user){
           return res.status(404)
@@ -52,7 +56,9 @@ export const protectedRoute = async (req : Request , res : Response,next : NextF
       else{
         const res1 = await request1
         .input('userid',sql.UniqueIdentifier,payload.userid)
-        .query(`SELECT * FROM Parent WHERE userid = @userid`)
+        .query(`SELECT a.userid, a.userrole as role,p.name,p.gender,p.avatarurl FROM Account a
+          JOIN Parent p on p.userid = a.userid
+           WHERE a.userid = @userid`)
         const user = res1.recordset[0]
         if(!user){
           return res.status(404)

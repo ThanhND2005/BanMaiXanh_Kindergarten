@@ -6,7 +6,7 @@ export const getStudentList = async (req: Request, res: Response) => {
     const res1 = await request.query(
       `SELECT s.studentid, s.dob,s.gender,s.height,s.weight,s.age,s.parentid,p.name as parentname,s.avatarurl,s.name,c.classid, c.name as classname,a.date,a.check_in_time,a.check_out_time
       FROM Student s
-      LEFT JOIN Parent p on p.parentid = s.parentid
+      LEFT JOIN Parent p on p.userid = s.parentid
       LEFT JOIN ClassManagement cm on cm.studentid = s.studentid
       LEFT JOIN Class c on cm.classid = c.classid
       LEFT JOIN Attendance a on a.studentid = s.studentid`
@@ -22,7 +22,7 @@ export const getStudentList = async (req: Request, res: Response) => {
 export const deleteStudent = async (req : Request,res :  Response) =>{
   try {
     const {studentid}=  req.params
-    const request = new sql.Request()
+    const request = new sql.Request() 
     await request
     .input('studentid',sql.UniqueIdentifier,studentid)
     .query(

@@ -14,11 +14,11 @@ const ClassCard = ({class1} : IClassProps) => {
             <div  className="rounded-xl bg-[#ffffff] shadow-md flex flex-wrap ">
                
                <div className="w-full h-25 overflow-hidden mb-3">
-                  <img src={class1.imageurl} alt="anh lop hoc" className="w-full object-cover"/>
+                  <img src='https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg' alt="anh lop hoc" className="w-full object-cover"/>
                </div>
                <div className="px-8 gap-4">
       
-                     <h2 className="text-md font-bold">Tên lớp: {class1.name}</h2>
+                     <h2 className="text-md font-bold">Tên lớp: {class1.classname}</h2>
                      <h2 className="text-md font-bold">Giáo viên: {class1.teachername}</h2>
                      <h2 className="text-md font-bold">Độ tuổi: {class1.age}</h2>
                      <h2 className="text-md font-bold">Số lượng trẻ: {class1.member}</h2>

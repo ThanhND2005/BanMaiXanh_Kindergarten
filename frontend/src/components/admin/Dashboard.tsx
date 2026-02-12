@@ -20,9 +20,9 @@ export function Dashboard() {
                 <div className="space-y-2">
                   <p className="text-2xl text-gray-500">Số lượng giáo viên</p>
                   <p className="text-black text-4xl font-bold">
-                    {teachers.length}
+                    {10}
                   </p>
-                </div>
+                </div>  
                 <button onClick={() => setTabActive("teachermanagement")}>
                   <div className=" bg-blue-500 w-24 h-24 rounded-lg flex items-center justify-center">
                     <Users className=" w-12 h-12 text-white" />
@@ -37,7 +37,7 @@ export function Dashboard() {
                 <div className="space-y-2">
                   <p className="text-2xl text-gray-500">Số lượng học sinh</p>
                   <p className="text-black font-bold text-4xl">
-                    {students.length}
+                    {students?.length || 0}
                   </p>
                 </div>
                 <button onClick={() => setTabActive("studentmanagement")}>
@@ -61,7 +61,7 @@ export function Dashboard() {
                     Số lượng giáo viên đã đến
                   </p>
                   <p className="text-black text-4xl font-bold">
-                    {teachers.filter(teacher => teacher.timekeeping !== null).length}
+                    {teachers?.filter(teacher => teacher.timekeeping !== null).length}
                   </p>
                 </div>
                 <div className=" bg-blue-500 w-24 h-24 rounded-lg flex items-center justify-center">
@@ -78,7 +78,7 @@ export function Dashboard() {
                     Số lượng học sinh đã đến
                   </p>
                   <p className="text-black font-bold text-4xl">
-                    {students.filter(student => student.checkin !== null).length}
+                    {students?.filter(student => student.check_in_time !== null).length}
                   </p>
                 </div>
                 <div className=" bg-red-500 w-24 h-24 rounded-lg flex items-center justify-center">

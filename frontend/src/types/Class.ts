@@ -7,8 +7,8 @@ export interface Class {
     currentmember: number,
     tuition: number, 
     schedule: string, 
-    name : string, 
+    classname : string, 
     type: string, 
     deleted: string,
-    imageurl: string,
+   
 }

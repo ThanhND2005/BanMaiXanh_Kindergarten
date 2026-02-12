@@ -7,6 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { getRedirectPath } from "@/lib/navigation";
+import { useAdminStore } from "@/stores/useAdminStore";
 const SigninSchema = z.object({
   username: z.string().min(1, "Tên đăng nhập không được để trống"),
   password: z.string().min(1, "Mật khẩu không được để trống"),
@@ -24,9 +27,23 @@ export function SigninPage({
     resolver: zodResolver(SigninSchema),
   });
   const navigate = useNavigate()
+  const signin = useAuthStore((state) => state.signin)
+ const {refreshStudents,refreshTeachers ,refreshClasses,refreshNotifications,refreshMenu,refreshStudentBills,refreshTeacherBills}= useAdminStore()
   const onSubmit = async (data: SigninFormValues) => {
-    //goi backend.
-    navigate('/admin')
+    const {username, password} = data 
+    await signin(username,password)
+    const user =  useAuthStore.getState().user
+    if (user) {
+        const correctPath = getRedirectPath(user.role as string);
+        await refreshStudents()
+        await refreshTeachers()
+        await refreshClasses()
+        await refreshNotifications()
+        await refreshMenu()
+        await refreshStudentBills()
+        await refreshTeacherBills()
+        navigate(correctPath);
+    }
   };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -109,7 +126,7 @@ export function SigninPage({
           <div className="relative w-full max-w-sm h-auto">
             {/* Thay đổi URL ảnh bên dưới thành ảnh thực tế của bạn */}
             <img
-              src="https://res.cloudinary.com/dhylrhxsa/image/upload/v1769423947/6cb54c22dd7b53250a6a-removebg-preview_ilwqum.png"
+              src="https://res.cloudinary.com/dhylrhxsa/image/upload/v1770804395/535c4358-c9a9-4d9b-88be-7f33caf74de7-removebg-preview_t7xbgy.png"
               alt="Minh họa giáo viên và học sinh"
               className="rounded-xl w-full h-auto"
             />

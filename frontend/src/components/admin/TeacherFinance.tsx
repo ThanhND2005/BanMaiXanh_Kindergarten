@@ -20,11 +20,11 @@ const TeacherFinance = () => {
         </div>
       </div>
       <ul className='grid grid-cols-4 gap-6'>
-        {teacherbills.map((teacherbill) =>(
+        {teacherbills?.map((teacherbill) =>(
           <li key={teacherbill.salaryid}>
             <div className='bg-[#ffffff] rounded-xl flex flex-col justify-center items-center shadow-md p-6 gap-4'>
               <div className='w-24 h-24 rounded-full overflow-hidden'>
-                  <img src={teacherbill.avatarUrl} alt="w-full object-cover" />
+                  <img src={teacherbill.avatarurl} alt="w-full object-cover" />
               </div>
               <div className='space-y-2'>
                 <h2 className='text-md font-bold'>Họ và tên: {teacherbill.teacherName}</h2>
