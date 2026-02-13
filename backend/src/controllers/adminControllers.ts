@@ -214,7 +214,7 @@ export const getStudentBill = async (req: Request, res: Response) => {
       ` SELECT t.tuitionid, 
       t.studentid, 
       t.classid, 
-      t.amount, 
+      t.amount as tuition, 
       t.billurl, 
       t.qrurl, 
       t.paidat, 
@@ -256,12 +256,12 @@ export const getTeacherBill = async (req: Request, res: Response) => {
       t.salaryid,
       t.teacherid,
       t.month,
-      tc.name,
+      tc.name as teacherName,
       tc.userid,
       tc.dob,
       tc.gender,
       tc.address,
-      c.name,
+      c.name as className,
       t.allowance,
       t.status,
       tc.avatarurl,
@@ -269,7 +269,7 @@ export const getTeacherBill = async (req: Request, res: Response) => {
       (
       SELECT COUNT(*) FROM TimeKeeping tk
       WHERE tk.teacherid = t.teacherid AND tk.month = t.month
-      )
+      ) as timekeeping
       FROM Salary t
       JOIN Teacher tc on t.teacherid = tc.userid
       JOIN Class c on c.teacherid = tc.userid

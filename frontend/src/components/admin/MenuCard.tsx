@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,7 +8,9 @@ import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { Label } from "../ui/label";
 import { Utensils,UtensilsCrossed } from "lucide-react";
 import type { Menu } from '@/types/store'
-
+import { useAdminStore } from "@/stores/useAdminStore";
+import { adminService } from "@/services/adminService";
+import {toast} from 'sonner'
 interface IMenuProps {
     menu : Menu
 }
@@ -24,6 +26,7 @@ type MenuFormValues = z.infer<typeof MenuFormSchema>;
 
 const MenuCard = ({menu} : IMenuProps) => {
     const {
+    reset,
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
@@ -38,8 +41,22 @@ const MenuCard = ({menu} : IMenuProps) => {
 
     }
   });
+  const [isOpen, setIsOpen] = useState(false)
+  const {refreshMenu} = useAdminStore()
   const onUpdate = async (data: MenuFormValues) => {
-    //goi backend
+    const {day,dish1,dish2,dish3,dish4} = data
+    try {
+      await adminService.patchMenu(day,dish1,dish2,dish3,dish4)
+      await refreshMenu()
+      toast.success("Cập nhập menu thành công !")
+    } catch (error) {
+      console.error(error)
+      toast.error("Cập nhập menu thất bại !")
+    }
+    finally{
+      reset()
+      setIsOpen(false)
+    }
   };
   return (
     <div>
@@ -70,7 +87,7 @@ const MenuCard = ({menu} : IMenuProps) => {
                 </div>
               </div>
               <div className="flex justify-center">
-                <Dialog>
+                <Dialog open={isOpen} onOpenChange={setIsOpen}>
                   <DialogTrigger asChild>
                     <Button
                       variant="outline"

@@ -1,12 +1,16 @@
 import type { Class } from '@/types/Class'
 import { Button } from '../ui/button'
+import { useAdminStore } from '@/stores/useAdminStore'
+import { adminService } from '@/services/adminService'
 interface IClassProps {
     class1 : Class
 }
 const ClassCard = ({class1} : IClassProps) => {
- 
-  const onDelete = async (classid) =>{
-    //goi backend
+  const {refreshClasses} = useAdminStore()
+
+  const onDelete = async (classid : string) =>{
+    await adminService.deleteClass(classid)
+    await refreshClasses()
   }
   return (
     <div>

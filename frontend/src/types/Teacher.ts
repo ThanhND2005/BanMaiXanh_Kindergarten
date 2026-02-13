@@ -13,7 +13,7 @@ export interface Teacher {
     timekeeping: Date | null,
 }
 export interface teacherState {
-    teacher : Teacher
+    teachers : Teacher[]
     notifications: Notification[]
     setTeacher: (teacher: Teacher) => void
     refreshNotifications: (notifications : Notification[]) => void

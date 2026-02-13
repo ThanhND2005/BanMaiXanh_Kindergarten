@@ -1,15 +1,42 @@
 import React from "react";
 import { Button } from "../ui/button";
 import { useAdminStore } from "@/stores/useAdminStore";
-
+import { adminService } from "@/services/adminService";
+import {toast} from 'sonner'
 const StudentFinance = () => {
   const studentbills = useAdminStore((state) => state.studentbills);
-  const onCreate = async () => {};
-  const onDelete = async (tuitionid) => {
-    //goi backend
+  const {refreshStudentBills} = useAdminStore()
+  const onCreate = async (month : number) => {
+      try {
+        await adminService.postStudentBill(month)
+        await refreshStudentBills()
+        toast.success("Tạo hóa đơn học phí thành công !")
+      } catch (error) {
+        console.log(error)
+        toast.error("Tạo hóa đơn học phí không thành công !")
+      }
+      
   };
-  const onVerify = async (tuitionid) => {
-    //goi backend
+  const onDelete = async (tuitionid : string) => {
+    try {
+      await adminService.deleteStudentBill(tuitionid)
+      await refreshStudentBills()
+      toast.success("Xóa thông báo thành công !")
+    } catch (error) {
+      console.error(error)
+      toast.error("Xóa thông báo thất bại !")
+    }
+
+  };
+  const onVerify = async (tuitionid : string) => {
+    try {
+      await adminService.verifyStudentBill(tuitionid)
+      await refreshStudentBills()
+      toast.success("Xác nhận thành công")
+    } catch (error) {
+      console.error(error)
+      toast.error("Xác nhận thất bại !")
+    }
   };
   return (
     <>
@@ -22,7 +49,7 @@ const StudentFinance = () => {
         <div className="flex justify-start items-center">
           <Button
             type="button"
-            onClick={onCreate}
+            onClick={() => onCreate(2)}
             className="bg-[#05D988] rounded-xl shadow-sm hover:bg-[#00BC74] focus:bg-[#05D988]"
           >
             Xuất hóa đơn

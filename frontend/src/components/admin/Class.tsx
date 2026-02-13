@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { Button } from "../ui/button";
@@ -19,63 +19,71 @@ import {
 } from "../ui/command";
 import ClassCard from "./ClassCard";
 import { useAdminStore } from "@/stores/useAdminStore";
+import type { Teacher } from "@/types/Teacher";
+import { adminService } from "@/services/adminService";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import {toast} from 'sonner'
 const ClassFormSchema = z.object({
-  imageurl: z
-    .any()
-    .refine((file) => file?.length > 0, {
-      message: "Vui lòng tải ảnh đại diện lớp học",
-    }),
+ 
   name: z.string().min(1, "Tên lớp không được để trống"),
-  teacherid: z.string().min(1, "Vui lòng chọn giáo viên"),
-  age: z.number("Vui lòng nhập đúng định dạng"),
-  members: z.number("Vui lòng nhập đúng định dạng"),
-  tuition: z.number("Vui lòng nhập đúng định dạng"),
+  teacherid: z.string().min(1, "Giáo viên không được để trống"),
+  age: z.coerce.number().min(0,"Tuổi phải lớn hơn 0"),
+  members: z.coerce.number().min(0,"Sĩ số phải lớn hơn 0"),
+  tuition: z.coerce.number().min(0,"Học phí phải lớn hơn 0"),
   schedule: z.string().min(1, "Vui lòng nhập lịch học cho lớp"),
-  classtype: z.string(),
+  classtype: z.string().min(1, "Loại lớp không được để trống"),
 });
-type Teacher = {
-  teacherid: string;
-  name: string;
-};
-type ClassCard = {
-  classid: string;
-};
-
 type ClassFormValues = z.infer<typeof ClassFormSchema>;
-const teachers: Teacher[] = [
-  {
-    teacherid: "001",
-    name: "Nguyen Thi Van",
-  },
-  {
-    teacherid: "002",
-    name: "Nguyen Thi Yen",
-  },
-  {
-    teacherid: "003",
-    name: "Nguyen Thi Oanh   ",
-  },
-];
-
-
 const Class = () => {
+  const teachers = useAdminStore((state) => state.teachers)?.filter((teacher) => teacher.classid === null)
+  const [open, setOpen] = useState(false);
+
   const {
+    reset,
+    control,
+    setValue,
+    watch,
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ClassFormValues>({
     resolver: zodResolver(ClassFormSchema),
+    defaultValues :{
+      name:"",
+      teacherid:"",
+      classtype:"Chính khóa",
+      schedule:"",
+      age:0,
+      members:0,
+      tuition:0
+    }
   });
-  const classes  = useAdminStore((state) => state.classes)
-  const onSubmit1 = async (data: ClassFormValues) => {};
-  const [open, setOpen] = useState(false);
-  const [teacherid, setTeacherId] = useState("");
+  const {classes,refreshClasses,refreshTeachers} = useAdminStore()
+  const onSubmit1 = async (data: ClassFormValues) => {
+    const {name,teacherid,classtype,age,members,tuition,schedule} = data
+    try {
+      await adminService.postClass(teacherid,age,members,tuition,schedule,name,classtype)
+      await refreshClasses()
+      await refreshTeachers()
+      toast.success('Tạo lớp học thành công !')
+    } catch (error) {
+      console.error(error)
+      toast.error("Tạo lớp học thất bại !")
+    }
+    finally
+    {
+      reset()
+      setOpen(false)
+      
+    }
+  };
+  const selectedTeacherid = watch("teacherid")
   return (
     <>
       <div className="flex justify-between">
         <h1 className="text-2xl itim-regular">Các lớp học trong hệ thống:</h1>
         <div>
-          <Dialog>
+          <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button
                 variant="outline"
@@ -87,26 +95,9 @@ const Class = () => {
             <DialogContent>
               <h1 className="text-2xl font-bold text-center">Tạo lớp học</h1>
               <form
-                className="flex flex-wrap mt-2 gap-2"
+                className="flex flex-col mt-2 gap-2"
                 onSubmit={handleSubmit(onSubmit1)}
               >
-                <div className="w-full">
-                  <Label htmlFor="imageurl" className="text-sm block">
-                    Ảnh lớp học
-                  </Label>
-                  <Input
-                    type="file"
-                    id="imageurl"
-                    className="rounded-xl border border-[#000000] shadow-md"
-                    placeholder="Ảnh lớp học"
-                    {...register("imageurl")}
-                  />
-                  {errors.imageurl && (
-                    <p className="text-destructive text-sm">
-                      {errors.imageurl.message as string}
-                    </p>
-                  )}
-                </div>
                 <div className="w-full">
                   <Label htmlFor="name" className="text-sm block">
                     Tên lớp
@@ -125,17 +116,6 @@ const Class = () => {
                   )}
                 </div>
                 <div className="w-full">
-                  <Input
-                    type="hidden"
-                    id="teacherid"
-                    value={teacherid}
-                    {...register("teacherid")}
-                  />
-                  {errors.teacherid && (
-                    <p className="text-destructive text-sm">
-                      {errors.teacherid.message}
-                    </p>
-                  )}
                   <Label htmlFor="teacherid" className="text-sm block">
                     Giáo viên
                   </Label>
@@ -147,10 +127,10 @@ const Class = () => {
                         aria-expanded={open}
                         className="w-full flex justify-between rounded-xl border border-[#000000] shadow-md"
                       >
-                        {teacherid
-                          ? teachers.find(
+                        {selectedTeacherid
+                          ? teachers?.find(
                               (teacher: Teacher) =>
-                                teacher.teacherid === teacherid,
+                                teacher.userid === selectedTeacherid,
                             )?.name
                           : "Chọn giáo viên"}
                         <ChevronsUpDown className="opacity-50" />
@@ -163,14 +143,13 @@ const Class = () => {
                             Không có giáo viên phù hợp
                           </CommandEmpty>
                           <CommandGroup>
-                            {teachers.map((teacher) => (
+                            {teachers?.map((teacher) => (
                               <CommandItem
-                                key={teacher.teacherid}
-                                value={teacher.teacherid}
-                                onSelect={(currentId) => {
-                                  setTeacherId(
-                                    currentId === teacherid ? "" : currentId,
-                                  );
+                                key={teacher.userid}
+                                value={teacher.name}
+                                onSelect={() => {
+              
+                                  setValue("teacherid",teacher.userid,{shouldValidate:true})
                                   setOpen(false);
                                 }}
                               >
@@ -188,7 +167,7 @@ const Class = () => {
                     Độ tuổi
                   </Label>
                   <Input
-                    type="text"
+                    type="number"
                     id="age"
                     className="rounded-xl border border-[#000000] shadow-md"
                     placeholder="Nhập độ tuổi"
@@ -205,7 +184,7 @@ const Class = () => {
                     Sổ trẻ
                   </Label>
                   <Input
-                    type="text"
+                    type="number"
                     id="members"
                     className="rounded-xl border border-[#000000] shadow-md"
                     placeholder="Nhập số trẻ tối đa"
@@ -222,7 +201,7 @@ const Class = () => {
                     Học phí
                   </Label>
                   <Input
-                    type="text"
+                    type="number"
                     id="tuition"
                     className="rounded-xl border border-[#000000] shadow-md"
                     placeholder="Nhập học phí"
@@ -251,6 +230,26 @@ const Class = () => {
                     </p>
                   )}
                 </div>
+                <div className="w-full">
+                  <Label htmlFor="classtype" className="text-sm block">Loại lớp học</Label>
+                  <Controller name="classtype" control={control} defaultValue="Chính khóa" 
+                render={({field}) => (
+
+              <RadioGroup onValueChange={field.onChange} defaultValue={field.value}  className="w-full">
+                <div className="flex gap-3">
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="Chính khóa" id="main" />
+                    <Label htmlFor="main">Chính khóa</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="Năng khiếu" id="extra" />
+                    <Label htmlFor="extra">Năng khiếu</Label>
+                  </div>
+                </div>
+              </RadioGroup>
+                )}
+              />
+                </div>
                 <div className="w-full flex justify-center">
                   <Button
                     type="submit"
@@ -266,13 +265,13 @@ const Class = () => {
         </div>
       </div>
       <ul className="grid grid-cols-4 gap-8 mt-4">
-        {classes.filter(mainclass => mainclass.type === 'Chính khóa').map((mainclass) => (
+        {classes?.filter(mainclass => mainclass.type === 'Chính khóa').map((mainclass) => (
           <ClassCard key={mainclass.classid} class1={mainclass}/>
         ))}
       </ul>
       <h2 className="text-2xl itim-regular mt-3">Các lớp học năng khiếu:</h2>
       <ul className="grid grid-cols-4 gap-8">
-        {classes.filter(extraclass => extraclass.type ==='Năng khiếu').map((extraclass) =>(
+        {classes?.filter(extraclass => extraclass.type ==='Năng khiếu').map((extraclass) =>(
           <ClassCard key={extraclass.classid} class1={extraclass}/>
         ))}
       </ul>

@@ -1,12 +1,15 @@
 import { cn } from "@/lib/utils";
 import React from "react";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { file, z } from "zod";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { useAdminStore } from "@/stores/useAdminStore";
+import { useNavigate } from "react-router-dom";
 
 const SignupSchema = z.object({
   name: z.string().min(1, "Họ và tên không được để trống"),
@@ -14,6 +17,8 @@ const SignupSchema = z.object({
   dob: z.string().date("Cần nhập đúng định dạng"),
   username: z.string().min(1, "Tên đăng nhập không được để trống"),
   password: z.string().min(1, "Mật khẩu không được để trống"),
+  gender: z.string().min(1,"Thông tin không được để trống"),
+  role : z.string()
 });
 type SignupFormValues = z.infer<typeof SignupSchema>;
 export function SignupPage({
@@ -21,14 +26,19 @@ export function SignupPage({
   ...props
 }: React.ComponentProps<"div">) {
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<SignupFormValues>({
     resolver: zodResolver(SignupSchema),
   });
+  const {signup} = useAuthStore()
+  const navigate = useNavigate()
   const onSubmit = async (data: SignupFormValues) => {
-    
+    const {name,address,gender,dob,role,username,password} = data
+    await signup(name,address,new Date(dob),gender,username,password,role)
+    navigate('/signin')
   };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -99,7 +109,10 @@ export function SignupPage({
               <Label htmlFor="gender" className="text-sm block">
                 Giới tính
               </Label>
-              <RadioGroup defaultValue="Nam" id="gender" className="w-full">
+              <Controller name="gender" control={control} defaultValue="Nam" 
+                render={({field}) => (
+
+              <RadioGroup onValueChange={field.onChange} defaultValue={field.value}  className="w-full" {...register("gender")}>
                 <div className="flex gap-3">
                   <div className="flex items-center gap-2">
                     <RadioGroupItem value="Nam" id="nam" />
@@ -111,6 +124,8 @@ export function SignupPage({
                   </div>
                 </div>
               </RadioGroup>
+                )}
+              />
             </div>
 
             {/* Tên đăng nhập */}
@@ -156,7 +171,10 @@ export function SignupPage({
               <Label htmlFor="role" className="text-sm block">
                 Vai trò
               </Label>
-              <RadioGroup id="role" defaultValue="Phụ huynh" className="w-full">
+              <Controller control={control} defaultValue="Phụ huynh" name="role" 
+                render={({field}) =>(
+
+              <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="w-full" {...register("role")}>
                 <div className="flex gap-3">
                   <div className="flex items-center gap-2 ">
                     <RadioGroupItem value="Giáo viên" id="teacher" />
@@ -168,6 +186,8 @@ export function SignupPage({
                   </div>
                 </div>
               </RadioGroup>
+                )}
+              />
             </div>
 
             {/* Nút Đăng ký */}
