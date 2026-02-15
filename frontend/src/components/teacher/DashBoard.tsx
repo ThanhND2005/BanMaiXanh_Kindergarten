@@ -1,11 +1,14 @@
 import { useTeacherStore } from '@/stores/useTeacherStore'
-import React from 'react'
+import React, { useState } from 'react'
 import {useForm} from 'react-hook-form'
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Megaphone, Users } from 'lucide-react'
 import { useAdminStore } from '@/stores/useAdminStore'
+import { useAuthStore } from '@/stores/useAuthStore'
+import { teacherService } from '@/services/teacherService'
+import {toast} from 'sonner'
 
 type TeacherForm = {
   teacherid : string,
@@ -19,26 +22,39 @@ const menu = {
   dish4 :'Rau cải luộc'
 }
 
-
-
 const DashBoard = () => {
   const notifications = useTeacherStore((state) => state.notifications)
-  const teacher = useTeacherStore((state) => state.teacher)
-  const students = useAdminStore((state) => state.students).filter(student => student.classname === teacher.classname)
+  const user = useAuthStore.getState().user
+  const teacher = useAdminStore((state) => state.teachers)?.find((t) => t.userid === user?.userid)
   
+  const students = useTeacherStore((state) => state.students)
+  const {refreshTeachers} = useAdminStore()
   const {register, handleSubmit, formState :{errors, isSubmitting}} = useForm<TeacherForm>()
+  const [open,setOpen]= useState(false)
   const onTimekeeping = async (data : TeacherForm) =>{
+        const {teacherid,code} = data
+        try {
+          await teacherService.postTimeKeeping(teacherid)
+          await refreshTeachers()
+          toast.success("Chấm công thành công")
+        } catch (error) {
+          console.error(error)
+          toast.error("Điểm danh thất bại")
+        }
+        finally{
+          setOpen(false)
+        }
 
   }
   return (
     <div className='flex flex-wrap justify-center p-8'>
         <div className='w-full grid grid-cols-2 p-4 bg-[#ffffff] rounded-xl shadow-md'>
           <div className='space-y-2'>
-            <h1 className='text-2xl itim-regular'>Chào buổi sáng, {teacher.gender ==='Nam' ? 'thầy' : 'cô'} {teacher.name} ☀️</h1>
-            <h2 className='text-md itim-regular text-[#828282]'>Chúc {teacher.gender === 'Name' ? 'thầy' : 'cô'} có một buổi sáng thật nhiều năng lượng nhé !</h2>
+            <h1 className='text-2xl itim-regular'>Chào buổi sáng, {teacher?.gender ==='Nam' ? 'thầy' : 'cô'} {teacher?.name} ☀️</h1>
+            <h2 className='text-md itim-regular text-[#828282]'>Chúc {teacher?.gender === 'Nam' ? 'thầy' : 'cô'} có một buổi sáng thật nhiều năng lượng nhé !</h2>
           </div>
           <div className='w-full flex justify-end items-center'>
-            {teacher.timekeeping === null ?  <Dialog>
+            {teacher?.timekeeping === null ?  <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
                 <Button variant='outline' className='bg-[#05d988] text-white hover:text-white hover:bg-[#006f44] focus:bg-[#05d988]'>Chấm Công</Button>
               </DialogTrigger>
@@ -58,8 +74,8 @@ const DashBoard = () => {
           <div className='flex flex-wrap justify-start space-y-12'>
             <div className='w-90 grid grid-cols-2 p-4 bg-[#ffffff] rounded-xl shadow-md'>
               <div className='flex flex-col items-center justify-center'>
-                <h2 className='text-xl text-[#828282] w-full'>Lớp {teacher.classname}</h2>
-                <h2 className='text-2xl font-bold w-full'>{students.filter(student => student.checkin !== null).length}/{students.length}</h2>
+                <h2 className='text-xl text-[#828282] w-full'>Lớp {teacher?.classname}</h2>
+                <h2 className='text-2xl font-bold w-full'>{students?.filter(student => student.check_in_time !== null).length}/{students?.length}</h2>
               </div>
               <div className='flex justify-end'>
                 <div className='h-20 w-20 rounded-full overflow-hidden bg-[#2E7D32] flex justify-center items-center opacity-60'>
@@ -70,7 +86,7 @@ const DashBoard = () => {
             <div className='w-90 grid grid-cols-2 p-4 bg-[#ffffff] rounded-xl shadow-md w-91'>
               <div className='flex flex-wrap justify-start'>
                 <h2 className='text-xl text-[#828282] w-full'>Thông báo</h2>
-                <h2 className='text-2xl font-bold w-full'>{notifications.length}</h2>
+                <h2 className='text-2xl font-bold w-full'>{notifications?.length}</h2>
               </div>
               <div className='flex justify-end'>
                 <div className='h-20 w-20 rounded-full overflow-hidden bg-[#F59E0B] flex justify-center items-center opacity-60'>

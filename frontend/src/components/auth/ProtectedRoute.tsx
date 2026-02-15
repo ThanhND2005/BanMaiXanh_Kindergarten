@@ -1,6 +1,7 @@
 import { getRedirectPath } from "@/lib/navigation";
 import { useAdminStore } from "@/stores/useAdminStore";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useTeacherStore } from "@/stores/useTeacherStore";
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 const ProtectedRoute = ({ allowedRole }: Props) => {
   const { accessToken, user, loading, refresh, getMe } = useAuthStore();
   const { refreshStudents,refreshTeachers,refreshClasses,refreshNotifications,refreshMenu,refreshStudentBills,refreshTeacherBills} =useAdminStore()
+  const {refreshNotifications : rnt,refreshStudents : rstu} = useTeacherStore()
   const [starting, setStarting] = useState(true)
   const init = async () =>{
     if(!accessToken)
@@ -22,7 +24,15 @@ const ProtectedRoute = ({ allowedRole }: Props) => {
         await refreshMenu()
         await refreshStudentBills()
         await refreshTeacherBills() 
+        
+        
     }
+    const currentUser = useAuthStore.getState().user
+    if(currentUser?.role === 'teacher')
+        {
+          await rstu(currentUser.userid)
+          await rnt(currentUser.userid)
+        }
     if(accessToken && !user)
     {
         await getMe()
@@ -43,6 +53,7 @@ const ProtectedRoute = ({ allowedRole }: Props) => {
   {
     return <Navigate to='/signin' replace/>
   }
+  
   if(accessToken && allowedRole !== user?.role){
     const correctPath = getRedirectPath(user?.role as string)
     return <Navigate to={correctPath} replace/>

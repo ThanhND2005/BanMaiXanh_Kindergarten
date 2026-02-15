@@ -11,7 +11,8 @@ export interface Student {
     check_in_time: string|null,
     check_out_time: string|null,
     dob: Date,
-    age : number
+    age : number,
+    attendanceid: string,
 }
 interface Class {
     classid : string ,

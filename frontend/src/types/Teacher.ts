@@ -1,4 +1,5 @@
 import type { Notification } from "./store"
+import type { Student } from "./Student"
 
 export interface Teacher {
     userid: string,
@@ -13,8 +14,10 @@ export interface Teacher {
     timekeeping: Date | null,
 }
 export interface teacherState {
-    teachers : Teacher[]
-    notifications: Notification[]
-    setTeacher: (teacher: Teacher) => void
-    refreshNotifications: (notifications : Notification[]) => void
+    students : Student[] | null
+    notifications: Notification[] |  null
+    loading: boolean
+    clearState : () => void
+    refreshStudents : (teacherid: string) => void
+    refreshNotifications: (teacherid: string) => void
 }

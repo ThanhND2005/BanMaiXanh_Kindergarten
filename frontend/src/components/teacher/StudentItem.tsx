@@ -1,6 +1,6 @@
 import { useTeacherStore } from '@/stores/useTeacherStore'
-import React from 'react'
-import {check, z} from 'zod'
+import React, { useState } from 'react'
+import { z} from 'zod'
 import {useForm} from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Label } from '../ui/label'
@@ -8,6 +8,10 @@ import { Button } from '../ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import { Input } from '../ui/input'
 import type { Student } from '@/types/Student'
+import { useAdminStore } from '@/stores/useAdminStore'
+import { useAuthStore } from '@/stores/useAuthStore'
+import { teacherService } from '@/services/teacherService'
+import { toast } from 'sonner'
 
 interface StudentItemProps {
   student: Student
@@ -27,7 +31,9 @@ const NotificationFormSchema = z.object({
 type UpdateFormValues = z.infer<typeof UpdateFormSchema>
 type NotificationFormValues  = z.infer<typeof NotificationFormSchema>
 const StudentItem = ({student} : StudentItemProps) => {
-  const {teacher} = useTeacherStore()
+  const user = useAuthStore.getState().user
+  const [open, setOpen] = useState(false)
+  const teacher = useAdminStore((state) => state.teachers)?.find((t) => t.userid === user?.userid)
   const {register, handleSubmit, formState :{errors, isSubmitting}} = useForm({
       resolver : zodResolver(UpdateFormSchema),
       defaultValues :{
@@ -37,35 +43,74 @@ const StudentItem = ({student} : StudentItemProps) => {
     const {register : reg ,handleSubmit :had, formState :{errors :err, isSubmitting: isSub}} = useForm<NotificationFormValues>({
       resolver : zodResolver(NotificationFormSchema),
       defaultValues : {
-        senderid : teacher.userid,
-        receiverid: student.studentid,
+        senderid : teacher?.userid,
+        receiverid: student.parentid,
       }
     })
+    const {refreshStudents} = useTeacherStore()
     const onUpdate = async (data : UpdateFormValues) =>{
-  
+      const {studentid,height,weight} = data
+      try {
+        await teacherService.patchStudent(studentid,height,weight)
+        await refreshStudents(teacher?.userid as string)
+        toast.success("Cập nhập thông tin thành công")
+        setOpen(false)
+      } catch (error) {
+        console.error(error)
+        toast.error("Cập nhập thông tin thất bại")
+      }
     }
     const onNotify = async (data : NotificationFormValues) => {
-  
+        const {senderid,receiverid,title,content} = data
+        try {
+          await teacherService.postNotification(senderid,receiverid,content,title)
+          toast.success("Gửi thông báo thành công")
+          setOpen(false)
+        } catch (error) {
+          console.error(error)
+          toast.error("Gửi thông báo thất bại")
+        }
     }
-    const onDelete = async (studentid, classid) =>{
-    
+    const onDelete = async (studentid : string, classid: string) =>{
+      try {
+        await teacherService.deleteStudent(studentid,classid)
+        await refreshStudents(teacher?.userid as string)
+        toast.success("Xóa học sinh thành công")
+      } catch (error) {
+        console.error(error)
+        toast.error("Xóa học sinh thất bại")
       }
-    const onCheckin = async (studentid) => {
-    
+    }
+    const onCheckin = async (studentid : string) => {
+      try {
+        await teacherService.postCheckin(studentid,teacher?.classid as string)
+        await refreshStudents(teacher?.userid as string)
+        toast.success("Ckeck in thành công")
+      } catch (error) {
+        console.error(error)
+        toast.error("Check in thất bại")
       }
-    const onCheckout = async (studentid) => {
-    
+    }
+    const onCheckout = async (attendanceid : string) => {
+      try {
+        await teacherService.postCheckout(attendanceid)
+        await refreshStudents(teacher?.userid as string)
+        toast.success("Check out thành công")
+      } catch (error) {
+        console.error(error)
+        toast.error("Check out thất bại")
       }
+    }
   return (
     <div>
       <li className='flex p-3 bg-[#ffffff] rounded-xl shadow-md space-x-10' key={student.studentid} >
             <div className='flex justify-start w-40'>
               <div className='flex flex-wrap justify-center space-y-3 '>
                 <div className='h-20 w-20 rounded-full overflow-hidden'>
-                  <img src={student.avatarUrl} alt="avatar" className='w-full object-cover' />
+                  <img src={student.avatarurl} alt="avatar" className='w-full object-cover' />
                 </div>
                 <div className='w-full flex justify-center'>
-                  <Dialog>
+                  <Dialog open={open} onOpenChange={setOpen}>
                     <DialogTrigger asChild>
                       <Button variant='outline' className='bg-[#F2F20E] rounded-xl shadow-sm'>Chỉnh sửa</Button>
                     </DialogTrigger>
@@ -73,7 +118,7 @@ const StudentItem = ({student} : StudentItemProps) => {
                       <form className='grid grid-cols-3 p-2' onSubmit={handleSubmit(onUpdate)}>
                         <div className='flex justify-center w-20 items-center '>
                           <div className='h-20 w-20 rounded-full overflow-hidden'>
-                            <img src={student.avatarUrl} alt="avatar" className='w-full h-auto object-cover'/>
+                            <img src={student.avatarurl} alt="avatar" className='w-full h-auto object-cover'/>
                           </div>
                         </div>
                         <div>
@@ -98,7 +143,7 @@ const StudentItem = ({student} : StudentItemProps) => {
                   </Dialog>
                 </div>
                 <div className='w-full flex justify-center'>
-                  <Dialog>
+                  <Dialog open={open} onOpenChange={setOpen}>
                     <DialogTrigger asChild>
                       <Button variant='outline' className='w-24 bg-[#67CFFC] rounded-xl shadow-md'>Kết nối</Button>
                     </DialogTrigger>
@@ -131,9 +176,9 @@ const StudentItem = ({student} : StudentItemProps) => {
                 <h2 className='text-xl font-bold w-full'>Họ tên phụ huynh: {student.parentname}</h2>
             </div>
             <div className='flex flex-col justify-center px-4  space-y-3'>
-                <Button type='button' onClick={() => onCheckin(student.studentid)} className={`${student.checkin === null ? 'bg-[#ffffff] text-[#828282]' : 'bg-[#2E7D32]'} rounded-xl shadow-md `}>Đã đến</Button>
-                <Button type='button' onClick={() => onCheckout(student.studentid)} className={`${student.checkout === null ? 'bg-[#ffffff] text-[#828282]' : 'bg-[#2E7D32]'} rounded-xl shadow-md `}>Đã về</Button>
-                <Button type='button' onClick={() => onDelete(student.studentid,student.classid)} className={`bg-[#FB3C1A] rounded-xl shadow-md`}>Xóa</Button>
+                <Button type='button' onClick={() => onCheckin(student.studentid)} className={`${student.check_in_time === null ? 'bg-[#ffffff] text-[#828282]' : 'bg-[#2E7D32]'} rounded-xl shadow-md `}>Đã đến</Button>
+                <Button type='button' onClick={() => onCheckout(student.attendanceid)} className={`${student.check_out_time === null ? 'bg-[#ffffff] text-[#828282]' : 'bg-[#2E7D32]'} rounded-xl shadow-md `}>Đã về</Button>
+                <Button type='button' onClick={() => onDelete(student.studentid,teacher?.classid as string)} className={`bg-[#FB3C1A] rounded-xl shadow-md`}>Xóa</Button>
             </div>
           </li>
     </div>

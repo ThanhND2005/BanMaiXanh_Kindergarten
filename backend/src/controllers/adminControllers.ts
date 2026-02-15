@@ -98,7 +98,7 @@ export const postNotification = async (req: Request, res: Response) => {
 }
 export const deleteNotification = async (req: Request, res: Response) => {
   try {
-    const userid = (req as any).user.userid 
+    const userid = (req as any).user.userid
     const { receiverid, notificationid } = req.body
     const request1 = new sql.Request()
     await request1
@@ -189,7 +189,7 @@ export const getMenu = async (req: Request, res: Response) => {
 
 export const patchMenu = async (req: Request, res: Response) => {
   try {
-    const day  = req.params.day
+    const day = req.params.day
     const { dish1, dish2, dish3, dish4 } = req.body
     const request = new sql.Request()
     const res1 = await request
@@ -350,7 +350,7 @@ export const postStudentBill = async (req: Request, res: Response) => {
 
 export const postTeacherBill = async (req: Request, res: Response) => {
   try {
-    const {month} = req.params
+    const { month } = req.params
     const request1 = new sql.Request()
     const res1 = await request1.query(
       `SELECT * FROM Class WHERE deleted ='false'`
@@ -388,7 +388,7 @@ export const postTeacherBill = async (req: Request, res: Response) => {
 }
 export const deleteTeacherBill = async (req: Request, res: Response) => {
   try {
-    const {salaryid} = req.params
+    const { salaryid } = req.params
     const request = new sql.Request()
     await request
       .input('salaryid', sql.UniqueIdentifier, salaryid)

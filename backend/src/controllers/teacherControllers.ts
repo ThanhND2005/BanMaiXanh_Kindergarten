@@ -109,11 +109,14 @@ export const getNotificationList = async (req : Request, res : Response) =>{
 export const postTimeKeeping = async (req : Request, res : Response) =>{
   try {
     const {teacherid} = req.params
+    const today = new Date()
+    const month = today.getMonth() +1
     const request = new sql.Request()
     await request
     .input('teacherid',sql.UniqueIdentifier,teacherid)
+    .input('month', sql.Int,month)
     .query(
-      `INSERT INTO TimeKeeping (teacherid, date, month) VALUES (@teacherid, GETDATE(), 2)`
+      `INSERT INTO TimeKeeping (teacherid, date, month) VALUES (@teacherid, GETDATE(), @month)`
     )
     return res.status(201).send('Điểm danh thành công')
   } catch (error) {
@@ -252,6 +255,31 @@ export const verifyTeacherBill = async (req : Request, res: Response) =>{
       `UPDATE Salary SET status='Đã hoàn thành' WHERE salaryid = @salaryid`
     )
     return res.sendStatus(204)
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send('Lỗi hệ thống')
+  }
+}
+export const getStudentList = async (req : Request, res : Response) =>{
+  const {teacherid} = req.params 
+  try {
+    const day = new Date()
+    const request = new sql.Request()
+    const res1 = await request
+    .input('teacherid',sql.UniqueIdentifier,teacherid)
+    .input('date',sql.Date,day)
+    .query(
+      `SELECT s.studentid, s.dob,s.gender,s.height,s.weight,s.age,s.parentid,p.name as parentname,s.avatarurl,s.name,a.date,a.check_in_time,a.check_out_time,a.attendanceid
+      FROM Student s
+      JOIN Parent p on p.userid = s.parentid
+      LEFT JOIN Attendance a on a.studentid = s.studentid AND date = @date
+      JOIN ClassManagement cm on cm.studentid = s.studentid 
+      JOIN Class c on c.classid = cm.classid 
+      JOIN Teacher t on c.teacherid = t.userid
+      WHERE s.deleted ='false' AND t.userid = @teacherid AND cm.deleted = 'false' `
+    )
+    const students = res1.recordset
+    return res.status(200).json({students})
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')

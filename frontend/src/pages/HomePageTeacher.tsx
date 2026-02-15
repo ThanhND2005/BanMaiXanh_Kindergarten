@@ -12,8 +12,7 @@ import DashBoard from "@/components/teacher/DashBoard";
 import Class from "@/components/teacher/Class";
 import Notification from "@/components/teacher/Notification";
 import Salary from "@/components/teacher/Salary";
-import Menu from "@/components/teacher/Menu";
-import { useTeacherStore } from "@/stores/useTeacherStore";
+import Menu from "@/components/teacher/Menu"; 
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +22,9 @@ import {z} from 'zod'
 import {useForm} from 'react-hook-form'
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useAdminStore } from "@/stores/useAdminStore";
+import type { Teacher } from "@/types/Teacher";
+import { use } from "react";
 const AvatarFormSchema = z.object({
   avatar: z
     .any()
@@ -33,7 +35,8 @@ const AvatarFormSchema = z.object({
 type AvatarFromValues = z.infer<typeof AvatarFormSchema>;
 const HomePageTeacher = () => {
   const { tabActive, setTabActive } = useTabTeacherStore();
-  const teacher = useTeacherStore((state) => state.teacher)
+  const user = useAuthStore((state) => state.user)
+  const teacher = useAdminStore((state) => state.teachers)?.find((t) => t.userid === user?.userid)
   const navigate = useNavigate()
   const {
       register,
@@ -116,14 +119,14 @@ const HomePageTeacher = () => {
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right hidden md:block">
-              <p className="font-bold text-gray-800 text-sm">{teacher.name}</p>
+              <p className="font-bold text-gray-800 text-sm">{teacher?.name}</p>
               <p className="text-xs text-gray-500">Giáo viên</p>
             </div>
             <Dialog>
               <DialogTrigger asChild>
                 <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-300">
                   <img
-                    src={teacher.avatarurl}
+                    src={teacher?.avatarurl}
                     alt="ảnh đại diện"
                     className="w-full h-auto object-cover"
                   />

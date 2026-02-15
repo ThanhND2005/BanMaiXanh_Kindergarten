@@ -4,7 +4,7 @@ export const getStudentList = async (req: Request, res: Response) => {
   try {
     const request = new sql.Request()
     const res1 = await request.query(
-      `SELECT s.studentid, s.dob,s.gender,s.height,s.weight,s.age,s.parentid,p.name as parentname,s.avatarurl,s.name,a.date,a.check_in_time,a.check_out_time
+      `SELECT s.studentid, s.dob,s.gender,s.height,s.weight,s.age,s.parentid,p.name as parentname,s.avatarurl,s.name,a.date,a.check_in_time,a.check_out_time,a.attendanceid
       FROM Student s
       LEFT JOIN Parent p on p.userid = s.parentid
       LEFT JOIN Attendance a on a.studentid = s.studentid AND date=GETDATE()

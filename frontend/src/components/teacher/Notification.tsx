@@ -7,7 +7,7 @@ const Notification = () => {
   return (
     <div>
       <ul className='space-y-4'>
-        {notifications.map((notification) =>(
+        {notifications?.map((notification) =>(
           <li key={notification.notificationid} className='w-full flex justify-between items-center bg-[#ffffff] rounded-xl shadow-md py-4 px-6'>
             <div className='flex flex-col space-y-2'>
               <h2 className='text-md text-[#828282]'>Người gửi: {notification.senderName}</h2>

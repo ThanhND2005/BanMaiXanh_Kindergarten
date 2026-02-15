@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { getRedirectPath } from "@/lib/navigation";
 import { useAdminStore } from "@/stores/useAdminStore";
+import { useTeacherStore } from "@/stores/useTeacherStore";
 const SigninSchema = z.object({
   username: z.string().min(1, "Tên đăng nhập không được để trống"),
   password: z.string().min(1, "Mật khẩu không được để trống"),
@@ -28,7 +29,8 @@ export function SigninPage({
   });
   const navigate = useNavigate()
   const signin = useAuthStore((state) => state.signin)
- const {refreshStudents,refreshTeachers ,refreshClasses,refreshNotifications,refreshMenu,refreshStudentBills,refreshTeacherBills}= useAdminStore()
+  const {refreshStudents,refreshTeachers ,refreshClasses,refreshNotifications,refreshMenu,refreshStudentBills,refreshTeacherBills}= useAdminStore()
+  const {refreshNotifications : rnt, refreshStudents : rstu} = useTeacherStore()
   const onSubmit = async (data: SigninFormValues) => {
     const {username, password} = data 
     await signin(username,password)
@@ -42,6 +44,11 @@ export function SigninPage({
         await refreshMenu()
         await refreshStudentBills()
         await refreshTeacherBills()
+        if(user.role === 'teacher')
+        {
+          await rnt(user.userid)
+          await rstu(user.userid)
+        }
         navigate(correctPath);
     }
   };

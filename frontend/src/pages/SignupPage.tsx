@@ -171,17 +171,17 @@ export function SignupPage({
               <Label htmlFor="role" className="text-sm block">
                 Vai trò
               </Label>
-              <Controller control={control} defaultValue="Phụ huynh" name="role" 
+              <Controller control={control} defaultValue="parent" name="role" 
                 render={({field}) =>(
 
               <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="w-full" {...register("role")}>
                 <div className="flex gap-3">
                   <div className="flex items-center gap-2 ">
-                    <RadioGroupItem value="Giáo viên" id="teacher" />
+                    <RadioGroupItem value="teacher" id="teacher" />
                     <Label htmlFor="teacher">Giáo viên</Label>
                   </div>
                   <div className="flex items-center gap-2">
-                    <RadioGroupItem value="Phụ huynh" id="parent" />
+                    <RadioGroupItem value="parent" id="parent" />
                     <Label htmlFor="parent">Phụ huynh</Label>
                   </div>
                 </div>
