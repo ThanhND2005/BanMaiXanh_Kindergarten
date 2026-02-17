@@ -2,13 +2,23 @@
 import { DollarSign } from 'lucide-react'
 import { Button } from '../ui/button'
 import type { TeacherBill } from '@/types/store'
-
+import {toast} from 'sonner'
+import { teacherService } from '@/services/teacherService'
+import { useAdminStore } from '@/stores/useAdminStore'
 interface SalaryProps {
     salary : TeacherBill    
 }
 const SalaryItem = ({salary} : SalaryProps) => {
-  const onConfirm = async (salaryid) => {
-
+  const {refreshTeacherBills} = useAdminStore()
+  const onConfirm = async (salaryid: string) => {
+    try {
+        await teacherService.verifyTeacherBill(salaryid)
+        await refreshTeacherBills()
+        toast.success("Xác nhận thành công")
+    } catch (error) {
+        console.error(error)
+        toast.error("Xác nhận thất bại")
+    }
   }
   return (
     <div>
@@ -25,7 +35,7 @@ const SalaryItem = ({salary} : SalaryProps) => {
             </div>
             <div className='flex space-x-2'>
                 <h2 className='text-xl font-bold text-[#828282]'>Lương cơ bản:</h2>
-                <h2 className='text-xl font-bold '>{salary.salary} vnđ</h2>
+                <h2 className='text-xl font-bold '>{salary.timekeeping * 200000} vnđ</h2>
             </div>
             <div className='flex space-x-2'>
                 <h2 className='text-xl font-bold text-[#828282]'>Phụ cấp:</h2>
@@ -37,9 +47,7 @@ const SalaryItem = ({salary} : SalaryProps) => {
             <div className='h-40 w-40 rounded-full overflow-hidden flex items-center justify-center bg-[#FFFF00]'>
                 <DollarSign className='h-40 w-40 text-white'/>
             </div>
-            {salary.status === 'Đã xác nhận' ? <Button type='button'  className='bg-[#0095D5] rounded-2xl shadow-md'>Đã xác nhận</Button>
-         :
-        <Button type='button' onClick={() => onConfirm(salary.salaryid)} className='bg-[#2E7D32] rounded-2xl shadow-md'>Xác nhận</Button>
+            {salary.status === 'Đang thực hiện' ? <Button type='button' onClick={() => onConfirm(salary.salaryid)} className='bg-[#2E7D32] rounded-2xl shadow-md'>Xác nhận</Button> : <Button type='button'  className='bg-[#0095D5] rounded-2xl shadow-md'>Đã xác nhận</Button>
         }
         </div>
       </li>

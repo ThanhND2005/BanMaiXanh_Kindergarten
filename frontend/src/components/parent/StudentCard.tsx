@@ -1,6 +1,6 @@
 
 import { Check } from 'lucide-react'
-import React from 'react'
+import React, { useState } from 'react'
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import { Button } from '../ui/button'
 import {z} from 'zod'
@@ -10,6 +10,9 @@ import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { RadioGroup,RadioGroupItem } from '../ui/radio-group'
 import type { Student } from '@/types/Student'
+import { useAdminStore } from '@/stores/useAdminStore'
+import { studentService } from '@/services/studentService'
+import { toast } from 'sonner'
 
 interface IStudentProps {
     student : Student
@@ -31,7 +34,8 @@ const UpdateFormSchema = z.object({
 })
 type UpdateFormValues = z.infer<typeof UpdateFormSchema>
 const StudentCard = ({student} : IStudentProps) => {
-  const {register, handleSubmit,formState :{errors,isSubmitting}} = useForm({
+  const [open, setOpen] = useState(false)
+  const {reset,register, handleSubmit,formState :{errors,isSubmitting}} = useForm({
     resolver : zodResolver(UpdateFormSchema),
     defaultValues:{
         studentid : student.studentid,
@@ -42,6 +46,7 @@ const StudentCard = ({student} : IStudentProps) => {
     }
   })
   const {
+    reset : resetAvatar,
     register: reg,
     handleSubmit: had,
     formState: { errors: err, isSubmitting: isSub },
@@ -49,16 +54,44 @@ const StudentCard = ({student} : IStudentProps) => {
     resolver: zodResolver(UpdateAvatarSchema),
   });
   const onUpdate = async (data : UpdateFormValues) =>{
-
+      const {name,gender,height,weight} = data
+      try {
+        await studentService.patchStudent(student.studentid,name,new Date('2022-01-01'),gender,height,weight)
+        await refreshStudents()
+        toast.success("Cập nhập thông tin thành công")
+      } catch (error) {
+        console.error(error)
+        toast.error("Cập nhập thông tin thất bại") 
+      }
+      finally{
+        reset() 
+        setOpen(false)
+      }
   }
-  const onUpdateAvatar = async (data: UpdateAvatarValues) => {};
+  const {refreshStudents} = useAdminStore()
+  const onUpdateAvatar = async (data: UpdateAvatarValues) => {
+    const file = data.avatarurl[0]
+    try {
+      await studentService.patchAvatar(student.studentid,file)
+      await refreshStudents()
+      toast.success("Cập nhập ảnh đại diện thành công")
+    } catch (error) {
+      console.error(error)
+      toast.error("Cập nhập ảnh đại diện thất bại")
+    }
+    finally
+    {
+      resetAvatar()
+      setOpen(false)
+    }
+  };
   return (
     <div>
       <li className='flex p-4 w-200 bg-[#ffffff] rounded-xl shadow-md items-center'>
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <div className='h-30 w-30 rounded-full overflow-hidden'>
-                <img src={student.avatarUrl} alt="logo" />
+                <img src={student.avatarurl} alt="logo" />
             </div>
 
           </DialogTrigger>
@@ -77,13 +110,13 @@ const StudentCard = ({student} : IStudentProps) => {
             <h1 className='text-2xl itim-regular'> Bé {student.name}</h1>
             <h2 className='text-xl itim-regular'>Chiều cao: {student.height}</h2>
             <h2 className='text-xl itim-regular'>Cân nặng: {student.weight}</h2>
-            {(student.checkin !== null && student.checkout !== null)
+            {(student.check_in_time !== null && student.check_out_time !== null)
             ? <div className='flex gap-2 items-center '> 
                 <div className='h-5 w-5 bg-[#EDFF46] rounded-full flex justify-center items-center'>
                     <Check className='h-4 w-4 text-white'/>
                 </div>
                 <h6 className='text-sm text-[#EDFF46]'>Đã được đón</h6>
-            </div> : (student.checkin !== null) ?<div className='flex gap-2 items-center'> 
+            </div> : (student.check_in_time !== null) ?<div className='flex gap-2 items-center'> 
                 <div className='h-5 w-5 bg-[#15803D] rounded-full flex justify-center items-center'>
                     <Check className='h-4 w-4 text-white'/>
                 </div>
@@ -96,7 +129,7 @@ const StudentCard = ({student} : IStudentProps) => {
             </div>}
         </div>
         <div className='flex ml-auto'>
-            <Dialog>
+            <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                     <Button variant='outline' className='bg-[#EDFF46] text-white rounded-2xl shadow-md h-30'>Chỉnh sửa thông tin</Button>
                 </DialogTrigger>

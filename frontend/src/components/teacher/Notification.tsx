@@ -19,7 +19,7 @@ const Notification = () => {
                 <h2 className='text-xl font-bold text-[#15803D] whitespace-nowrap'>Nội dung:</h2>
                 <h2 className='text-xl font-bold'>{notification.content}</h2>
               </div>
-              <h2 className='text-md text-[#828282]'>Ngày gửi: {notification.createdat.toLocaleDateString('vi-VN')}</h2>
+              <h2 className='text-md text-[#828282]'>Ngày gửi: {new Date(notification.createdat).toLocaleDateString('vi-VN')}</h2>
             </div>
             <div className='h-30 w-30 rounded-full overflow-hidden flex justify-center items-center bg-[#FB3C1A] opacity-80'>
               <Megaphone className='w-25 h-25 text-white'/>  

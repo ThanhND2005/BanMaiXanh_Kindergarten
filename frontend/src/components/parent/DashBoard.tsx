@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
@@ -10,6 +10,9 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import StudentCard from "./StudentCard";
 import { useAdminStore } from "@/stores/useAdminStore";
 import { useParentStore } from "@/stores/useParentStore";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { studentService } from "@/services/studentService";
+import { toast } from "sonner";
 
 const RegisterFormSchema = z.object({
   name: z.string().min(1, "Không được để trống thông tin"),
@@ -21,24 +24,47 @@ const RegisterFormSchema = z.object({
 
 type RegisterFormValues = z.infer<typeof RegisterFormSchema>;
 const DashBoard = () => {
-  const parent = useParentStore((state) => state.parent);
-  const students = useAdminStore((state) => state.students).filter(
-    (student) => student.parentid === parent.userid,
+  const [open, setOpen] = useState(false);
+  const parent = useAuthStore((state) => state.user);
+  const students = useAdminStore((state) => state?.students)?.filter(
+    (student) => student.parentid === parent?.userid,
   );
   const {
+    control,
+    reset,
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm({
+  } = useForm<RegisterFormValues>({
     resolver: zodResolver(RegisterFormSchema),
   });
-  
-  const onCreate = async (data: RegisterFormValues) => {};
-  
+  const { refreshStudents } = useAdminStore();
+  const onCreate = async (data: RegisterFormValues) => {
+    const { name, dob, gender, height, weight } = data;
+    try {
+      await studentService.postStudent(
+        parent?.userid as string,
+        name,
+        new Date(dob),
+        gender,
+        height,
+        weight,
+      );
+      await refreshStudents();
+      toast.success("Tạo thông tin học sinh thành công");
+    } catch (error) {
+      console.error(error);
+      toast.error("Tạo thông tin thất bại");
+    } finally {
+      reset();
+      setOpen(false);
+    }
+  };
+
   return (
     <div className="p-4 space-y-4">
       <div className="w-full flex justify-end">
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button
               variant="outline"
@@ -77,22 +103,30 @@ const DashBoard = () => {
                 <Label htmlFor="gender" className="text-sm block">
                   Giới tính
                 </Label>
-                <RadioGroup defaultValue="Nam" id="gender">
-                  <div className="flex gap-4">
-                    <div className="flex gap-2 items-center">
-                      <RadioGroupItem value="Nam" id="Nam" />
-                      <Label htmlFor="Name" className="text-sm">
-                        Nam
-                      </Label>
-                    </div>
-                    <div className="flex gap-2 items-center">
-                      <RadioGroupItem value="Nữ" id="Nu" />
-                      <Label htmlFor="Nu" className="text-sm">
-                        Nữ
-                      </Label>
-                    </div>
-                  </div>
-                </RadioGroup>
+                <Controller
+                  name="gender"
+                  control={control}
+                  defaultValue="Nam"
+                  render={({ field }) => (
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="w-full"
+                      {...register("gender")}
+                    >
+                      <div className="flex gap-3">
+                        <div className="flex items-center gap-2">
+                          <RadioGroupItem value="Nam" id="nam" />
+                          <Label htmlFor="nam">Nam</Label>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <RadioGroupItem value="Nữ" id="nu" />
+                          <Label htmlFor="nu">Nữ</Label>
+                        </div>
+                      </div>
+                    </RadioGroup>
+                  )}
+                />
               </div>
               <div>
                 <Label htmlFor="dob" className="text-sm block">
@@ -160,7 +194,7 @@ const DashBoard = () => {
         </Dialog>
       </div>
       <ul className="space-y-4">
-        {students.map((student) => (
+        {students?.map((student) => (
           <StudentCard key={student.studentid} student={student} />
         ))}
       </ul>

@@ -7,7 +7,7 @@ const Menu = () => {
   return (
     <div>
       <ul className="grid grid-cols-3 p-4 gap-8">
-        {menuday.map((menu) => (
+        {menuday?.map((menu) => (
           <li>
             <div className="bg-[#ffffff] rounded-xl shadow-md flex flex-col justify-center p-4">
               <div>

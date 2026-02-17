@@ -266,10 +266,7 @@ export const getTeacherBill = async (req: Request, res: Response) => {
       t.status,
       tc.avatarurl,
       t.amount,
-      (
-      SELECT COUNT(*) FROM TimeKeeping tk
-      WHERE tk.teacherid = t.teacherid AND tk.month = t.month
-      ) as timekeeping
+      t.timekeeping
       FROM Salary t
       JOIN Teacher tc on t.teacherid = tc.userid
       JOIN Class c on c.teacherid = tc.userid

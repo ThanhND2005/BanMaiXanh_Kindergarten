@@ -8,7 +8,6 @@ import {
   HandCoins,
   CookingPot,
   LogOut,
-  User,
   School,
 } from "lucide-react";
 import DashBoard from "@/components/parent/DashBoard";
@@ -17,7 +16,6 @@ import Teacher from "@/components/parent/Teacher";
 import Notification from "@/components/parent/Notification";
 import Tuition from "@/components/parent/Tuition";
 import Menu from "@/components/teacher/Menu";
-import { useParentStore } from "@/stores/useParentStore";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,6 +25,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { parentService } from "@/services/parentService";
+import { toast } from "sonner";
 
 const AvatarFormSchema = z.object({
   avatar: z
@@ -38,7 +38,8 @@ const AvatarFormSchema = z.object({
 type AvatarFromValues = z.infer<typeof AvatarFormSchema>;
 const HomePageParent = () => {
   const { tabActive, setTabActive } = useTabParentStore();
-  const parent = useParentStore((state) => state.parent);
+  
+  const parent = useAuthStore((state) => state.user)
   const {
     register,
     handleSubmit,
@@ -54,7 +55,18 @@ const HomePageParent = () => {
     year: "numeric",
   }).format(now);
   const final = dateformat.replace(", ", ", ngày ");
-  const onUpdate = (data: AvatarFromValues) => {};
+  const {getMe} = useAuthStore()
+  const onUpdate = async (data: AvatarFromValues) => {
+    const file = data.avatar[0]
+    try {
+      await parentService.patchAvatar(file,parent?.userid as string)
+      await getMe()
+      toast.success("Cập nhập ảnh đại diện thành công")
+    } catch (error) {
+      console.error(error)
+      toast.error("Cập nhập ảnh đại diện thất bại ")
+    }
+  };
   const navigate = useNavigate()
    const signout = useAuthStore((state) => state.signout)
   const onLogout = async () =>{
@@ -127,14 +139,14 @@ const HomePageParent = () => {
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right hidden md:block">
-              <p className="font-bold text-gray-800 text-sm">{parent.name}</p>
+              <p className="font-bold text-gray-800 text-sm">{parent?.name}</p>
               <p className="text-xs text-gray-500">Phụ huynh</p>
             </div>
             <Dialog>
               <DialogTrigger asChild>
                 <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-300">
                   <img
-                    src={parent.avatarurl}
+                    src={parent?.avatarurl}
                     alt="ảnh đại diện"
                     className="w-full h-auto object-cover"
                   />
