@@ -8,6 +8,8 @@ import {useForm} from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useParentStore } from '@/stores/useParentStore'
 import type { Teacher } from '@/types/Teacher'
+import { useAdminStore } from '@/stores/useAdminStore'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 interface ITeacherProps {
   teacher : Teacher
@@ -21,11 +23,11 @@ const NotificationFormSchema = z.object({
 type NotificationFormValues = z.infer<typeof NotificationFormSchema>
 
 const TeacherCard = ({teacher} : ITeacherProps) => {
-  const parent = useParentStore((state) => state.parent)
+  const parent = useAuthStore((state) => state.user)
   const {register : reg ,handleSubmit :had, formState :{errors :err, isSubmitting: isSub}} = useForm<NotificationFormValues>({
         resolver : zodResolver(NotificationFormSchema),
         defaultValues : {
-          senderid : parent.userid,
+          senderid : parent?.userid,
           receiverid: teacher.userid,
         }
       })
@@ -38,8 +40,8 @@ const TeacherCard = ({teacher} : ITeacherProps) => {
           <div className='flex flex-col gap-3'>
             <h2 className='text-4xl itim-regular'>{teacher.name}</h2>
             <h2 className='text-2xl itim-regular'>Lớp: {teacher.classname}</h2>
-            <h2 className='text-2xl itim-regular'>Ngày sinh: {teacher.dob.toLocaleDateString('vi-VN')}</h2>
-            <h2 className='text-2xl itim-regular'>Ngày tham gia: {teacher.createdat.toLocaleDateString('vi-VN')}</h2>
+            <h2 className='text-2xl itim-regular'>Ngày sinh: {new Date(teacher.dob).toLocaleDateString('vi-VN')}</h2>
+            <h2 className='text-2xl itim-regular'>Ngày tham gia: {new Date(teacher.createdat).toLocaleDateString('vi-VN')}</h2>
           </div>
           <div className='flex flex-col items-center justify-center ml-auto gap-3'>
             <div className='h-30 w-30 rounded-full overflow-hidden'>

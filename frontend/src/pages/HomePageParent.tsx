@@ -27,6 +27,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { parentService } from "@/services/parentService";
 import { toast } from "sonner";
+import Notice from "@/components/parent/Notice";
 
 const AvatarFormSchema = z.object({
   avatar: z
@@ -187,6 +188,7 @@ const HomePageParent = () => {
           {tabActive === "notification" && <Notification />}
           {tabActive === "tuition" && <Tuition />}
           {tabActive === "menu" && <Menu />}
+          {tabActive === "notice" && <Notice />}
         </main>
       </div>
     </div>

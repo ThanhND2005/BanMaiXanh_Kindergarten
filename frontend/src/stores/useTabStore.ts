@@ -14,6 +14,10 @@ export const useTabTeacherStore = create<tabTeacherState>((set) =>({
 }))
 export const useTabParentStore = create<tabParentState>((set) =>({
     tabActive: 'dashboard',
+    student : null,
+    setStudent : (student) => {
+        set({student})
+    },
     setTabActive :(tab) =>{
         set({tabActive : tab})
     }

@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import { Button } from '../ui/button'
 import {z} from 'zod'
-import {useForm} from 'react-hook-form'
+import {Controller, useForm} from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
@@ -13,6 +13,7 @@ import type { Student } from '@/types/Student'
 import { useAdminStore } from '@/stores/useAdminStore'
 import { studentService } from '@/services/studentService'
 import { toast } from 'sonner'
+import { useStudentStore } from '@/stores/useStudentStore'
 
 interface IStudentProps {
     student : Student
@@ -35,14 +36,15 @@ const UpdateFormSchema = z.object({
 type UpdateFormValues = z.infer<typeof UpdateFormSchema>
 const StudentCard = ({student} : IStudentProps) => {
   const [open, setOpen] = useState(false)
-  const {reset,register, handleSubmit,formState :{errors,isSubmitting}} = useForm({
+  const [openAvatarForm, setOpenAvatarForm] = useState(false)
+  const {reset,control,register, handleSubmit,formState :{errors,isSubmitting}} = useForm({
     resolver : zodResolver(UpdateFormSchema),
     defaultValues:{
         studentid : student.studentid,
         name : student.name,
         gender: student.gender,
         height : student.height,
-        weight: student.height
+        weight: student.weight
     }
   })
   const {
@@ -82,16 +84,21 @@ const StudentCard = ({student} : IStudentProps) => {
     finally
     {
       resetAvatar()
-      setOpen(false)
+      setOpenAvatarForm(false)
     }
   };
+  const {classes,refreshClasses} = useStudentStore()
+  const getClass = async (studentid : string) =>{
+    await refreshClasses(studentid)
+  }
+  
   return (
     <div>
       <li className='flex p-4 w-200 bg-[#ffffff] rounded-xl shadow-md items-center'>
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={openAvatarForm} onOpenChange={setOpenAvatarForm}>
           <DialogTrigger asChild>
             <div className='h-30 w-30 rounded-full overflow-hidden'>
-                <img src={student.avatarurl} alt="logo" />
+                <img src={student?.avatarurl} alt="logo" />
             </div>
 
           </DialogTrigger>
@@ -108,8 +115,8 @@ const StudentCard = ({student} : IStudentProps) => {
         </Dialog>
         <div className='flex flex-col ml-20 space-y-2'>
             <h1 className='text-2xl itim-regular'> Bé {student.name}</h1>
-            <h2 className='text-xl itim-regular'>Chiều cao: {student.height}</h2>
-            <h2 className='text-xl itim-regular'>Cân nặng: {student.weight}</h2>
+            <h2 className='text-xl itim-regular'>Chiều cao (m): {student.height}</h2>
+            <h2 className='text-xl itim-regular'>Cân nặng (kg): {student.weight}</h2>
             {(student.check_in_time !== null && student.check_out_time !== null)
             ? <div className='flex gap-2 items-center '> 
                 <div className='h-5 w-5 bg-[#EDFF46] rounded-full flex justify-center items-center'>
@@ -131,7 +138,7 @@ const StudentCard = ({student} : IStudentProps) => {
         <div className='flex ml-auto'>
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <Button variant='outline' className='bg-[#EDFF46] text-white rounded-2xl shadow-md h-30'>Chỉnh sửa thông tin</Button>
+                    <Button variant='outline' className='bg-[#EDFF46] text-white rounded-2xl shadow-md h-30' onClick={()=>getClass(student.studentid)}>Chỉnh sửa thông tin</Button>
                 </DialogTrigger>
                 <DialogContent>
                     <form className="flex flex-col justify-center gap-3" onSubmit={handleSubmit(onUpdate)}>
@@ -160,11 +167,14 @@ const StudentCard = ({student} : IStudentProps) => {
                 <Label htmlFor="gender" className="text-sm block">
                   Giới tính
                 </Label>
-                <RadioGroup defaultValue={student.gender} id="gender">
+                <Controller name='gender' control={control} defaultValue={student.gender}
+                render={({field}) => (
+
+                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} {...register("gender")}>
                   <div className="flex gap-4">
                     <div className="flex gap-2 items-center">
                       <RadioGroupItem value="Nam" id="Nam" />
-                      <Label htmlFor="Name" className="text-sm">
+                      <Label htmlFor="Nam" className="text-sm">
                         Nam
                       </Label>
                     </div>
@@ -177,28 +187,40 @@ const StudentCard = ({student} : IStudentProps) => {
 
                   </div>
                 </RadioGroup>
+                )}
+                />
               </div>
               <div>
-                <Label htmlFor="height" className="text-sm block">Chiều cao</Label>
+                <Label htmlFor="height" className="text-sm block">Chiều cao (m)</Label>
                 <Input 
-                type="text" 
+                type="number" 
                 id="height"
                 className="rounded-2xl shadow-md p-2"
-                placeholder="Nhập chiều cao"
-                {...register("height")}/>
+                
+                {...register("height")} />
                 {errors.height && <p className="text-destructive text-sm">{errors.height.message}</p>}
               </div>
               <div>
-                <Label htmlFor="weight" className="text-sm block">Cân nặng</Label>
+                <Label htmlFor="weight" className="text-sm block">Cân nặng (kg)</Label>
                 <Input 
-                type="text" 
+                type="number" 
                 id="weight"
                 className="rounded-2xl shadow-md p-2"
-                placeholder="Nhập cân nặng"
+                
                 {...register("weight")}/>
                 {errors.weight && <p className="text-destructive text-sm">{errors.weight.message}</p>}
               </div>
-              
+              <div>
+                <Label htmlFor='classes' className='text-sm block'>Lớp học đang tham gia</Label>
+                <ul id= 'classes' className='space-y-2'>
+                {classes?.map((class1) =>(
+                  <li key={class1.classid}>
+                    <Input type='text' className='rounded-2xl shadow-md p-2' value={class1.name} readOnly/>
+                  </li>
+                ))}
+
+                </ul>
+              </div>
               <div className="flex justify-center">
 
               <Button type="submit" className="rounded-2xl bg-[#05D988] text-[#ffffff] hover:bg-[#02B671] focus:bg-[#05D988] shadow-md w-50" disabled={isSubmitting}>Cập nhập</Button>

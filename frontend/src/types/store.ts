@@ -1,3 +1,5 @@
+import type { Student } from "./Student"
+
 export  interface tabAdminState {
     tabActive : string|null,
     setTabActive : (tab: string) => void
@@ -8,6 +10,8 @@ export interface tabTeacherState {
 }
 export interface tabParentState {
     tabActive: string|null,
+    student : Student | null,
+    setStudent : (student : Student) => void
     setTabActive : (tab : string) => void
 }
 export interface Menu {
