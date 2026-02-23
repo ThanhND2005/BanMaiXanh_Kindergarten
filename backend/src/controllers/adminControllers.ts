@@ -219,6 +219,7 @@ export const getStudentBill = async (req: Request, res: Response) => {
       t.qrurl, 
       t.paidat, 
       t.month, 
+      p.userid as parentid,
       p.name as parentName, 
       s.name as studentName, 
       s.dob,

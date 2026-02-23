@@ -176,7 +176,8 @@ const StudentItem = ({student} : StudentItemProps) => {
                 <h2 className='text-xl font-bold w-full'>Họ tên phụ huynh: {student.parentname}</h2>
             </div>
             <div className='flex flex-col justify-center px-4  space-y-3'>
-                <Button type='button' onClick={() => onCheckin(student.studentid)} className={`${student.check_in_time === null ? 'bg-[#ffffff] text-[#828282]' : 'bg-[#2E7D32]'} rounded-xl shadow-md `}>Đã đến</Button>
+              {student.check_in_time === null ? <Button type='button' onClick={() => onCheckin(student.studentid)} className= 'bg-[#ffffff] text-[#828282] rounded-xl shadow-md '>Đã đến</Button> : <Button type='button' className='bg-[#2E7D32] rounded-xl shadow-md '>Đã đến</Button>}
+                
                 <Button type='button' onClick={() => onCheckout(student.attendanceid)} className={`${student.check_out_time === null ? 'bg-[#ffffff] text-[#828282]' : 'bg-[#2E7D32]'} rounded-xl shadow-md `}>Đã về</Button>
                 <Button type='button' onClick={() => onDelete(student.studentid,teacher?.classid as string)} className={`bg-[#FB3C1A] rounded-xl shadow-md`}>Xóa</Button>
             </div>

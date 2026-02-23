@@ -5,7 +5,6 @@ import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { useStudentStore } from '@/stores/useStudentStore'
-import { adminService } from '@/services/adminService'
 import { studentService } from '@/services/studentService'
 import { useAdminStore } from '@/stores/useAdminStore'
 

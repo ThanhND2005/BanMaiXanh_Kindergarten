@@ -24,6 +24,7 @@ export interface Menu {
 export interface StudentBill {
     tuitionid: string, 
     month: number,
+    parentid: string,
     parentName: string, 
     studentName: string, 
     dob: Date,
