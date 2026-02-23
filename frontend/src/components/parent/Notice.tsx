@@ -1,8 +1,5 @@
 import { useAdminStore } from '@/stores/useAdminStore';
-import { useAuthStore } from '@/stores/useAuthStore';
 import { useStudentStore } from '@/stores/useStudentStore';
-import { useTabParentStore } from '@/stores/useTabStore';
-import React from 'react'
 import TeacherCard from './TeacherCard';
 
 const Notice = () => {

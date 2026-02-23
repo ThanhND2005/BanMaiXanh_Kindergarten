@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import { Button } from '../ui/button'
 import { Label } from '../ui/label'
@@ -6,10 +6,10 @@ import { Input } from '../ui/input'
 import {z} from 'zod'
 import {useForm} from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useParentStore } from '@/stores/useParentStore'
 import type { Teacher } from '@/types/Teacher'
-import { useAdminStore } from '@/stores/useAdminStore'
 import { useAuthStore } from '@/stores/useAuthStore'
+import { parentService } from '@/services/parentService'
+import { toast } from 'sonner'
 
 interface ITeacherProps {
   teacher : Teacher
@@ -23,8 +23,9 @@ const NotificationFormSchema = z.object({
 type NotificationFormValues = z.infer<typeof NotificationFormSchema>
 
 const TeacherCard = ({teacher} : ITeacherProps) => {
+  const [open, setOpen] = useState(false)
   const parent = useAuthStore((state) => state.user)
-  const {register : reg ,handleSubmit :had, formState :{errors :err, isSubmitting: isSub}} = useForm<NotificationFormValues>({
+  const {reset:re,register : reg ,handleSubmit :had, formState :{errors :err, isSubmitting: isSub}} = useForm<NotificationFormValues>({
         resolver : zodResolver(NotificationFormSchema),
         defaultValues : {
           senderid : parent?.userid,
@@ -32,7 +33,19 @@ const TeacherCard = ({teacher} : ITeacherProps) => {
         }
       })
   const onSubmit = async (data : NotificationFormValues) =>{
-
+    const {title,content,senderid,receiverid} = data
+    try {
+      await parentService.postNotification(senderid, receiverid,content,title)
+      toast.success("Gửi thông báo thành công !")
+    } catch (error) {
+      console.error(error)
+      toast.error("Gửi thông báo thất bại !")
+    }
+    finally
+    {
+      re()
+      setOpen(false)
+    }
   }
   return (
     <div>
@@ -48,7 +61,7 @@ const TeacherCard = ({teacher} : ITeacherProps) => {
               <img src={teacher.avatarurl} alt="avtar" />
             </div>
             <div>
-              <Dialog>
+              <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                   <Button variant='outline' className='rounded-2xl bg-[#1271BF] text-[#ffffff] hover:bg-[#0A5694] focus:bg-[#1271BF]'>Kết nối</Button>
                 </DialogTrigger>

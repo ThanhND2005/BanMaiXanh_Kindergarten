@@ -1,6 +1,7 @@
 import { getRedirectPath } from "@/lib/navigation";
 import { useAdminStore } from "@/stores/useAdminStore";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useParentStore } from "@/stores/useParentStore";
 import { useTeacherStore } from "@/stores/useTeacherStore";
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
@@ -11,6 +12,7 @@ const ProtectedRoute = ({ allowedRole }: Props) => {
   const { accessToken, user, loading, refresh, getMe } = useAuthStore();
   const { refreshStudents,refreshTeachers,refreshClasses,refreshNotifications,refreshMenu,refreshStudentBills,refreshTeacherBills} =useAdminStore()
   const {refreshNotifications : rnt,refreshStudents : rstu} = useTeacherStore()
+  const {refreshNotification :refreshNotificationParent} = useParentStore()
   const [starting, setStarting] = useState(true)
   const init = async () =>{
     if(!accessToken)
@@ -33,6 +35,10 @@ const ProtectedRoute = ({ allowedRole }: Props) => {
           await rstu(currentUser.userid)
           await rnt(currentUser.userid)
         }
+    if(currentUser?.role === 'parent')
+    {
+      await refreshNotificationParent(currentUser.userid)
+    }
     if(accessToken && !user)
     {
         await getMe()

@@ -8,8 +8,8 @@ export const getStudentList = async (req: Request, res: Response) => {
       `SELECT s.studentid, s.dob,s.gender,s.height,s.weight,s.age,s.parentid,p.name as parentname,s.avatarurl,s.name,a.date,a.check_in_time,a.check_out_time,a.attendanceid
       FROM Student s
       LEFT JOIN Parent p on p.userid = s.parentid
-      LEFT JOIN Attendance a on a.studentid = s.studentid AND date=@day
-      WHERE deleted ='false'`
+      LEFT JOIN Attendance a on a.studentid = s.studentid AND a.date=@day
+      WHERE s.deleted ='false'`
     )
     const students = res1.recordset
     return res.status(200).json({ students })

@@ -55,7 +55,7 @@ export interface TeacherBill {
 }
 export interface Notification {
     notificationid:string, 
-    senderName:string, 
+    senderid:string, 
     title: string,
     content: string, 
     createdat: Date,
@@ -65,7 +65,10 @@ export interface User {
     name : string, 
     gender: string,
     avatarurl : string | 'https://i.pinimg.com/736x/e9/e0/7d/e9e07de22e3ef161bf92d1bcf241e4d0.jpg',
-    role : 'admin' | 'teacher' | 'parent'
+    role : 'admin' | 'teacher' | 'parent',
+    address : string, 
+    dob: Date,
+    createdat : Date
 }
 export interface authState {
     accessToken : string|null,

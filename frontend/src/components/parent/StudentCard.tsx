@@ -94,7 +94,7 @@ const StudentCard = ({student} : IStudentProps) => {
   
   return (
     <div>
-      <li className='flex p-4 w-200 bg-[#ffffff] rounded-xl shadow-md items-center'>
+      <li className='flex p-4 bg-[#ffffff] rounded-xl shadow-md items-center'>
         <Dialog open={openAvatarForm} onOpenChange={setOpenAvatarForm}>
           <DialogTrigger asChild>
             <div className='h-30 w-30 rounded-full overflow-hidden'>
@@ -114,7 +114,7 @@ const StudentCard = ({student} : IStudentProps) => {
           </DialogContent>
         </Dialog>
         <div className='flex flex-col ml-20 space-y-2'>
-            <h1 className='text-2xl itim-regular'> Bé {student.name}</h1>
+            <h1 className='text-2xl itim-regular'> Bé: {student.name}</h1>
             <h2 className='text-xl itim-regular'>Chiều cao (m): {student.height}</h2>
             <h2 className='text-xl itim-regular'>Cân nặng (kg): {student.weight}</h2>
             {(student.check_in_time === null && student.check_out_time === null)

@@ -93,3 +93,21 @@ export const patchStudentBill=  async (req : Request, res : Response ) =>{
     return res.send(404)
   }
 }
+export const patchParent = async (req : Request , res : Response) =>{
+  const {parentid} = req.params
+  const {name, dob, address,gender} = req.body
+  try {
+    const request1 = new sql.Request()
+    await request1
+    .input('userid',sql.UniqueIdentifier,parentid)
+    .input('name',sql.NVarChar,name)
+    .input('dob',sql.Date,dob)
+    .input('address',sql.NVarChar,address)
+    .input('gender',sql.NVarChar,gender)
+    .query('UPDATE Parent SET name=@name, dob=@dob,address=@address,gender=@gender WHERE userid = @userid')
+    return res.sendStatus(204)
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send('Lỗi hệ thống')
+  }
+}

@@ -33,6 +33,7 @@ type NotificationFormValues  = z.infer<typeof NotificationFormSchema>
 const StudentItem = ({student} : StudentItemProps) => {
   const user = useAuthStore.getState().user
   const [open, setOpen] = useState(false)
+  const [open2,setOpen2] = useState(false)
   const teacher = useAdminStore((state) => state.teachers)?.find((t) => t.userid === user?.userid)
   const {register, handleSubmit, formState :{errors, isSubmitting}} = useForm({
       resolver : zodResolver(UpdateFormSchema),
@@ -59,6 +60,10 @@ const StudentItem = ({student} : StudentItemProps) => {
         console.error(error)
         toast.error("Cập nhập thông tin thất bại")
       }
+      finally
+      {
+        setOpen2(false)
+      }
     }
     const onNotify = async (data : NotificationFormValues) => {
         const {senderid,receiverid,title,content} = data
@@ -69,6 +74,9 @@ const StudentItem = ({student} : StudentItemProps) => {
         } catch (error) {
           console.error(error)
           toast.error("Gửi thông báo thất bại")
+        }
+        finally{
+          setOpen(false)
         }
     }
     const onDelete = async (studentid : string, classid: string) =>{
@@ -110,7 +118,7 @@ const StudentItem = ({student} : StudentItemProps) => {
                   <img src={student.avatarurl} alt="avatar" className='w-full object-cover' />
                 </div>
                 <div className='w-full flex justify-center'>
-                  <Dialog open={open} onOpenChange={setOpen}>
+                  <Dialog open={open2} onOpenChange={setOpen2}>
                     <DialogTrigger asChild>
                       <Button variant='outline' className='bg-[#F2F20E] rounded-xl shadow-sm'>Chỉnh sửa</Button>
                     </DialogTrigger>

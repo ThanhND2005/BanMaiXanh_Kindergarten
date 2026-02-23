@@ -6,8 +6,8 @@ import { useAuthStore } from '@/stores/useAuthStore'
 
 
 const Class = () => {
-  const user = useAuthStore.getState().user
-  const teacher = useAdminStore((state) => state.teachers)?.find((t) => t.userid === user?.userid)
+  
+
   const students = useTeacherStore((state) => state.students)
   
   return (

@@ -13,12 +13,16 @@ export const parentService = {
     },
     getNotificationList : async (parentid : string) =>{
         const res = await api.get(`/parent/getNotificationList/${parentid}`,{withCredentials:true})
-        return res.data.notificatons 
+        return res.data.notifications 
     },
     patchStudentBill : async (tuitionid : string,file:File) =>{
         const formData = new FormData()
         formData.append('tuition',file)
         const res = await api.patch(`/parent/patchStudentBill/${tuitionid}`,formData,{withCredentials:true})
+        return res.data
+    },
+    patchParent : async (parentid: string, name: string, dob: Date,gender: string, address: string) =>{
+        const res = await api.patch(`/parent/patchParent/${parentid}`,{name,dob,gender,address},{withCredentials:true})
         return res.data
     }
 }

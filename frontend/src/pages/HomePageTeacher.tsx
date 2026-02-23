@@ -12,53 +12,95 @@ import DashBoard from "@/components/teacher/DashBoard";
 import Class from "@/components/teacher/Class";
 import Notification from "@/components/teacher/Notification";
 import Salary from "@/components/teacher/Salary";
-import Menu from "@/components/teacher/Menu"; 
+import Menu from "@/components/teacher/Menu";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog,DialogTrigger,DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import {z} from 'zod'
-import {useForm} from 'react-hook-form'
+import { z } from "zod";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { useAdminStore } from "@/stores/useAdminStore";
-import type { Teacher } from "@/types/Teacher";
-import { use } from "react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { teacherService } from "@/services/teacherService";
+import { toast } from "sonner";
 const AvatarFormSchema = z.object({
-  avatar: z
-    .any()
-    .refine((file) => file?.length > 0, {
-      message: "Không để trống thông tin",
-    }),
+  avatar: z.any().refine((file) => file?.length > 0, {
+    message: "Không để trống thông tin",
+  }),
 });
+const UpdateFormSchema = z.object({
+  name: z.string().min(1, "Tên không được để trống !"),
+  gender: z.string().min(1, "Giới tính không được để trống !"),
+  address: z.string().min(1, "Địa chỉ không được để trống !"),
+  dob: z.string().date("Ngày sinh không được để trống !"),
+});
+type UpdateFormValues = z.infer<typeof UpdateFormSchema>;
 type AvatarFromValues = z.infer<typeof AvatarFormSchema>;
 const HomePageTeacher = () => {
   const { tabActive, setTabActive } = useTabTeacherStore();
-  const user = useAuthStore((state) => state.user)
-  const teacher = useAdminStore((state) => state.teachers)?.find((t) => t.userid === user?.userid)
-  const navigate = useNavigate()
+  const teacher = useAuthStore((state) => state.user);
+  
+  const navigate = useNavigate();
   const {
-      register,
-      handleSubmit,
-      formState: { errors, isSubmitting },
-    } = useForm<AvatarFromValues>({
-      resolver: zodResolver(AvatarFormSchema),
-    });
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<AvatarFromValues>({
+    resolver: zodResolver(AvatarFormSchema),
+  });
+  const {
+    control: ctr,
+    register: reg,
+    handleSubmit: had,
+    formState: { errors: err, isSubmitting: isSub },
+  } = useForm<UpdateFormValues>({
+    resolver: zodResolver(UpdateFormSchema),
+    defaultValues: {
+      name: teacher?.name,
+      dob: new Date(teacher?.dob as Date).toLocaleDateString("en-CA"),
+      gender: teacher?.gender,
+      address: teacher?.address,
+    },
+  });
+  
   const now = new Date();
-    const dateformat = new Intl.DateTimeFormat('vi-VN',{
-      weekday: 'long',
-      day :'2-digit',
-      month:'2-digit',
-      year:'numeric',
-    }).format(now)
-  const final = dateformat.replace(', ',', ngày ')
-  const signout = useAuthStore((state) => state.signout)
-  const onLogout = async () =>{
-    await signout()
-    navigate("/signin")
+  const dateformat = new Intl.DateTimeFormat("vi-VN", {
+    weekday: "long",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(now);
+  const final = dateformat.replace(", ", ", ngày ");
+  const signout = useAuthStore((state) => state.signout);
+  const onLogout = async () => {
+    await signout();
+    navigate("/signin");
+  };
+  const {getMe} = useAuthStore()
+  const onUpdate = async (data: AvatarFromValues) => {
+    const file = data.avatar[0];
+        try {
+          await teacherService.patchAvatar(file, teacher?.userid as string);
+          await getMe();
+          toast.success("Cập nhập ảnh đại diện thành công");
+        } catch (error) {
+          console.error(error);
+          toast.error("Cập nhập ảnh đại diện thất bại ");
+        }
+  };
+  const onUpdateInfor = async (data : UpdateFormValues) =>{
+    const {name, dob, gender,address} = data
+      try {
+        await teacherService.patchTeacher(teacher?.userid as string,name,new Date(dob),address,gender)
+        await getMe()
+        toast.success("Cập nhập thông tin cá nhân thành công !")
+      } catch (error) {
+        console.error(error)
+        toast.error("Cập nhập thông tin thất bại !")
+      }
   }
-  const onUpdate = (data: AvatarFromValues) => {};
   return (
     <div className="flex min-h-screen bg-[#E8F5E9]">
       <aside className="w-64 bg-[#2E7D32] text-white flex flex-col h-screen sticky top-0 left-0 shadow-xl z-30 shrink-0">
@@ -104,7 +146,10 @@ const HomePageTeacher = () => {
           </button>
         </nav>
         <div className="p-4 border-t border-white/10">
-          <button className="flex items-center w-full px-4 py-3 text-white/90 hover:bg-white/10 hover:text-white rounded-lg transition-colors" onClick={onLogout}>
+          <button
+            className="flex items-center w-full px-4 py-3 text-white/90 hover:bg-white/10 hover:text-white rounded-lg transition-colors"
+            onClick={onLogout}
+          >
             <LogOut size={20} className="mr-3" />
             <span className="font-medium">Đăng xuất</span>
           </button>
@@ -113,14 +158,64 @@ const HomePageTeacher = () => {
       <div className="flex-1 flex flex-col min-w-0">
         <header className="sticky top-0 z-20 w-full bg-white h-20 px-8 flex justify-between items-center shadow-sm border-b border-gray-100">
           <div>
-            <h2 className="text-2xl font-bold text-gray-800">
-              {final}
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-800">{final}</h2>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right hidden md:block">
-              <p className="font-bold text-gray-800 text-sm">{teacher?.name}</p>
-              <p className="text-xs text-gray-500">Giáo viên</p>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div>
+                    <p className="font-bold text-gray-800 text-sm">
+                      {teacher?.name}
+                    </p>
+                    <p className="text-xs text-gray-500">Giáo viên</p>
+                  </div>
+                </DialogTrigger>
+                <DialogContent>
+                  <form className="flex flex-col justify-center items-center gap-3" onSubmit={had(onUpdateInfor)}>
+                    <div>
+                      <h1 className="text-2xl font-bold">Cập nhập thông tin cá nhân</h1>
+                    </div>
+                    <div className="w-full">
+                      <Label htmlFor="name" className="text-sm block">Họ và tên</Label>
+                      <Input type="text" id="name" className="rounded-xl shadow-md" {...reg("name")}/>
+                      {err.name && <p className="text-destructive text-sm">{err.name.message}</p>}
+                    </div>
+                    <div className="w-full">
+                      <Label htmlFor="dob" className="text-sm block">Ngày sinh</Label>
+                      <Input type="text" id="dob" className="rounded-xl shadow-md" {...reg("dob")}/>
+                      {err.dob && <p className="text-destructive text-sm">{err.dob.message}</p>}
+                    </div>
+                    <div className="w-full">
+                      <Label htmlFor="gender" className="text-sm block">Giới tính</Label>
+                      <Controller name="gender" control={ctr} defaultValue={teacher?.gender}
+                      render={({field}) =>(
+                        <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="w-full" {...reg("gender")}>
+                          <div className="flex gap-3">
+                            <div className="flex items-center gap-2">
+                              <RadioGroupItem id="nam" value="Nam"/>
+                              <Label htmlFor="nam">Nam</Label>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <RadioGroupItem id="nu" value="Nữ"/>
+                              <Label htmlFor="nu">Nữ</Label>
+                            </div>
+                          </div>
+                        </RadioGroup>
+                      )}
+                      />
+                    </div>
+                    <div className="w-full">
+                      <Label htmlFor="address" className="text-sm block">Địa chỉ</Label>
+                      <Input type="text" id="address" className="rounded-xl shadow-md" {...reg("address")}/>
+                      {err.address && <p className="text-destructive text-sm">{err.address.message}</p>}
+                    </div>
+                    <div>
+                      <Button type="submit" disabled={isSub} className="rounded-2xl shadow-md">Cập nhập</Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
             <Dialog>
               <DialogTrigger asChild>
@@ -144,8 +239,17 @@ const HomePageTeacher = () => {
                     <Label htmlFor="avatar" className="text-sm block">
                       Ảnh đại diện
                     </Label>
-                    <Input type="file" id="avatar" className="rounded-2xl" {...register("avatar")}/>
-                    {errors.avatar && <p className="text-destructive text-sm">{errors.avatar.message as string}</p> }
+                    <Input
+                      type="file"
+                      id="avatar"
+                      className="rounded-2xl"
+                      {...register("avatar")}
+                    />
+                    {errors.avatar && (
+                      <p className="text-destructive text-sm">
+                        {errors.avatar.message as string}
+                      </p>
+                    )}
                   </div>
                   <Button
                     type="submit"

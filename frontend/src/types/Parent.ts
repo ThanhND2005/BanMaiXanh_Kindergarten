@@ -1,17 +1,7 @@
-import type { Teacher } from "./Teacher"
-
-export interface Parent{
-   
-    name:string,
-    dob: Date,
-    gender: string,
-    address: string,
-    avatarurl: string,
-}
-
+import type { Notification } from "./store"
 export interface parentState {
-    parent : Parent
-    teachers : Teacher[]
-    setParent : (parent: Parent) => void
-    refreshTeacher : (teachers : Teacher[]) => void
+    
+    notifications : Notification[] | null
+    refreshNotification: (parentid : string) => void
+
 }

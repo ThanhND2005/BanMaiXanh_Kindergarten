@@ -8,6 +8,11 @@ import { Button } from '../ui/button'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import type { StudentBill } from '@/types/store'
+import { adminService } from '@/services/adminService'
+import { useAdminStore } from '@/stores/useAdminStore'
+import { parentService } from '@/services/parentService'
+import { toast } from 'sonner'
+
 
 interface ITuitionCard {
     tuition: StudentBill
@@ -18,14 +23,25 @@ const ComfirmFormSchema = z.object({
 })
 type ComfirmFormValues = z.infer<typeof ComfirmFormSchema>
 const TuitionCard = ({tuition} :ITuitionCard) => {
+  console.log(tuition.status)
   const {register, handleSubmit, formState :{errors, isSubmitting}} = useForm<ComfirmFormValues>({
     resolver : zodResolver(ComfirmFormSchema),
     defaultValues:{
         tuitionid : tuition.tuitionid
     }
   })
+  const {refreshStudentBills} = useAdminStore()
   const onSubmit = async (data: ComfirmFormValues) => {
-
+    const file = data.billImage[0]
+    const {tuitionid} = data
+    try {
+        await parentService.patchStudentBill(tuitionid,file)
+        await refreshStudentBills()
+        toast.success("Gửi hóa đơn thành công !")
+    } catch (error) {
+        console.error(error)
+        toast.error("Gửi hóa đơn thất bại !")
+    }
   }
   return (
     <div>
@@ -36,7 +52,7 @@ const TuitionCard = ({tuition} :ITuitionCard) => {
             <h2 className='text-xl itim-regular'> Lớp: {tuition.className}</h2>
             <h2 className='text-xl itim-regular'> Số ngày đi học: {tuition.attendance}</h2>
             <h2 className='text-4xl itim-regular text-[#FB3C1A]'> Học phí: {tuition.tuition} vnđ</h2>
-            {tuition.status === 'Đã hoàn thành'? <div className='flex gap-2'>
+            {tuition.status !== null? <div className='flex gap-2'>
                 <div className='h-5 w-5 bg-[#15803D] rounded-full flex justify-center items-center'>
                     <Check className='h-4 w-4 text-white'/>
                 </div>

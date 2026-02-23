@@ -17,7 +17,7 @@ import Notification from "@/components/parent/Notification";
 import Tuition from "@/components/parent/Tuition";
 import Menu from "@/components/teacher/Menu";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -28,25 +28,45 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { parentService } from "@/services/parentService";
 import { toast } from "sonner";
 import Notice from "@/components/parent/Notice";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const AvatarFormSchema = z.object({
-  avatar: z
-    .any()
-    .refine((file) => file?.length > 0, {
-      message: "Không để trống thông tin",
-    }),
+  avatar: z.any().refine((file) => file?.length > 0, {
+    message: "Không để trống thông tin",
+  }),
+});
+const UpdateFormSchema = z.object({
+  name: z.string().min(1, "Tên không được để trống !"),
+  gender: z.string().min(1, "Giới tính không được để trống !"),
+  address: z.string().min(1, "Địa chỉ không được để trống !"),
+  dob: z.string().date("Ngày sinh không được để trống !"),
 });
 type AvatarFromValues = z.infer<typeof AvatarFormSchema>;
+type UpdateFormValues = z.infer<typeof UpdateFormSchema>;
 const HomePageParent = () => {
   const { tabActive, setTabActive } = useTabParentStore();
-  
-  const parent = useAuthStore((state) => state.user)
+
+  const parent = useAuthStore((state) => state.user);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<AvatarFromValues>({
     resolver: zodResolver(AvatarFormSchema),
+  });
+  const {
+    control: ctr,
+    register: reg,
+    handleSubmit: had,
+    formState: { errors: err, isSubmitting: isSub },
+  } = useForm<UpdateFormValues>({
+    resolver: zodResolver(UpdateFormSchema),
+    defaultValues: {
+      name: parent?.name,
+      dob: new Date(parent?.dob as Date).toLocaleDateString('en-CA'),
+      gender: parent?.gender,
+      address: parent?.address,
+    },
   });
   const now = new Date();
   const dateformat = new Intl.DateTimeFormat("vi-VN", {
@@ -56,24 +76,35 @@ const HomePageParent = () => {
     year: "numeric",
   }).format(now);
   const final = dateformat.replace(", ", ", ngày ");
-  const {getMe} = useAuthStore()
+  const { getMe } = useAuthStore();
   const onUpdate = async (data: AvatarFromValues) => {
-    const file = data.avatar[0]
+    const file = data.avatar[0];
     try {
-      await parentService.patchAvatar(file,parent?.userid as string)
-      await getMe()
-      toast.success("Cập nhập ảnh đại diện thành công")
+      await parentService.patchAvatar(file, parent?.userid as string);
+      await getMe();
+      toast.success("Cập nhập ảnh đại diện thành công");
     } catch (error) {
-      console.error(error)
-      toast.error("Cập nhập ảnh đại diện thất bại ")
+      console.error(error);
+      toast.error("Cập nhập ảnh đại diện thất bại ");
     }
   };
-  const navigate = useNavigate()
-   const signout = useAuthStore((state) => state.signout)
-  const onLogout = async () =>{
-    await signout()
-    navigate('/signin')
+  const onUpdateInfor = async (data : UpdateFormValues) =>{
+      const {name, dob, gender,address} = data
+      try {
+        await parentService.patchParent(parent?.userid as string,name,new Date(dob),gender,address)
+        await getMe()
+        toast.success("Cập nhập thông tin cá nhân thành công !")
+      } catch (error) {
+        console.error(error)
+        toast.error("Cập nhập thông tin thất bại !")
+      }
   }
+  const navigate = useNavigate();
+  const signout = useAuthStore((state) => state.signout);
+  const onLogout = async () => {
+    await signout();
+    navigate("/signin");
+  };
   return (
     <div className="flex min-h-screen bg-[#E8F5E9]">
       <aside className="w-64 bg-[#2E7D32] text-white flex flex-col h-screen sticky top-0 left-0 shadow-xl z-30 shrink-0">
@@ -98,7 +129,7 @@ const HomePageParent = () => {
           </button>
           <button
             onClick={() => setTabActive("teacher")}
-            className={`w-full rounded-2xl flex items-center px-6 py-3 justify-start gap-2 itim-regular text-2xl ${tabActive === "teacher" ? "bg-white text-[#15803D]" : "border-transparent"} transition-all duration-500`}
+            className={`w-full rounded-2xl flex items-center px-6 py-3 justify-start gap-2 itim-regular text-2xl ${(tabActive === "teacher" || tabActive==="notice") ? "bg-white text-[#15803D]" : "border-transparent"} transition-all duration-500`}
           >
             <Users className="h-6 w-6" />
             Giáo viên
@@ -126,7 +157,10 @@ const HomePageParent = () => {
           </button>
         </nav>
         <div className="p-4 border-t border-white/10">
-          <button className="flex items-center w-full px-4 py-3 text-white/90 hover:bg-white/10 hover:text-white rounded-lg transition-colors" onClick={() => onLogout()}>
+          <button
+            className="flex items-center w-full px-4 py-3 text-white/90 hover:bg-white/10 hover:text-white rounded-lg transition-colors"
+            onClick={() => onLogout()}
+          >
             <LogOut size={20} className="mr-3" />
             <span className="font-medium">Đăng xuất</span>
           </button>
@@ -140,8 +174,60 @@ const HomePageParent = () => {
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right hidden md:block">
-              <p className="font-bold text-gray-800 text-sm">{parent?.name}</p>
-              <p className="text-xs text-gray-500">Phụ huynh</p>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div>
+                    <p className="font-bold text-gray-800 text-sm">
+                      {parent?.name}
+                    </p>
+                    <p className="text-xs text-gray-500">Phụ huynh</p>
+                  </div>
+                </DialogTrigger>
+                <DialogContent>
+                  <form className="flex flex-col justify-center items-center gap-3" onSubmit={had(onUpdateInfor)}>
+                    <div>
+                      <h1 className="text-2xl font-bold">Cập nhập thông tin cá nhân</h1>
+                    </div>
+                    <div className="w-full">
+                      <Label htmlFor="name" className="text-sm block">Họ và tên</Label>
+                      <Input type="text" id="name" className="rounded-xl shadow-md" {...reg("name")}/>
+                      {err.name && <p className="text-destructive text-sm">{err.name.message}</p>}
+                    </div>
+                    <div className="w-full">
+                      <Label htmlFor="dob" className="text-sm block">Ngày sinh</Label>
+                      <Input type="text" id="dob" className="rounded-xl shadow-md" {...reg("dob")}/>
+                      {err.dob && <p className="text-destructive text-sm">{err.dob.message}</p>}
+                    </div>
+                    <div className="w-full">
+                      <Label htmlFor="gender" className="text-sm block">Giới tính</Label>
+                      <Controller name="gender" control={ctr} defaultValue={parent?.gender}
+                      render={({field}) =>(
+                        <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="w-full" {...reg("gender")}>
+                          <div className="flex gap-3">
+                            <div className="flex items-center gap-2">
+                              <RadioGroupItem id="nam" value="Nam"/>
+                              <Label htmlFor="nam">Nam</Label>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <RadioGroupItem id="nu" value="Nữ"/>
+                              <Label htmlFor="nu">Nữ</Label>
+                            </div>
+                          </div>
+                        </RadioGroup>
+                      )}
+                      />
+                    </div>
+                    <div className="w-full">
+                      <Label htmlFor="address" className="text-sm block">Địa chỉ</Label>
+                      <Input type="text" id="address" className="rounded-xl shadow-md" {...reg("address")}/>
+                      {err.address && <p className="text-destructive text-sm">{err.address.message}</p>}
+                    </div>
+                    <div>
+                      <Button type="submit" disabled={isSub} className="rounded-2xl shadow-md">Cập nhập</Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
             <Dialog>
               <DialogTrigger asChild>
@@ -165,8 +251,17 @@ const HomePageParent = () => {
                     <Label htmlFor="avatar" className="text-sm block">
                       Ảnh đại diện
                     </Label>
-                    <Input type="file" id="avatar" className="rounded-2xl" {...register("avatar")}/>
-                    {errors.avatar && <p className="text-destructive text-sm">{errors.avatar.message as string}</p>}
+                    <Input
+                      type="file"
+                      id="avatar"
+                      className="rounded-2xl"
+                      {...register("avatar")}
+                    />
+                    {errors.avatar && (
+                      <p className="text-destructive text-sm">
+                        {errors.avatar.message as string}
+                      </p>
+                    )}
                   </div>
                   <Button
                     type="submit"
