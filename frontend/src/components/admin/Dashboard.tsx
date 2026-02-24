@@ -14,7 +14,7 @@ export function Dashboard() {
       <div className="space-y-6 mb-3 bg-[#f0fdf4]">
         {/* Stats Grid */}
         <div className="flex gap-12">
-          <Card className="w-150 h-auto">
+          <Card className="w-150 h-auto shadow-md rounded-2xl">
             <CardContent className="p-6">
               <div className="flex space-x-40 justify-between">
                 <div className="space-y-2">
@@ -24,14 +24,14 @@ export function Dashboard() {
                   </h1>
                 </div>  
                 <button onClick={() => setTabActive("teachermanagement")}>
-                  <div className=" bg-blue-500 w-24 h-24 rounded-lg flex items-center justify-center">
+                  <div className=" bg-blue-500 w-24 h-24 rounded-lg flex items-center justify-center hover:shadow-xl">
                     <Users className=" w-12 h-12 text-white" />
                   </div>
                 </button>
               </div>
             </CardContent>
           </Card>
-          <Card className="w-150 h-auto">
+          <Card className="w-150 h-auto shadow-md rounded-2xl">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div className="space-y-2">
@@ -41,7 +41,7 @@ export function Dashboard() {
                   </h1>
                 </div>
                 <button onClick={() => setTabActive("studentmanagement")}>
-                  <div className=" bg-red-500 w-24 h-24 rounded-lg flex items-center justify-center">
+                  <div className=" bg-red-500 w-24 h-24 rounded-lg flex items-center justify-center hover:shadow-xl">
                     <Baby className=" w-12 h-12 text-white" />
                   </div>
                 </button>
@@ -51,9 +51,9 @@ export function Dashboard() {
         </div>
       </div>
       <div className="space-y-6 mb-3">
-        {/* Stats Grid */}
+       
         <div className="flex gap-12">
-          <Card className="w-150 h-auto">
+          <Card className="w-150 h-auto shadow-md rounded-2xl">
             <CardContent className="p-6">
               <div className="flex space-x-40 justify-between">
                 <div className="space-y-2">
@@ -70,7 +70,7 @@ export function Dashboard() {
               </div>
             </CardContent>
           </Card>
-          <Card className="w-150 h-auto">
+          <Card className="w-150 h-auto shadow-md rounded-2xl">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div className="space-y-2">

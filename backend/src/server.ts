@@ -11,6 +11,7 @@ import studentRoute from './routes/studentRoute'
 import { protectedRoute } from "./middlewares/authMiddleware";
 const app = express()
 const PORT = process.env.PORT || 5001
+
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));

@@ -91,7 +91,7 @@ const MenuCard = ({menu} : IMenuProps) => {
                   <DialogTrigger asChild>
                     <Button
                       variant="outline"
-                      className="rounded-2xl bg-[#05D988] text-[#ffffff] mt-4 hover:bg-[#05C27A] hover:text-white focus:bg-[#05D988]"
+                      className="rounded-2xl bg-[#05D988] text-[#ffffff] mt-4 hover:bg-[#006f44] hover:text-white focus:bg-[#05D988]"
                     >
                       Chỉnh sửa
                     </Button>
@@ -172,7 +172,7 @@ const MenuCard = ({menu} : IMenuProps) => {
                       <div>
                         <Button
                           type="submit"
-                          className="bg-[#05D988] text-[#ffffff] mt-4 hover:bg-[#05C27A] focus:bg-[#05D988]"
+                          className="rounded-2xl bg-[#05D988] text-[#ffffff] mt-4 hover:bg-[#006f44] focus:bg-[#05D988]"
                           disabled={isSubmitting}
                         >
                           Cập nhập

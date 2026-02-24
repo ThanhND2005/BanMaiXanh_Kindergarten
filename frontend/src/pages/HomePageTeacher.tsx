@@ -211,7 +211,7 @@ const HomePageTeacher = () => {
                       {err.address && <p className="text-destructive text-sm">{err.address.message}</p>}
                     </div>
                     <div>
-                      <Button type="submit" disabled={isSub} className="rounded-2xl shadow-md">Cập nhập</Button>
+                      <Button type="submit" disabled={isSub} className="rounded-2xl shadow-md text-white bg-[#05d988] hover:bg-[#006f44] hover:text-white focus:bg-[#05d988]">Cập nhập</Button>
                     </div>
                   </form>
                 </DialogContent>

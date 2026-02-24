@@ -25,8 +25,8 @@ export const adminService = {
         const res = await api.post('/admin/postNotification',{title,content,receiver},{withCredentials:true})
         return res.data
     },
-    deleteNotification : async (notificationid : string, receiverid : string) =>{
-        const res = await api.patch('/admin/deleteNotification',{notificationid,receiverid},{withCredentials:true})
+    deleteNotification : async (notificationid : string) =>{
+        const res = await api.patch('/admin/deleteNotification',{notificationid},{withCredentials:true})
         return res.data
     },
     postClass : async (teacherid : string, age : number, member : number ,tuition: number,schedule: string, name: string, type: string) =>{

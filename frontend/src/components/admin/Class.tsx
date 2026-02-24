@@ -9,7 +9,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { ChevronsUpDown } from "lucide-react";
+import { ChevronsUpDown, Plus } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -37,7 +37,7 @@ type ClassFormValues = z.infer<typeof ClassFormSchema>;
 const Class = () => {
   const teachers = useAdminStore((state) => state.teachers)?.filter((teacher) => teacher.classid === null)
   const [open, setOpen] = useState(false);
-
+  const [open2,setOpen2] = useState(false)
   const {
     reset,
     control,
@@ -73,7 +73,7 @@ const Class = () => {
     finally
     {
       reset()
-      setOpen(false)
+      setOpen2(false)
       
     }
   };
@@ -83,13 +83,16 @@ const Class = () => {
       <div className="flex justify-between">
         <h1 className="text-2xl itim-regular">Các lớp học trong hệ thống:</h1>
         <div>
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog open={open2} onOpenChange={setOpen2}>
             <DialogTrigger asChild>
               <Button
                 variant="outline"
                 className="rounded-2xl shadow-md text-white bg-[#05d988] hover:bg-[#006f44] hover:text-white focus:bg-[#05d988]"
               >
-                Tạo lớp học
+                <div className="flex justify-between items-center gap-1">
+                  <Plus/>
+                  <h1 className="text-md">Tạo lớp học</h1>
+                </div>
               </Button>
             </DialogTrigger>
             <DialogContent>

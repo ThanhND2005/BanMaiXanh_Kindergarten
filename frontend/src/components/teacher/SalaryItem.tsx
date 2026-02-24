@@ -47,7 +47,7 @@ const SalaryItem = ({salary} : SalaryProps) => {
             <div className='h-40 w-40 rounded-full overflow-hidden flex items-center justify-center bg-[#FFFF00]'>
                 <DollarSign className='h-40 w-40 text-white'/>
             </div>
-            {salary.status === 'Đang thực hiện' ? <Button type='button' onClick={() => onConfirm(salary.salaryid)} className='bg-[#2E7D32] rounded-2xl shadow-md'>Xác nhận</Button> : <Button type='button'  className='bg-[#0095D5] rounded-2xl shadow-md'>Đã xác nhận</Button>
+            {salary.status === 'Đang thực hiện' ? <Button type='button' onClick={() => onConfirm(salary.salaryid)} className='bg-[#05d988] rounded-2xl shadow-md hover:bg-[#006f44] focus:bg-[#05d988]'>Xác nhận</Button> : <Button type='button'  className='bg-[#0095D5] rounded-2xl shadow-md hover:bg-[#0095D5]'>Đã xác nhận</Button>
         }
         </div>
       </li>

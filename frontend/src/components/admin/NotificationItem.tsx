@@ -8,8 +8,8 @@ interface INotificationProps {
 }
 const NotificationItem = ({ notification }: INotificationProps) => {
   const {refreshNotifications} = useAdminStore()
-  const onDelete = async (notificationid : string,receiverid : string) => {
-    await adminService.deleteNotification(notificationid,receiverid)
+  const onDelete = async (notificationid : string) => {
+    await adminService.deleteNotification(notificationid)
     await refreshNotifications()
   };
   return (
@@ -31,7 +31,7 @@ const NotificationItem = ({ notification }: INotificationProps) => {
             <Button
               type="button"
               className="w-20 bg-[#f52121] rounded-2xl shadow-sm hover:bg-[#9E0C0C] focus:bg-[#f52121] transition all"
-              onClick={() => onDelete(notification.notificationid,notification.receiveid)}
+              onClick={() => onDelete(notification.notificationid)}
             >
               Xóa
             </Button>

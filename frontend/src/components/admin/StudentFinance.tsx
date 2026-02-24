@@ -50,7 +50,7 @@ const StudentFinance = () => {
           <Button
             type="button"
             onClick={() => onCreate(2)}
-            className="bg-[#05D988] rounded-xl shadow-sm hover:bg-[#00BC74] focus:bg-[#05D988]"
+            className="bg-[#05D988] rounded-2xl shadow-sm hover:bg-[#006f44] focus:bg-[#05D988]"
           >
             Xuất hóa đơn
           </Button>
@@ -100,7 +100,7 @@ const StudentFinance = () => {
                 <div>
                   <Button
                     type="button"
-                    className="w-20 bg-[#05D988] rounded-2xl hover:bg-[#00BC74] focus:bg-[#05D988]"
+                    className="w-20 bg-[#05D988] rounded-2xl hover:bg-[#006f44] focus:bg-[#05D988]"
                     onClick={() => onVerify(studentbill.tuitionid)}
                   >
                     Xác nhận

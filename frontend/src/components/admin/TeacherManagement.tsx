@@ -1,19 +1,22 @@
-
 import { useAdminStore } from "@/stores/useAdminStore";
 import TeacherCard from "./TeacherCard";
 
 const TeacherManagement = () => {
-  
-  const teachers = useAdminStore((state) => state.teachers)
-  
+  const teachers = useAdminStore((state) => state.teachers);
+  const { security } = useAdminStore();
   return (
     <>
-      <h1 className="text-4xl itim-regular mb-4">
-        Các giáo viên trong hệ thống:
-      </h1>
+      <div className="flex justify-between">
+        <h1 className="text-4xl itim-regular mb-4">
+          Các giáo viên trong hệ thống:
+        </h1>
+        <h1 className="text-4xl itim-regular mb-4">
+          Mã bảo mật: {security?.code}
+        </h1> 
+      </div>
       <ul className="grid grid-cols-4 gap-8">
         {teachers?.map((teacher) => (
-          <TeacherCard key={teacher.userid} teacher={teacher}/>
+          <TeacherCard key={teacher.userid} teacher={teacher} />
         ))}
       </ul>
     </>

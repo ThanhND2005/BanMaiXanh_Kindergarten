@@ -9,11 +9,35 @@ export const getNotificationList = async (req: Request, res: Response) => {
     const request = new sql.Request()
     const result = await request
       .input('userid', sql.UniqueIdentifier, userid)
-      .query(`SELECT m.senderid, m.receiveid ,m.notificationid,n.title, n.content,n.createdat from NotificationManagement m
-  join Account a on a.userid = m.senderid 
-  join Notification n  on n.notificationid  = m.notificationid 
-  where a.userid = @userid AND m.deleted = 'false' 
-  ORDER BY n.createdat DESC`)
+      .query(`WITH RankedNotifications AS (
+    SELECT 
+        m.senderid, 
+        m.receiveid, 
+        m.notificationid,
+        n.title, 
+        n.content,
+        n.createdat,
+        
+        ROW_NUMBER() OVER(
+            PARTITION BY m.notificationid 
+            ORDER BY n.createdat DESC
+        ) as rn
+    FROM NotificationManagement m
+    JOIN Account a ON a.userid = m.senderid 
+    JOIN Notification n ON n.notificationid = m.notificationid 
+    WHERE a.userid = @userid AND m.deleted = 'false' 
+)
+
+SELECT 
+    senderid, 
+    receiveid, 
+    notificationid, 
+    title, 
+    content, 
+    createdat 
+FROM RankedNotifications
+WHERE rn = 1
+ORDER BY createdat DESC;`)
     const notifications = result.recordset
     if (!notifications) {
       return res.status(404).send('Không có thông báo liên quan đến đối tượng')
@@ -103,14 +127,13 @@ export const postNotification = async (req: Request, res: Response) => {
 export const deleteNotification = async (req: Request, res: Response) => {
   try {
     const userid = (req as any).user.userid
-    const { receiverid, notificationid } = req.body
+    const { notificationid } = req.body
     const request1 = new sql.Request()
     await request1
       .input('userid', sql.UniqueIdentifier, userid)
-      .input('receiverid', sql.UniqueIdentifier, receiverid)
       .input('notificationid', sql.UniqueIdentifier, notificationid)
       .query(
-        `UPDATE NotificationManagement SET deleted = 'true' WHERE senderid = @userid AND receiveid = @receiverid AND notificationid = @notificationid`
+        `UPDATE NotificationManagement SET deleted = 'true' WHERE notificationid = @notificationid`
       )
     return res.sendStatus(204)
   } catch (error) {
@@ -317,6 +340,7 @@ export const postStudentBill = async (req: Request, res: Response) => {
   try {
     const today = new Date()
     const month = today.getMonth()
+    const year = today.getFullYear()
     const request1 = new sql.Request()
     const res1 = await request1.query(
       `SELECT * FROM ClassManagement WHERE deleted = 'false'`
@@ -340,8 +364,9 @@ export const postStudentBill = async (req: Request, res: Response) => {
         .input('tuition', sql.Int, amount)
         .input('qrUrl', sql.NVarChar, qrUrl)
         .input('month', sql.Int, month)
+        .input('year',sql.Int,year)
         .query(
-          `INSERT INTO Tuition (studentid, classid, amount, qrurl,month) VALUES (@studentid, @classid, @tuition, @qrUrl, @month)`
+          `INSERT INTO Tuition (studentid, classid, amount, qrurl,month,year) VALUES (@studentid, @classid, @tuition, @qrUrl, @month,@year)`
         )
     })
     await Promise.all(insertPromise)
@@ -357,6 +382,7 @@ export const postTeacherBill = async (req: Request, res: Response) => {
   try {
     const today = new Date()
     const month = today.getMonth()
+    const year = today.getFullYear()
     const request1 = new sql.Request()
     const res1 = await request1.query(
       `SELECT * FROM Class WHERE deleted ='false'`
@@ -380,10 +406,10 @@ export const postTeacherBill = async (req: Request, res: Response) => {
         .input('amount', sql.Int, amount)
         .input('timekeeping', sql.Int, timekeeping)
         .input('month', sql.Int, month)
+        .input('year',sql.Int,year)
         .query(
-          `INSERT INTO Salary (teacherid, allowance, amount, timekeeping, month) VALUES (@teacherid, @allowance, @amount, @timekeeping, @month)`
+          `INSERT INTO Salary (teacherid, allowance, amount, timekeeping, month,year) VALUES (@teacherid, @allowance, @amount, @timekeeping, @month,@year)`
         )
-
     })
     await Promise.all(insertPromise)
     return res.sendStatus(201)

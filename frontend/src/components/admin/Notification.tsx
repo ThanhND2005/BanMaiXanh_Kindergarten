@@ -11,6 +11,7 @@ import NotificationItem from './NotificationItem'
 import { useAdminStore } from '@/stores/useAdminStore'
 import { adminService } from '@/services/adminService'
 import {toast} from 'sonner'
+import { Plus } from 'lucide-react'
 const NotificationFormSchema = z.object({
     title: z.string().min(1,"Tiêu đề không được để trống"),
     content: z.string().min(1,"Nội dung không được để trống"),
@@ -42,7 +43,10 @@ const Notification = () => {
       <h1 className='text-2xl font-bold itim-regular'>Các thông báo đã gửi:</h1>
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant='outline' className='rounded-2xl bg-[#05D988] text-[#ffffff] hover:bg-[#02B671] focus:bg-[#05D988]  transition all'>Tạo thông báo</Button>
+          <Button variant='outline' className='rounded-2xl bg-[#05D988] text-[#ffffff] hover:bg-[#006f44] hover:text-white focus:bg-[#05D988]  transition all'><div className='flex justify-between gap-1 items-center'>
+            <Plus/>
+            <h1 className='text-md'>Tạo thông báo</h1>
+            </div> </Button>
         </DialogTrigger>
         <DialogContent className='flex flex-wrap justify-center gap-3 p-3'>
           <h1 className='text-2xl font-bold'>Tạo thông báo</h1>
@@ -69,8 +73,6 @@ const Notification = () => {
               </div>
             </RadioGroup>
             )}
-            
-            
             />
          
             <div className='w-full'>
@@ -80,11 +82,11 @@ const Notification = () => {
             </div>
             <div className='w-full'>
               <Label htmlFor='content' className='text-sm block font-bold'>Nội dung</Label>
-              <Input type='text' id='title' placeholder='Nhập tiêu đề' className='shadow-sm' {...register("content")}/>
+              <Input type='text' id='title' placeholder='Nhập nội dung' className='shadow-sm' {...register("content")}/>
               {errors.content && <p className='text-destructive text-sm'>{errors.content?.message}</p>}
             </div>
             <div className='flex justify-center w-full'>
-              <Button type='submit' className='rounded-2xl bg-[#05D988] hover:bg-[#02B671] focus:bg-[#05D988]  transition all' disabled={isSubmitting}>Tạo thông báo</Button>
+              <Button type='submit' className='rounded-2xl bg-[#05D988] hover:bg-[#006f44] focus:bg-[#05D988]  transition all' disabled={isSubmitting}>Tạo thông báo</Button>
 
             </div>
           </form>

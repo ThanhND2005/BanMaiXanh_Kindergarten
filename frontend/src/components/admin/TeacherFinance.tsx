@@ -38,10 +38,10 @@ const TeacherFinance = () => {
           <h2 className='text-2xl itim-regular text-[#05D988]'>Hóa đơn lương giáo viên trong hệ thống:</h2>
         </div>
         <div className='flex justify-end'>
-          <Button type='button' className='bg-[#05d988] hover:bg-[#00BC74] focus:bg-[#05D988]' onClick={() => onCreate(2)}>Xuất hóa đơn</Button>
+          <Button type='button' className='rounded-2xl bg-[#05d988] hover:bg-[#006f44] focus:bg-[#05D988]' onClick={() => onCreate(2)}>Xuất hóa đơn</Button>
         </div>
       </div>
-      <ul className='grid grid-cols-4 gap-6'>
+      <ul className='grid grid-cols-3  gap-6'>
         {teacherbills?.map((teacherbill) =>(
           <li key={teacherbill.salaryid}>
             <div className='bg-[#ffffff] rounded-xl flex flex-col justify-center items-center shadow-md p-6 gap-4'>
@@ -62,7 +62,7 @@ const TeacherFinance = () => {
                 <h2 className='text-md font-bold'>Trạng thái: {teacherbill.status}</h2>
               </div>
               <div>
-                <Button type='button' className='bg-[#EB5757] hover:bg-[#B22626] focus:bg-[#EB5757]' onClick={() => onDelete(teacherbill.salaryid)}>Xóa</Button>
+                <Button type='button' className='bg-[#EB5757] rounded-2xl hover:bg-[#B22626] focus:bg-[#EB5757]' onClick={() => onDelete(teacherbill.salaryid)}>Xóa</Button>
               </div>
             </div>
           </li>

@@ -111,7 +111,7 @@ export default function HomePageAdmin() {
               Tài chính
             </button>
             <div className='flex ml-auto items-center'>
-              <Button type='button' onClick={() => onLogout()} className='bg-[#05d988] hover:bg-[#006f44] focus:bg-[#05d988] transition all '>Đăng xuất</Button>
+              <Button type='button' onClick={() => onLogout()} className='rounded-2xl bg-[#05d988] hover:bg-[#006f44] focus:bg-[#05d988] transition all '>Đăng xuất</Button>
             </div>
           </div>
         </div>
