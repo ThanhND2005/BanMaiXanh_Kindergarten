@@ -19,6 +19,7 @@ const NotificationFormSchema = z.object({
   receiverid: z.string(),
   title : z.string().min(1,"Tiêu đề không được để trống"),
   content : z.string().min(1,"Nội dung không được để trống"),
+  sendername: z.string().min(1,"Tên người gửi không được để trống")
 })
 type NotificationFormValues = z.infer<typeof NotificationFormSchema>
 
@@ -30,12 +31,13 @@ const TeacherCard = ({teacher} : ITeacherProps) => {
         defaultValues : {
           senderid : parent?.userid,
           receiverid: teacher.userid,
+          sendername: parent?.name
         }
       })
   const onSubmit = async (data : NotificationFormValues) =>{
-    const {title,content,senderid,receiverid} = data
+    const {title,content,senderid,receiverid,sendername} = data
     try {
-      await parentService.postNotification(senderid, receiverid,content,title)
+      await parentService.postNotification(senderid, receiverid,content,title,sendername)
       toast.success("Gửi thông báo thành công !")
     } catch (error) {
       console.error(error)

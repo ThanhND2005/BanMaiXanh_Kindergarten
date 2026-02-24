@@ -1,8 +1,8 @@
 import api from "@/lib/axios";
 
 export const parentService = {
-    postNotification : async(parentid : string, teacherid: string, content: string, title: string) =>{
-        const res =await api.post(`/parent/postNotification/${parentid}`,{teacherid,title,content},{withCredentials:true})
+    postNotification : async(parentid : string, teacherid: string, content: string, title: string,sendername: string) =>{
+        const res =await api.post(`/parent/postNotification/${parentid}`,{teacherid,title,content,sendername},{withCredentials:true})
         return res.data
     },
     patchAvatar : async (file : File, parentid: string) =>{

@@ -32,7 +32,7 @@ export const adminService = {
     postClass : async (teacherid : string, age : number, member : number ,tuition: number,schedule: string, name: string, type: string) =>{
         const res = await api.post('/admin/postClass',{teacherid,age,member,tuition,schedule,name,type},{withCredentials: true})
         return res.data
-    },
+    },  
     deleteClass : async (classid : string) =>{
         const res = await api.patch('/admin/deleteClass',{classid},{withCredentials: true})
         return res.data
@@ -58,7 +58,11 @@ export const adminService = {
         return res.data
     },
     deleteTeacherBill : async (salaryid : string) =>{
-        const res = await api.patch(`/deleteTeacherBill/${salaryid}`,{},{withCredentials: true})
+        const res = await api.patch(`/admin/deleteTeacherBill/${salaryid}`,{},{withCredentials: true})
         return res.data
+    },
+    getCode : async () =>{
+        const res = await api.get('/admin/getCode',{withCredentials: true})
+        return res.data.security
     }
 }

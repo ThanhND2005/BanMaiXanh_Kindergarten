@@ -10,7 +10,7 @@ const Notification = () => {
         {notifications?.map((notification) =>(
           <li key={notification.notificationid} className='w-full flex justify-between items-center bg-[#ffffff] rounded-xl shadow-md py-4 px-6'>
             <div className='flex flex-col space-y-2'>
-              <h2 className='text-md text-[#828282]'>Người gửi: {notification.senderid}</h2>
+              <h2 className='text-md text-[#828282]'>Người gửi: {notification.sendername}</h2>
               <div className='flex space-x-3'>
                 <h2 className='text-xl font-bold text-[#15803D]'>Tiêu đề:</h2>
                 <h2 className='text-xl font-bold'>{notification.title}</h2>

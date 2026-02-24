@@ -4,7 +4,7 @@ export const getStudentList = async (req: Request, res: Response) => {
   try {
     const request = new sql.Request()
     const day = new Date()
-    const res1 = await request.input('day',sql.Date,day).query(
+    const res1 = await request.input('day', sql.Date, day).query(
       `SELECT s.studentid, s.dob,s.gender,s.height,s.weight,s.age,s.parentid,p.name as parentname,s.avatarurl,s.name,a.date,a.check_in_time,a.check_out_time,a.attendanceid
       FROM Student s
       LEFT JOIN Parent p on p.userid = s.parentid
@@ -116,7 +116,17 @@ export const registerClass = async (req: Request, res: Response) => {
       .input('studentid', sql.UniqueIdentifier, studentid)
       .input('classid', sql.UniqueIdentifier, classid)
       .query(
-        `INSERT INTO ClassManagement (studentid, classid) VALUES (@studentid, @classid)`
+        `INSERT INTO ClassManagement (studentid, classid)
+                  SELECT @studentid, @classid
+                  FROM Class c
+                  WHERE c.classid = @classid 
+                    AND c.member > c.currentmember;`
+      )
+    const request2 = new sql.Request()
+    await request2
+      .input('classid', sql.UniqueIdentifier, classid)
+      .query(
+        'UPDATE Class SET currentmember = currentmember+1 WHERE classid = @classid'
       )
     return res.send(201)
   } catch (error) {

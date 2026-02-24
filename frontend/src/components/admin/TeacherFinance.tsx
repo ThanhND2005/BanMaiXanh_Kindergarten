@@ -5,7 +5,7 @@ import { useAdminStore } from '@/stores/useAdminStore'
 
 const TeacherFinance = () => {
   const teacherbills = useAdminStore((state)=> state.teacherbills)
-  const {refreshTeacherBills,loading} = useAdminStore()
+  const {refreshTeacherBills} = useAdminStore()
   const onCreate = async (month : number) =>{
     try {
       useAdminStore.setState({loading : true})
@@ -58,6 +58,7 @@ const TeacherFinance = () => {
                 <h2 className='text-md font-bold'>Lương cơ bản: {teacherbill.timekeeping * 200000} vnđ</h2>
                 <h2 className='text-md font-bold'>Phụ cấp: {teacherbill.allowance} vnđ</h2>
                 <h2 className='text-md font-bold'>Tổng lương: {teacherbill.amount} vnđ</h2>
+                <h2 className='text-md font-bold'>Tháng: {teacherbill.month}</h2>
                 <h2 className='text-md font-bold'>Trạng thái: {teacherbill.status}</h2>
               </div>
               <div>

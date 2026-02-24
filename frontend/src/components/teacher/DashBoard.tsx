@@ -34,9 +34,18 @@ const DashBoard = () => {
   const onTimekeeping = async (data : TeacherForm) =>{
         const {teacherid,code} = data
         try {
-          await teacherService.postTimeKeeping(teacherid)
+          await teacherService.postTimeKeeping(teacherid,code)
           await refreshTeachers()
-          toast.success("Chấm công thành công")
+          const currentteacher = useAdminStore.getState().teachers?.find((t) => t.userid === user?.userid)
+          if(currentteacher?.timekeeping === null)
+          {
+            toast.error("Chấm công thất bại !")
+          }
+          else
+          {
+            toast.success("Chấm công thành công !")
+          }
+
         } catch (error) {
           console.error(error)
           toast.error("Điểm danh thất bại")

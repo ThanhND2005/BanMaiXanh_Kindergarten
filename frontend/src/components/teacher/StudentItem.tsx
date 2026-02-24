@@ -26,6 +26,7 @@ const NotificationFormSchema = z.object({
   receiverid: z.string(),
   title : z.string().min(1,"Tiêu đề không được để trống"),
   content : z.string().min(1,"Nội dung không được để trống"),
+  sendername: z.string().min(1,"Nội dung này không được để trống")
 })
 
 type UpdateFormValues = z.infer<typeof UpdateFormSchema>
@@ -46,6 +47,7 @@ const StudentItem = ({student} : StudentItemProps) => {
       defaultValues : {
         senderid : teacher?.userid,
         receiverid: student.parentid,
+        sendername: teacher?.name
       }
     })
     const {refreshStudents} = useTeacherStore()
@@ -66,9 +68,9 @@ const StudentItem = ({student} : StudentItemProps) => {
       }
     }
     const onNotify = async (data : NotificationFormValues) => {
-        const {senderid,receiverid,title,content} = data
+        const {senderid,receiverid,title,content,sendername} = data
         try {
-          await teacherService.postNotification(senderid,receiverid,content,title)
+          await teacherService.postNotification(senderid,receiverid,content,title,sendername)
           toast.success("Gửi thông báo thành công")
           setOpen(false)
         } catch (error) {

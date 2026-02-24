@@ -12,7 +12,8 @@ export const getNotificationList = async (req: Request, res: Response) => {
       .query(`SELECT m.senderid, m.receiveid ,m.notificationid,n.title, n.content,n.createdat from NotificationManagement m
   join Account a on a.userid = m.senderid 
   join Notification n  on n.notificationid  = m.notificationid 
-  where a.userid = @userid AND m.deleted = 'false'`)
+  where a.userid = @userid AND m.deleted = 'false' 
+  ORDER BY n.createdat DESC`)
     const notifications = result.recordset
     if (!notifications) {
       return res.status(404).send('Không có thông báo liên quan đến đối tượng')
@@ -47,7 +48,8 @@ export const postNotification = async (req: Request, res: Response) => {
           .input('userid', sql.UniqueIdentifier, userid)
           .input('receiverid', sql.UniqueIdentifier, user.userid)
           .input('notificationid', sql.UniqueIdentifier, notificationid)
-          .query(`INSERT INTO NotificationManagement (senderid, notificationid, receiveid) VALUES (@userid, @notificationid, @receiverid)`)
+          .input('sendername', sql.NVarChar, 'Nhà trường')
+          .query(`INSERT INTO NotificationManagement (senderid, notificationid, receiveid,sendername) VALUES (@userid, @notificationid, @receiverid,@sendername)`)
 
       })
       await Promise.all(insertPromise)
@@ -62,9 +64,10 @@ export const postNotification = async (req: Request, res: Response) => {
         return request3
           .input('userid', sql.UniqueIdentifier, userid)
           .input('receiverid', sql.UniqueIdentifier, user.userid)
+          .input('sendername', sql.NVarChar, 'Nhà trường')
           .input('notificationid', sql.UniqueIdentifier, notificationid)
           .query(
-            `INSERT INTO NotificationManagement (senderid, notificationid, receiveid) VALUES (@userid,  @notificationid,@receiverid)`
+            `INSERT INTO NotificationManagement (senderid, notificationid, receiveid,sendername) VALUES (@userid,  @notificationid,@receiverid,@sendername)`
           )
 
       })
@@ -80,9 +83,10 @@ export const postNotification = async (req: Request, res: Response) => {
         return request3
           .input('userid', sql.UniqueIdentifier, userid)
           .input('receiverid', sql.UniqueIdentifier, user.userid)
+          .input('sendername', sql.NVarChar, 'Nhà trường')
           .input('notificationid', sql.UniqueIdentifier, notificationid)
           .query(
-            `INSERT INTO NotificationManagement (senderid, notificationid, receiveid) VALUES (@userid, @notificationid, @receiverid)`
+            `INSERT INTO NotificationManagement (senderid, notificationid, receiveid,sendername) VALUES (@userid, @notificationid, @receiverid,@sendername)`
           )
 
       })
@@ -217,7 +221,7 @@ export const getStudentBill = async (req: Request, res: Response) => {
       t.amount as tuition, 
       t.billurl, 
       t.qrurl, 
-      t.paidat, 
+      t.createdat, 
       t.month, 
       p.userid as parentid,
       p.name as parentName, 
@@ -235,10 +239,11 @@ export const getStudentBill = async (req: Request, res: Response) => {
             AND a.check_in_time IS NOT NULL
         ) as attendance 
       FROM Tuition t
-      JOIN Student s on t.studentid = s.studentid
-      JOIN Parent p on p.userid = s.parentid
-      JOIN Class c on c.classid = t.classid
+      JOIN Student s on t.studentid = s.studentid AND s.deleted= 'false'
+      JOIN Parent p on p.userid = s.parentid AND p.deleted='false'
+      JOIN Class c on c.classid = t.classid AND c.deleted = 'false'
       WHERE t.deleted = 'false'
+      ORDER BY t.createdat DESC
       `
     )
     const studentbills = res1.recordset
@@ -269,9 +274,10 @@ export const getTeacherBill = async (req: Request, res: Response) => {
       t.amount,
       t.timekeeping
       FROM Salary t
-      JOIN Teacher tc on t.teacherid = tc.userid
-      JOIN Class c on c.teacherid = tc.userid
+      JOIN Teacher tc on t.teacherid = tc.userid AND tc.deleted ='false'
+      JOIN Class c on c.teacherid = tc.userid AND c.deleted='false'
       WHERE t.deleted = 'false'
+      ORDER BY t.paidat DESC
       `
     )
     const teacherbills = res1.recordset
@@ -309,7 +315,8 @@ export const deleteStudentBill = async (req: Request, res: Response) => {
 }
 export const postStudentBill = async (req: Request, res: Response) => {
   try {
-    const { month } = req.params
+    const today = new Date()
+    const month = today.getMonth()
     const request1 = new sql.Request()
     const res1 = await request1.query(
       `SELECT * FROM ClassManagement WHERE deleted = 'false'`
@@ -320,7 +327,7 @@ export const postStudentBill = async (req: Request, res: Response) => {
       const res2 = await request2
         .input('classid', sql.UniqueIdentifier, classmanagement.classid)
         .query(
-          `SELECT * FROM Class WHERE classid = @classid`
+          `SELECT * FROM Class WHERE classid = @classid AND deleted='false'`
         )
       const amount = res2.recordset[0].tuition
       const url = `https://img.vietqr.io/image/vpbank-0354445956-print.png?amount=${amount}&addInfo=HOC%20PHI%20THANG%20${month}&accountName=MAM%20NON%20BAN%20MAI%20XANH`
@@ -348,7 +355,8 @@ export const postStudentBill = async (req: Request, res: Response) => {
 
 export const postTeacherBill = async (req: Request, res: Response) => {
   try {
-    const { month } = req.params
+    const today = new Date()
+    const month = today.getMonth()
     const request1 = new sql.Request()
     const res1 = await request1.query(
       `SELECT * FROM Class WHERE deleted ='false'`
@@ -394,6 +402,36 @@ export const deleteTeacherBill = async (req: Request, res: Response) => {
         `UPDATE Salary SET deleted = 'true' WHERE salaryid = @salaryid`
       )
     return res.sendStatus(204)
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send('Lỗi hệ thống')
+  }
+}
+export const getCode = async (req: Request, res: Response) => {
+  try {
+
+    const today = new Date()
+    const request = new sql.Request()
+    const code = (Math.floor(Math.random() * 9000) + 1000).toString()
+    await request
+      .input('code', sql.NVarChar, code)  
+      .input('day', sql.Date, today)
+      .query(
+        `IF NOT EXISTS(
+        SELECT 1 FROM Security WHERE date = @day
+      )
+      BEGIN
+        INSERT INTO Security (code,date) VALUES (@code,@day)
+      END`
+      )
+    const request2 = new sql.Request()
+    const res1 = await request2
+      .input('day', sql.Date, today)
+      .query(
+        'SELECT * FROM Security WHERE date = @day'
+      )
+    const security = res1.recordset[0]
+    return res.status(200).json({ security })
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')

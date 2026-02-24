@@ -9,6 +9,7 @@ import { adminService } from '@/services/adminService'
 export const useAdminStore = create<adminState>((set,get) => ({
     loading : false,
     students: null,
+    security : null,
     clearState : () =>{
         set({students :null,teachers :null,teacherbills :null,studentbills:null,classes: null,loading:false})
     },
@@ -18,7 +19,20 @@ export const useAdminStore = create<adminState>((set,get) => ({
     menuday: null,
     studentbills: null,
     teacherbills: null,
-    
+    refreshSecurity: async () =>{
+        try {
+            set({loading: true})
+            const security = await adminService.getCode()
+            set({security})
+        } catch (error) {
+            console.error(error)
+            get().clearState()
+        }
+        finally
+        {
+            set({loading:false})
+        }
+    },
     refreshTeachers: async () => {
         try {
             set({loading: true})

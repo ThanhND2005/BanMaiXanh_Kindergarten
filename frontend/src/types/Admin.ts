@@ -9,10 +9,16 @@ export interface Notification {
     receiveid: string, 
     title: string, 
     content: string, 
-    createdat: Date
+    createdat: Date,
+    sendername: string,
+}
+export interface Security{
+    code: string, 
+    date: Date
 }
 export interface adminState {
-    loading : boolean,
+    loading : boolean
+    security : Security | null
     teachers : Teacher[] | null
     notifications: Notification[] | null
     classes : Class[] | null
@@ -28,4 +34,5 @@ export interface adminState {
     refreshStudents : () => void
     refreshStudentBills: () => void
     refreshTeacherBills: () => void
+    refreshSecurity: ()=> void
 }

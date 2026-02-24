@@ -90,6 +90,9 @@ const StudentFinance = () => {
                   Học phí: {studentbill.tuition} vnđ
                 </h2>
                 <h2 className="text-md font-bold w-full">
+                  Tháng: {studentbill.month}
+                </h2>
+                <h2 className="text-md font-bold w-full">
                   Trạng thái: {studentbill.status}
                 </h2>
               </div>

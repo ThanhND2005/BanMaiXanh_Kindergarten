@@ -17,9 +17,6 @@ const NotificationItem = ({ notification }: INotificationProps) => {
       <li className="mb-4">
         <div className="grid grid-cols-2 justify-between gap-6 rounded-2xl w-full shadow-md bg-[#ffffff] px-4 py-2">
           <div className="flex flex-col gap-3">
-            <h1 className="text-xl font-medium text-[#828282]">
-              Người nhận: {notification.receiveid}
-            </h1>
             <h1 className="text-xl font-medium">
               Tiêu đề: {notification.title}
             </h1>

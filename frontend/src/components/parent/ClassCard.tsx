@@ -23,11 +23,12 @@ const ClassCard = ({ classinfor }: IClassProps) => {
   const [open, setOpen] = useState(false);
   const [open2,setOpen2] = useState(false)
   const [studentid, setStudentId] = useState("");
-  const { refreshStudents } = useAdminStore();
+  const { refreshStudents,refreshClasses} = useAdminStore();
   const onRegister = async (studentid: string, classid: string) => {
     try {
       await studentService.registerClass(studentid, classid);
       await refreshStudents();
+      await refreshClasses();
       toast.success("Đăng ký lớp cho học sinh thành công");
     } catch (error) {
       console.error(error);

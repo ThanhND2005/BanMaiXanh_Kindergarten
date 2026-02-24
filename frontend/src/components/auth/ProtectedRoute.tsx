@@ -10,7 +10,7 @@ interface Props {
 }
 const ProtectedRoute = ({ allowedRole }: Props) => {
   const { accessToken, user, loading, refresh, getMe } = useAuthStore();
-  const { refreshStudents,refreshTeachers,refreshClasses,refreshNotifications,refreshMenu,refreshStudentBills,refreshTeacherBills} =useAdminStore()
+  const { refreshSecurity,refreshStudents,refreshTeachers,refreshClasses,refreshNotifications,refreshMenu,refreshStudentBills,refreshTeacherBills} =useAdminStore()
   const {refreshNotifications : rnt,refreshStudents : rstu} = useTeacherStore()
   const {refreshNotification :refreshNotificationParent} = useParentStore()
   const [starting, setStarting] = useState(true)
@@ -26,7 +26,7 @@ const ProtectedRoute = ({ allowedRole }: Props) => {
         await refreshMenu()
         await refreshStudentBills()
         await refreshTeacherBills() 
-        
+        await refreshSecurity()
         
     }
     const currentUser = useAuthStore.getState().user

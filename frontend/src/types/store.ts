@@ -56,6 +56,7 @@ export interface TeacherBill {
 export interface Notification {
     notificationid:string, 
     senderid:string, 
+    sendername: string,
     title: string,
     content: string, 
     createdat: Date,

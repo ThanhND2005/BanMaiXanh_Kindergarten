@@ -19,8 +19,8 @@ export const teacherService = {
         const res = await api.get(`/teacher/getNotifications/${teacherid}`,{withCredentials:true})
         return res.data.notifications 
     },
-    postTimeKeeping : async (teacherid : string) =>{
-        const res = await api.post(`/teacher/postTimeKeeping/${teacherid}`,{},{withCredentials:true})
+    postTimeKeeping : async (teacherid : string,code: string) =>{
+        const res = await api.post(`/teacher/postTimeKeeping/${teacherid}`,{code},{withCredentials:true})
         return res.data
     },
     getMenu : async (day : number) =>{
@@ -43,8 +43,8 @@ export const teacherService = {
         const res = await api.patch(`/teacher/patchStudent/${studentid}`,{height,weight},{withCredentials: true})
         return res.data
     },
-    postNotification : async (teacherid: string, parentid: string, content: string, title: string) =>{
-        const res = await api.post(`/teacher/postNotification/${teacherid}`,{parentid,title,content},{withCredentials:true})
+    postNotification : async (teacherid: string, parentid: string, content: string, title: string,sendername: string) =>{
+        const res = await api.post(`/teacher/postNotification/${teacherid}`,{parentid,title,content,sendername},{withCredentials:true})
         return res.data
     },
     verifyTeacherBill : async (salaryid : string) =>{

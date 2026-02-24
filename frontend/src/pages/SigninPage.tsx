@@ -30,7 +30,7 @@ export function SigninPage({
   });
   const navigate = useNavigate()
   const signin = useAuthStore((state) => state.signin)
-  const {refreshStudents,refreshTeachers ,refreshClasses,refreshNotifications,refreshMenu,refreshStudentBills,refreshTeacherBills}= useAdminStore()
+  const {refreshStudents,refreshTeachers ,refreshClasses,refreshNotifications,refreshMenu,refreshStudentBills,refreshTeacherBills,refreshSecurity}= useAdminStore()
   const {refreshNotifications : rnt, refreshStudents : rstu} = useTeacherStore()
   const {refreshNotification : refreshNotificationParent} = useParentStore()
   const onSubmit = async (data: SigninFormValues) => {
@@ -46,6 +46,7 @@ export function SigninPage({
         await refreshMenu()
         await refreshStudentBills()
         await refreshTeacherBills()
+        await refreshSecurity()
         if(user.role === 'teacher')
         {
           await rnt(user.userid)

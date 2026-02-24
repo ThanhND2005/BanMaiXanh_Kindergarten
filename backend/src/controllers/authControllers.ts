@@ -109,7 +109,7 @@ export const refresh = async (req: Request, res: Response) => {
     const request2 = new sql.Request()
     const res2 = await request2
       .input('userid', sql.UniqueIdentifier, session.userid)
-      .query(`SELECT * FROM Account WHERE userid = @userid`)
+      .query(`SELECT * FROM Account WHERE userid = @userid AND deleted='false'`)
     const account = res2.recordset[0]
     const accessToken = jwt.sign({ userid: session.userid, role: account.userrole }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '30m' })
     return res.status(200).json({ accessToken })
