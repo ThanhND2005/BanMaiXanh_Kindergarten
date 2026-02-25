@@ -138,7 +138,7 @@ const StudentCard = ({student} : IStudentProps) => {
         <div className='flex ml-auto'>
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <Button variant='outline' className='bg-[#EDFF46] text-white rounded-2xl shadow-md h-30' onClick={()=>getClass(student.studentid)}>Chỉnh sửa thông tin</Button>
+                    <Button variant='outline' className='bg-[#EDFF46] text-white rounded-2xl shadow-md h-30 hover:text-white hover:bg-[#D0E134] focus:bg-[#EDFF46]' onClick={()=>getClass(student.studentid)}>Chỉnh sửa thông tin</Button>
                 </DialogTrigger>
                 <DialogContent>
                     <form className="flex flex-col justify-center gap-3" onSubmit={handleSubmit(onUpdate)}>
@@ -223,7 +223,7 @@ const StudentCard = ({student} : IStudentProps) => {
               </div>
               <div className="flex justify-center">
 
-              <Button type="submit" className="rounded-2xl bg-[#05D988] text-[#ffffff] hover:bg-[#02B671] focus:bg-[#05D988] shadow-md w-50" disabled={isSubmitting}>Cập nhập</Button>
+              <Button type="submit" className="rounded-2xl bg-[#05D988] text-[#ffffff] hover:bg-[#006f44] focus:bg-[#05D988] shadow-md w-50" disabled={isSubmitting}>Cập nhập</Button>
               </div>
             </form>
 

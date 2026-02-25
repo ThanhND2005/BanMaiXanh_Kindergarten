@@ -104,7 +104,7 @@ const TuitionCard = ({ tuition }: ITuitionCard) => {
               <DialogTrigger asChild>
                 <Button
                   variant="outline"
-                  className="rounded-2xl bg-[#05D988] text-[#ffffff] hover:bg-[#02B671] focus:bg-[#05D988] shadow-md"
+                  className="rounded-2xl bg-[#05D988] text-[#ffffff] hover:bg-[#006f44] hover:text-white focus:bg-[#05D988] shadow-md"
                 >
                   Gửi hóa đơn
                 </Button>

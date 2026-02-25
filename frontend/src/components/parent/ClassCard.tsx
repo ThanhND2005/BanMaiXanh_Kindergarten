@@ -64,7 +64,7 @@ const ClassCard = ({ classinfor }: IClassProps) => {
             <DialogTrigger asChild>
               <Button
                 variant="outline"
-                className="w-60 rounded-2xl bg-[#05D988] text-[#ffffff] hover:bg-[#02B671] focus:bg-[#05D988]"
+                className="w-60 rounded-2xl bg-[#05D988] text-[#ffffff] hover:bg-[#006f44] hover:text-white focus:bg-[#05D988]"
               >
                 Đăng ký
               </Button>
@@ -118,7 +118,7 @@ const ClassCard = ({ classinfor }: IClassProps) => {
                 <Button
                   type="button"
                   onClick={() => onRegister(studentid, classinfor.classid)}
-                  className="w-50 rounded-2xl bg-[#05D988] text-[#ffffff] hover:bg-[#02B671] focus:bg-[#05D988]"
+                  className="w-50 rounded-2xl bg-[#05D988] text-[#ffffff] hover:bg-[#006f44] focus:bg-[#05D988]"
                 >
                   Đăng ký
                 </Button>

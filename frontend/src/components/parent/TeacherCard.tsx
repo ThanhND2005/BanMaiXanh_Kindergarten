@@ -65,7 +65,7 @@ const TeacherCard = ({teacher} : ITeacherProps) => {
             <div>
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                  <Button variant='outline' className='rounded-2xl bg-[#1271BF] text-[#ffffff] hover:bg-[#0A5694] focus:bg-[#1271BF]'>Kết nối</Button>
+                  <Button variant='outline' className='rounded-2xl bg-[#1271BF] text-[#ffffff] hover:bg-[#0A5694] hover:text-white focus:bg-[#1271BF]'>Kết nối</Button>
                 </DialogTrigger>
                 <DialogContent>
                   <h2 className='text-2xl itim-regular '>Phụ huynh nhớ nhập đầy đủ nội dung nhé !</h2>
@@ -81,7 +81,7 @@ const TeacherCard = ({teacher} : ITeacherProps) => {
                           {err.content && <p className='text-destructive text-sm'>{err.content.message}</p>}
                         </div>
                         <div className='flex justify-center'>
-                          <Button type='submit' className='rounded-xl shadow-md bg-[#2E7D32]' disabled={isSub}>Gửi</Button>
+                          <Button type='submit' className='w-50 rounded-2xl shadow-md bg-[#05d988] hover:bg-[#006f44] focus:bg-[#05d988]' disabled={isSub}>Gửi</Button>
                         </div>
                   </form>
                 </DialogContent>
