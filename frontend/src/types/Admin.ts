@@ -14,11 +14,12 @@ export interface Notification {
 }
 export interface Security{
     code: string, 
-    date: Date
+    date: Date,
+    teacherid: string,
 }
 export interface adminState {
     loading : boolean
-    security : Security | null
+    security : Security[] | null
     teachers : Teacher[] | null
     notifications: Notification[] | null
     classes : Class[] | null

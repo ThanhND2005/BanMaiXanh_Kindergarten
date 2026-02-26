@@ -15,7 +15,7 @@ const ClassCard = ({class1} : IClassProps) => {
   return (
     <div>
       <li>
-            <div  className="rounded-xl bg-[#ffffff] shadow-md flex flex-wrap ">
+            <div  className="rounded-xl bg-[#ffffff] shadow-md flex flex-col ">
                
                <div className="w-full h-25 overflow-hidden mb-3">
                   <img src='https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg' alt="anh lop hoc" className="w-full object-cover"/>
@@ -26,7 +26,7 @@ const ClassCard = ({class1} : IClassProps) => {
                      <h2 className="text-md font-bold">Giáo viên: {class1.teachername}</h2>
                      <h2 className="text-md font-bold">Độ tuổi: {class1.age}</h2>
                      <h2 className="text-md font-bold">Số lượng trẻ: {class1.member}</h2>
-                     <h2 className="text-md font-bold">Học phí: {class1.tuition}</h2>
+                     <h2 className="text-md font-bold">Học phí: {class1.tuition} vnđ</h2>
                      <h2 className="text-md font-bold">Tình trạng: {`${class1.currentmember}/${class1.member}`}</h2>
                
 

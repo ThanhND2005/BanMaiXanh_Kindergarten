@@ -1,13 +1,5 @@
 import type { Teacher } from "@/types/Teacher";
-import React from "react";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import { Button } from "../ui/button";
-import { Dialog, DialogTrigger, DialogContent } from "../ui/dialog";
-import { adminService } from "@/services/adminService";
 import { useAdminStore } from "@/stores/useAdminStore";
 import { teacherService } from "@/services/teacherService";
 interface ITeacher {
@@ -17,6 +9,7 @@ interface ITeacher {
 const TeacherCard = ({ teacher }: ITeacher) => {
   
   const {refreshTeachers} = useAdminStore()
+  const security =  useAdminStore.getState().security?.find((t) => t.teacherid === teacher.userid)
   const onDelete = async (userid : string) => {
     await teacherService.deleteTeacher(userid)
     await refreshTeachers()
@@ -53,6 +46,9 @@ const TeacherCard = ({ teacher }: ITeacher) => {
             </div>
             <div className=" text-base font-medium">
               Ngày tham gia: {new Date(teacher.createdat).toLocaleDateString("vi-VN")}
+            </div>
+            <div className=" text-base font-medium">
+              Mã bảo mật: {security?.code}
             </div>
           </div>
           <div className='flex space-x-10'>

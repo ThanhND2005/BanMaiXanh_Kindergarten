@@ -119,7 +119,7 @@ export const postTimeKeeping = async (req: Request, res: Response) => {
       .input('month', sql.Int, month)
       .input('day',sql.Date,today)
       .query(
-        `IF EXISTS (SELECT 1 FROM Security s WHERE s.code = @code AND s.date = @day)
+        `IF EXISTS (SELECT 1 FROM Security s WHERE s.code = @code AND s.date = @day AND teacherid = @teacherid)
                   BEGIN
                       INSERT INTO TimeKeeping (teacherid, date, month) 
                       VALUES (@teacherid, GETDATE(), @month);

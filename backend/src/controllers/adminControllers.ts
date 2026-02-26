@@ -58,10 +58,7 @@ export const postNotification = async (req: Request, res: Response) => {
       .input('content', sql.NVarChar, content)
       .query(`INSERT INTO Notification (title, content) OUTPUT INSERTED.notificationid VALUES(@title,@content)`)
     const notificationid = res1.recordset[0].notificationid
-    if (!notificationid) {
-      return res.sendStatus(404)
-    }
-    console.log(notificationid)
+
     if (receiver === 'Giáo viên') {
       const request2 = new sql.Request()
       const res2 = await request2.query(`SELECT * FROM Account WHERE userrole = 'teacher' AND deleted = 'false'`)
@@ -364,7 +361,7 @@ export const postStudentBill = async (req: Request, res: Response) => {
         .input('tuition', sql.Int, amount)
         .input('qrUrl', sql.NVarChar, qrUrl)
         .input('month', sql.Int, month)
-        .input('year',sql.Int,year)
+        .input('year', sql.Int, year)
         .query(
           `INSERT INTO Tuition (studentid, classid, amount, qrurl,month,year) VALUES (@studentid, @classid, @tuition, @qrUrl, @month,@year)`
         )
@@ -406,7 +403,7 @@ export const postTeacherBill = async (req: Request, res: Response) => {
         .input('amount', sql.Int, amount)
         .input('timekeeping', sql.Int, timekeeping)
         .input('month', sql.Int, month)
-        .input('year',sql.Int,year)
+        .input('year', sql.Int, year)
         .query(
           `INSERT INTO Salary (teacherid, allowance, amount, timekeeping, month,year) VALUES (@teacherid, @allowance, @amount, @timekeeping, @month,@year)`
         )
@@ -438,25 +435,31 @@ export const getCode = async (req: Request, res: Response) => {
 
     const today = new Date()
     const request = new sql.Request()
-    const code = (Math.floor(Math.random() * 9000) + 1000).toString()
-    await request
-      .input('code', sql.NVarChar, code)  
-      .input('day', sql.Date, today)
-      .query(
-        `IF NOT EXISTS(
-        SELECT 1 FROM Security WHERE date = @day
+    const res0 = await request.query(`SELECT userid FROM Teacher WHERE deleted ='false'`)
+    const teachers = res0.recordset
+    for (let i = 0; i < teachers.length; i++) {
+      const request1 = new sql.Request()
+      const code = (Math.floor(Math.random() * 9000) + 1000).toString()
+      await request1
+        .input('code', sql.NVarChar, code)
+        .input('day', sql.Date, today)
+        .input('teacherid', sql.UniqueIdentifier, teachers[i].userid)
+        .query(
+          `IF NOT EXISTS(
+        SELECT 1 FROM Security WHERE date = @day AND teacherid = @teacherid
       )
       BEGIN
-        INSERT INTO Security (code,date) VALUES (@code,@day)
+        INSERT INTO Security (code,date,teacherid) VALUES (@code,@day,@teacherid)
       END`
-      )
+        )
+    }
     const request2 = new sql.Request()
     const res1 = await request2
       .input('day', sql.Date, today)
       .query(
         'SELECT * FROM Security WHERE date = @day'
       )
-    const security = res1.recordset[0]
+    const security = res1.recordset
     return res.status(200).json({ security })
   } catch (error) {
     console.error(error)

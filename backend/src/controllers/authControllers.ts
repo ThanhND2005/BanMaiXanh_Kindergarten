@@ -132,10 +132,10 @@ export const signout = async (req: Request, res: Response) => {
     return res.status(500).send('Lỗi hệ thống')
   }
 }
-export const authMe = async (req : Request , res : Response) =>{
+export const authMe = async (req: Request, res: Response) => {
   try {
-    const user = (req as any).user 
-    return res.status(200).json({user})
+    const user = (req as any).user
+    return res.status(200).json({ user })
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')
