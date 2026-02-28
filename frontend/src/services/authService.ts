@@ -10,6 +10,10 @@ export const authService = {
         const res = await api.post('/auth/signin',{username,password},{withCredentials: true})
         return res.data
     },
+    signInadmin : async(username : string, password: string) =>{
+        const res = await api.post('/auth/signinAdmin',{username,password},{withCredentials:true})
+        return res.data
+    },
     signOut : async () =>{
         return api.post('/auth/signout',{},{withCredentials: true})
     },

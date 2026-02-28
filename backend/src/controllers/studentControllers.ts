@@ -9,7 +9,8 @@ export const getStudentList = async (req: Request, res: Response) => {
       FROM Student s
       LEFT JOIN Parent p on p.userid = s.parentid
       LEFT JOIN Attendance a on a.studentid = s.studentid AND a.date=@day
-      WHERE s.deleted ='false'`
+      WHERE s.deleted ='false'
+      ORDER BY s.name DESC`
     )
     const students = res1.recordset
     return res.status(200).json({ students })
@@ -28,7 +29,7 @@ export const deleteStudent = async (req: Request, res: Response) => {
       .query(
         `UPDATE Student SET deleted = 'true' WHERE studentid = @studentid`
       )
-    return res.sendStatus(204)
+    return res.status(204).send('Xóa học sinh thành công')
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')
@@ -47,7 +48,7 @@ export const patchAvatar = async (req: Request, res: Response) => {
         .query(
           `UPDATE Student SET avatarurl=@avatarurl WHERE studentid=@studentid`
         )
-      return res.sendStatus(204)
+      return res.status(204).send('Thay ảnh đại diện thành công')
     } catch (error) {
       console.error(error)
       return res.status(500).send('Lỗi hệ thống')
@@ -62,6 +63,7 @@ export const postStudent = async (req: Request, res: Response) => {
   try {
     const { parentid } = req.params
     const { name, dob, gender, height, weight } = req.body
+    const age = new Date().getFullYear() - new Date(dob).getFullYear()
     const request = new sql.Request()
     await request
       .input('parentid', sql.UniqueIdentifier, parentid)
@@ -70,10 +72,11 @@ export const postStudent = async (req: Request, res: Response) => {
       .input('gender', sql.NVarChar, gender)
       .input('height', sql.Float, height)
       .input('weight', sql.Float, weight)
+      .input('age', sql.Int, age)
       .query(
-        `INSERT INTO Student (parentid, name, dob,gender,height,weight) VALUES (@parentid, @name,@dob,@gender,@height,@weight)`
+        `INSERT INTO Student (parentid, name, dob,gender,height,weight,age) VALUES (@parentid, @name,@dob,@gender,@height,@weight,@age)`
       )
-    return res.sendStatus(201)
+    return res.status(201).send('Tạo thông tin thành công')
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')
@@ -84,10 +87,12 @@ export const patchStudent = async (req: Request, res: Response) => {
   try {
     const { studentid } = req.params
     const { name, dob, gender, height, weight } = req.body
+    const age = new Date().getFullYear() - new Date(dob).getFullYear()
     const request = new sql.Request()
     await request
       .input('studentid', sql.UniqueIdentifier, studentid)
       .input('name', sql.NVarChar, name)
+      .input('age',sql.Int,age)
       .input('dob', sql.Date, dob)
       .input('gender', sql.NVarChar, gender)
       .input('height', sql.Float, height)
@@ -97,7 +102,8 @@ export const patchStudent = async (req: Request, res: Response) => {
       dob =@dob,
       gender=@gender,
       height=@height,
-      weight=@weight
+      weight=@weight,
+      age = @age
       WHERE studentid = @studentid`
       )
     return res.sendStatus(204)

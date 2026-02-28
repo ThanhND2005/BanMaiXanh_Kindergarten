@@ -44,9 +44,25 @@ export const useAuthStore = create<authState>((set, get) => ({
             set({ loading: false })
         }
     },
+    signinAdmin: async (username, password) => {
+        try {
+            set({ loading: true })
+            const { accessToken } = await authService.signInadmin(username, password)
+            set({ accessToken })
+            await get().getMe()
+            toast.success("Đăng nhập thành công !")
+        } catch (error) {
+            console.error(error)
+            toast.error("Đăng nhập thất bại !")
+        }
+        finally {
+            set({ loading: false })
+        }
+    },
     signout: async () => {
         try {
             set({ loading: true })
+            set({accessToken : null,user: null})
             await authService.signOut()
             toast.success("Đăng xuất thành công !")
         } catch (error) {

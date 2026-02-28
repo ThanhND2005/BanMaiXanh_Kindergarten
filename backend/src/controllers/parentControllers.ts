@@ -41,7 +41,7 @@ export const patchAvatar = async (req: Request, res: Response) => {
         .query(
           `UPDATE Parent SET avatarurl = @avatarurl WHERE userid = @parentid`
         )
-      return res.sendStatus(204)
+      return res.status(204).send('Cập nhập avatar thành công')
     }
     else {
       return res.status(404).send('Không tìm thấy thông tin người gửi')
@@ -83,7 +83,7 @@ export const patchStudentBill = async (req: Request, res: Response) => {
         .query(
           `UPDATE Tuition SET billurl = @billurl WHERE tuitionid=@tuitionid`
         )
-      return res.sendStatus(204)
+      return res.status(204).send('Gửi hóa đơn thành công')
     } catch (error) {
       console.error(error)
       return res.status(500).send('Lỗi hệ thống')
@@ -105,7 +105,7 @@ export const patchParent = async (req: Request, res: Response) => {
       .input('address', sql.NVarChar, address)
       .input('gender', sql.NVarChar, gender)
       .query('UPDATE Parent SET name=@name, dob=@dob,address=@address,gender=@gender WHERE userid = @userid')
-    return res.sendStatus(204)
+    return res.status(204).send('Thay đổi thông tin thành công')
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')

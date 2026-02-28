@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { VarChar } from "mssql";
 import { sql } from "~/libs/DB";
 
 export const getTeacherList = async (req: Request, res: Response) => {
@@ -13,7 +14,8 @@ export const getTeacherList = async (req: Request, res: Response) => {
         LEFT JOIN Class c on c.teacherid = t.userid
         LEFT JOIN TimeKeeping tk on tk.teacherid = t.userid AND tk.date = @date
         JOIN Account a on a.userid = t.userid AND a.deleted = 'false'
-        WHERE t.deleted = 'false'`
+        WHERE t.deleted = 'false'
+        ORDER t.name DESC`
       )
     const teachers = res1.recordset
     return res.status(200).json({ teachers })
@@ -43,7 +45,7 @@ export const deleteTeacher = async (req: Request, res: Response) => {
 export const patchTeacher = async (req: Request, res: Response) => {
   try {
     const { teacherid } = req.params
-    const { name, dob, gender, address } = req.body
+    const { name, dob, gender, address,bank,accountbank } = req.body
     const request = new sql.Request()
     await request
       .input('userid', sql.UniqueIdentifier, teacherid)
@@ -51,8 +53,10 @@ export const patchTeacher = async (req: Request, res: Response) => {
       .input('dob', sql.Date, dob)
       .input('gender', sql.NVarChar, gender)
       .input('address', sql.NVarChar, address)
+      .input('bank',sql.VarChar,bank)
+      .input('accountbank',sql.VarChar,accountbank)
       .query(
-        `UPDATE Teacher SET name=@name, dob=@dob,gender=@gender,address=@address 
+        `UPDATE Teacher SET name=@name, dob=@dob,gender=@gender,address=@address,bank=@bank,accountbank = @accountbank
       WHERE userid=@userid`
       )
     return res.sendStatus(204)
@@ -109,20 +113,22 @@ export const getNotificationList = async (req: Request, res: Response) => {
 export const postTimeKeeping = async (req: Request, res: Response) => {
   try {
     const { teacherid } = req.params
-    const {code} = req.body
+    const { code } = req.body
     const today = new Date()
     const month = today.getMonth() + 1
+    const year = today.getFullYear()
     const request = new sql.Request()
     await request
       .input('teacherid', sql.UniqueIdentifier, teacherid)
-      .input('code',sql.NVarChar,code)
+      .input('code', sql.NVarChar, code)
       .input('month', sql.Int, month)
-      .input('day',sql.Date,today)
+      .input('day', sql.Date, today)
+      .input('year',sql.Int,year)
       .query(
         `IF EXISTS (SELECT 1 FROM Security s WHERE s.code = @code AND s.date = @day AND teacherid = @teacherid)
                   BEGIN
-                      INSERT INTO TimeKeeping (teacherid, date, month) 
-                      VALUES (@teacherid, GETDATE(), @month);
+                      INSERT INTO TimeKeeping (teacherid, date, month,year) 
+                      VALUES (@teacherid, GETDATE(), @month,@year);
                   END
         `
       )
@@ -229,7 +235,7 @@ export const patchStudent = async (req: Request, res: Response) => {
 export const postNotification = async (req: Request, res: Response) => {
   try {
     const { teacherid } = req.params
-    const { parentid, content, title ,sendername} = req.body
+    const { parentid, content, title, sendername } = req.body
     const request1 = new sql.Request()
     const res1 = await request1
       .input('title', sql.NVarChar, title)
@@ -242,7 +248,7 @@ export const postNotification = async (req: Request, res: Response) => {
     const res2 = await request2
       .input('senderid', sql.UniqueIdentifier, teacherid)
       .input('notificationid', sql.UniqueIdentifier, newNotificationid)
-      .input('sendername',sql.NVarChar,sendername)
+      .input('sendername', sql.NVarChar, sendername)
       .input('receiveid', sql.UniqueIdentifier, parentid)
       .query(
         `INSERT INTO NotificationManagement (senderid,notificationid,receiveid,sendername) VALUES (@senderid,@notificationid,@receiveid,@sendername)`
@@ -289,6 +295,23 @@ export const getStudentList = async (req: Request, res: Response) => {
       )
     const students = res1.recordset
     return res.status(200).json({ students })
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send('Lỗi hệ thống')
+  }
+}
+export const getAccountBank = async (req: Request, res: Response) => {
+  const userid = req.params.userid
+  console.log(userid)
+  try {
+    const request = new sql.Request()
+    const res1 = await request
+      .input('userid', sql.UniqueIdentifier, userid)
+      .query(
+        `SELECT bank,accountbank FROM Teacher WHERE userid = @userid AND deleted ='false'`
+      )
+    const account = res1.recordset[0]
+    return res.status(200).json({ account })
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')

@@ -29,10 +29,11 @@ export interface StudentBill {
     studentName: string, 
     dob: Date,
     gender: string,
-    className: string, 
     attendance: number,
     tuition: number,
     status: string,
+    year: number,
+    classes: string,
     avatarurl: string | 'https://i.pinimg.com/1200x/24/9f/ae/249fae081d976169452038569b8de507.jpg',
     billurl: string | null,
     qrurl: string
@@ -51,6 +52,7 @@ export interface TeacherBill {
     salary : number,
     amount: number,
     status: string, 
+    qrurl: string,
     avatarurl: string | 'https://i.pinimg.com/736x/e9/e0/7d/e9e07de22e3ef161bf92d1bcf241e4d0.jpg',
 }
 export interface Notification {
@@ -79,6 +81,7 @@ export interface authState {
     clearState : () => void
     signup :(name : string, address : string, dob: Date,gender: string,username: string,password:string,role: string) => Promise<void>
     signin :(username : string, password : string) => Promise<void>
+    signinAdmin :(username : string, password : string) => Promise<void>
     signout :() => Promise<void>
     getMe: () => Promise<void>
     refresh: () => Promise<void>

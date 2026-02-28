@@ -32,6 +32,7 @@ const UpdateFormSchema = z.object({
   gender: z.string().min(1, "Không được để trống thông tin"),
   height: z.coerce.number({ message: "Yêu cầu nhập đúng định dạng" }),
   weight: z.coerce.number({ message: "Yêu cầu nhập đúng định dạng" }),
+  dob : z.string().date("Yêu cầu nhập đúng định dạng YYYY-mm-DD")
 })
 type UpdateFormValues = z.infer<typeof UpdateFormSchema>
 const StudentCard = ({student} : IStudentProps) => {
@@ -44,7 +45,8 @@ const StudentCard = ({student} : IStudentProps) => {
         name : student.name,
         gender: student.gender,
         height : student.height,
-        weight: student.weight
+        weight: student.weight,
+        dob : new Date(student.dob).toLocaleDateString('en-CA')
     }
   })
   const {
@@ -56,9 +58,9 @@ const StudentCard = ({student} : IStudentProps) => {
     resolver: zodResolver(UpdateAvatarSchema),
   });
   const onUpdate = async (data : UpdateFormValues) =>{
-      const {name,gender,height,weight} = data
+      const {name,gender,height,weight,dob} = data
       try {
-        await studentService.patchStudent(student.studentid,name,new Date('2022-01-01'),gender,height,weight)
+        await studentService.patchStudent(student.studentid,name,new Date(dob),gender,height,weight)
         await refreshStudents()
         toast.success("Cập nhập thông tin thành công")
       } catch (error) {
@@ -162,7 +164,23 @@ const StudentCard = ({student} : IStudentProps) => {
                   </p>
                 )}
               </div>
-    
+                <div>
+                <Label htmlFor="dob" className="text-sm block">
+                  Ngày sinh
+                </Label>
+                <Input
+                  type="text"
+                  id="dob"
+                  className="rounded-2xl shadow-md p-2"
+                  placeholder="Nhập ngày sinh"
+                  {...register("dob")}
+                />
+                {errors.dob && (
+                  <p className="text-destructive text-sm">
+                    {errors.dob.message}
+                  </p>
+                )}
+              </div>
               <div>
                 <Label htmlFor="gender" className="text-sm block">
                   Giới tính

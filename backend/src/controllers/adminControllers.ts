@@ -1,7 +1,8 @@
+import { time } from "console";
 import { Request, Response, NextFunction } from "express"
 import { sql } from "~/libs/DB"
 import { qrStorage } from "~/middlewares/cloudMiddleware";
-import { Account, ClassManagement } from '~/type';
+import { Account } from '~/type';
 
 export const getNotificationList = async (req: Request, res: Response) => {
   try {
@@ -74,7 +75,7 @@ export const postNotification = async (req: Request, res: Response) => {
 
       })
       await Promise.all(insertPromise)
-      return res.sendStatus(201)
+      return res.status(201).send('Tạo thông báo thành công')
     }
     if (receiver === 'Phụ huynh') {
       const request2 = new sql.Request()
@@ -93,7 +94,7 @@ export const postNotification = async (req: Request, res: Response) => {
 
       })
       await Promise.all(insertPromise)
-      return res.sendStatus(201)
+      return res.status(201).send('Tạo thông báo thành công')
     }
     else {
       const request2 = new sql.Request()
@@ -112,7 +113,7 @@ export const postNotification = async (req: Request, res: Response) => {
 
       })
       await Promise.all(insertPromise)
-      return res.sendStatus(201)
+      return res.status(201).send('Tạo thông báo thành công')
     }
 
   } catch (error) {
@@ -132,7 +133,7 @@ export const deleteNotification = async (req: Request, res: Response) => {
       .query(
         `UPDATE NotificationManagement SET deleted = 'true' WHERE notificationid = @notificationid`
       )
-    return res.sendStatus(204)
+    return res.status(204).send('Xóa thông báo thành công')
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')
@@ -145,7 +146,7 @@ export const getClassList = async (req: Request, res: Response) => {
     const res1 = await request1
       .query(
         `SELECT c.classid, t.name as teachername, c.teacherid, c.age,c.member, c.currentmember, c.tuition,c.schedule,c.name as classname, c.type,c.deleted FROM Class c
-      JOIN Teacher t on t.userid = c.teacherid WHERE c.deleted = 'false'`
+      JOIN Teacher t on t.userid = c.teacherid WHERE c.deleted = 'false' `
       )
     const classes = res1.recordset
     return res.status(200).json({ classes })
@@ -169,7 +170,7 @@ export const postClass = async (req: Request, res: Response) => {
       .query(
         `INSERT INTO Class (teacherid, age, member,currentmember,tuition,schedule,name,type) VALUES (@teacherid,@age,@member,0,@tuition,@schedule,@name,@type)`
       )
-    return res.sendStatus(201)
+    return res.status(201).send('Tạo lớp học mới thành công')
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')
@@ -193,7 +194,7 @@ export const deleteClass = async (req: Request, res: Response) => {
             THROW; 
           END CATCH`
       )
-    return res.sendStatus(204)
+    return res.status(204).send('Xóa thông báo thành công')
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')
@@ -225,7 +226,7 @@ export const patchMenu = async (req: Request, res: Response) => {
       .query(
         `UPDATE Menu set dish1 = @dish1, dish2 = @dish2, dish3 = @dish3, dish4 = @dish4 WHERE day = @day`
       )
-    return res.sendStatus(204)
+    return res.status(204).send('Chỉnh sửa thực đơn thành công')
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')
@@ -237,12 +238,12 @@ export const getStudentBill = async (req: Request, res: Response) => {
     const res1 = await request.query(
       ` SELECT t.tuitionid, 
       t.studentid, 
-      t.classid, 
       t.amount as tuition, 
       t.billurl, 
       t.qrurl, 
       t.createdat, 
       t.month, 
+      t.year,
       p.userid as parentid,
       p.name as parentName, 
       s.name as studentName, 
@@ -250,18 +251,11 @@ export const getStudentBill = async (req: Request, res: Response) => {
       s.gender,
       t.status,
       s.avatarurl,
-      c.name as className, 
-      (
-            SELECT COUNT(*) 
-            FROM Attendance a 
-            WHERE a.studentid = t.studentid 
-            AND a.month = t.month 
-            AND a.check_in_time IS NOT NULL
-        ) as attendance 
+      t.attendance,
+      t.classes
       FROM Tuition t
       JOIN Student s on t.studentid = s.studentid AND s.deleted= 'false'
       JOIN Parent p on p.userid = s.parentid AND p.deleted='false'
-      JOIN Class c on c.classid = t.classid AND c.deleted = 'false'
       WHERE t.deleted = 'false'
       ORDER BY t.createdat DESC
       `
@@ -292,7 +286,8 @@ export const getTeacherBill = async (req: Request, res: Response) => {
       t.status,
       tc.avatarurl,
       t.amount,
-      t.timekeeping
+      t.timekeeping,
+      t.qrurl
       FROM Salary t
       JOIN Teacher tc on t.teacherid = tc.userid AND tc.deleted ='false'
       JOIN Class c on c.teacherid = tc.userid AND c.deleted='false'
@@ -314,7 +309,7 @@ export const verifyStudentBill = async (req: Request, res: Response) => {
     await request1
       .input('tuitionid', sql.UniqueIdentifier, tuitionid)
       .query(`UPDATE Tuition SET status = 'Đã hoàn thành' WHERE tuitionid = @tuitionid`)
-    return res.sendStatus(204)
+    return res.status(204).send('Xác nhận hóa đơn thành công')
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')
@@ -327,7 +322,7 @@ export const deleteStudentBill = async (req: Request, res: Response) => {
     await request
       .input('tuitionid', sql.UniqueIdentifier, tuitionid)
       .query(`UPDATE Tuition SET deleted ='true' WHERE tuitionid = @tuitionid`)
-    return res.sendStatus(204)
+    return res.status(204).send('Xóa hóa đơn thành công')
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')
@@ -339,35 +334,56 @@ export const postStudentBill = async (req: Request, res: Response) => {
     const month = today.getMonth()
     const year = today.getFullYear()
     const request1 = new sql.Request()
-    const res1 = await request1.query(
-      `SELECT * FROM ClassManagement WHERE deleted = 'false'`
-    )
-    const classes = res1.recordset
-    const insertPromise = classes.map(async (classmanagement: ClassManagement) => {
+    const res1 = await request1.query(`SELECT studentid,name FROM Student WHERE deleted ='false'`)
+    const students = res1.recordset
+    for (let i = 0; i < students.length; i++) {
       const request2 = new sql.Request()
       const res2 = await request2
-        .input('classid', sql.UniqueIdentifier, classmanagement.classid)
-        .query(
-          `SELECT * FROM Class WHERE classid = @classid AND deleted='false'`
-        )
-      const amount = res2.recordset[0].tuition
-      const url = `https://img.vietqr.io/image/vpbank-0354445956-print.png?amount=${amount}&addInfo=HOC%20PHI%20THANG%20${month}&accountName=MAM%20NON%20BAN%20MAI%20XANH`
-      const qrUrl = await qrStorage(url)
-
-      const request3 = new sql.Request()
-      return request3
-        .input('studentid', sql.UniqueIdentifier, classmanagement.studentid)
-        .input('classid', sql.UniqueIdentifier, classmanagement.classid)
-        .input('tuition', sql.Int, amount)
-        .input('qrUrl', sql.NVarChar, qrUrl)
         .input('month', sql.Int, month)
         .input('year', sql.Int, year)
+        .input('studentid', sql.UniqueIdentifier, students[i].studentid)
         .query(
-          `INSERT INTO Tuition (studentid, classid, amount, qrurl,month,year) VALUES (@studentid, @classid, @tuition, @qrUrl, @month,@year)`
+          `SELECT COUNT(*) as attendance FROM Attendance WHERE month=@month AND year=@year AND studentid = @studentid`
         )
-    })
-    await Promise.all(insertPromise)
-    return res.sendStatus(201)
+      const attendance = res2.recordset[0].attendance
+      const request3 = new sql.Request()
+      const res3 = await request3
+        .input('studentid', sql.UniqueIdentifier, students[i].studentid)
+        .query(
+          `SELECT cm.classid, c.name, c.tuition FROM ClassManagement cm 
+        JOIN Class c on c.classid = cm.classid AND c.deleted = 'false'
+        WHERE cm.deleted = 'false' AND studentid = @studentid`
+        )
+      const classes = res3.recordset
+      let classnames: string = ''
+      let amount: number = 0
+      for (let i = 0; i < classes.length; i++) {
+        classnames += `${classes[i].name} : ${classes[i].tuition} vnđ,`
+        amount += classes[i].tuition
+      }
+      if (attendance < 9) {
+        amount /= 2
+      }
+      if(attendance == 0)
+      {
+        continue
+      }
+      const url = `https://img.vietqr.io/image/vpbank-0354445956-print.png?amount=${amount}&addInfo=HOC%20PHI%20THANG%20${month}%20BE%20${students[i].name}&accountName=MAM%20NON%20BAN%20MAI%20XANH`
+      const qrUrl = await qrStorage(url)
+      const request4 = new sql.Request()
+      await request4
+      .input('studentid',sql.UniqueIdentifier,students[i].studentid)
+      .input('amount',sql.Int,amount)
+      .input('qrurl',sql.NVarChar,qrUrl)
+      .input('month',sql.Int,month)
+      .input('year',sql.Int,year)
+      .input('classes',sql.NVarChar,classnames)
+      .input('attendance',sql.Int,attendance)
+      .query(
+        `INSERT INTO Tuition (studentid, amount, qrurl, month, year, classes, attendance) VALUES (@studentid, @amount, @qrurl,@month,@year,@classes,@attendance)`
+      )
+    }
+    return res.status(201).send('Tạo hóa đơn học phí thành công')
 
   } catch (error) {
     console.error(error)
@@ -385,31 +401,48 @@ export const postTeacherBill = async (req: Request, res: Response) => {
       `SELECT * FROM Class WHERE deleted ='false'`
     )
     const classes = res1.recordset
-    const insertPromise = classes.map(async (classmanagement) => {
+    for (let i = 0; i < classes.length; i++) {
       const request2 = new sql.Request()
       const res2 = await request2
-        .input('teacherid', sql.UniqueIdentifier, classmanagement.teacherid)
+        .input('teacherid', sql.UniqueIdentifier, classes[i].teacherid)
         .input('month', sql.Int, month)
+        .input('year', sql.Int, year)
         .query(
-          `SELECT COUNT(*) as timekeeping FROM TimeKeeping WHERE teacherid = @teacherid AND month=@month`
+          `SELECT COUNT(*) as timekeeping FROM TimeKeeping WHERE teacherid = @teacherid AND month=@month AND year = @year `
         )
       const timekeeping = res2.recordset[0].timekeeping
+      if (timekeeping == 0) {
+        continue
+      }
+      const request4 = new sql.Request()
+      const res4 = await request4
+        .input('userid', sql.UniqueIdentifier, classes[i].teacherid)
+        .query(
+          'SELECT * FROM Teacher WHERE userid = @userid'
+        )
+      const teacher = res4.recordset[0]
+      if (teacher.bank === null || teacher.accountbank === null) {
+        continue
+      }
       const allowance = 200000
       const amount = 200000 * timekeeping + allowance
+      const url = `https://img.vietqr.io/image/${teacher.bank}-${teacher.accountbank}-print.png?amount=${amount}&addInfo=LUONG%20THANG%20${month}&accountName=MAM%20NON%20BAN%20MAI%20XANH`
+      const qrUrl = await qrStorage(url)
       const request3 = new sql.Request()
-      return request3
-        .input('teacherid', sql.UniqueIdentifier, classmanagement.teacherid)
+      await request3
+        .input('teacherid', sql.UniqueIdentifier, classes[i].teacherid)
         .input('allowance', sql.Int, allowance)
         .input('amount', sql.Int, amount)
         .input('timekeeping', sql.Int, timekeeping)
         .input('month', sql.Int, month)
         .input('year', sql.Int, year)
+        .input('qrurl', sql.VarChar, qrUrl)
         .query(
-          `INSERT INTO Salary (teacherid, allowance, amount, timekeeping, month,year) VALUES (@teacherid, @allowance, @amount, @timekeeping, @month,@year)`
+          `INSERT INTO Salary (teacherid, allowance, amount, timekeeping, month,year,qrurl) VALUES (@teacherid, @allowance, @amount, @timekeeping, @month,@year,@qrurl)`
         )
-    })
-    await Promise.all(insertPromise)
-    return res.sendStatus(201)
+    }
+
+    return res.status(201).send('Tạo hóa đơn thành công')
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')
@@ -424,7 +457,7 @@ export const deleteTeacherBill = async (req: Request, res: Response) => {
       .query(
         `UPDATE Salary SET deleted = 'true' WHERE salaryid = @salaryid`
       )
-    return res.sendStatus(204)
+    return res.status(204).send('Xóa hóa đơn thành công')
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')

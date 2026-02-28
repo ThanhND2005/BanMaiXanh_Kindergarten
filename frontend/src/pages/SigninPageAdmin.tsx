@@ -10,14 +10,12 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { getRedirectPath } from "@/lib/navigation";
 import { useAdminStore } from "@/stores/useAdminStore";
-import { useTeacherStore } from "@/stores/useTeacherStore";
-import { useParentStore } from "@/stores/useParentStore";
 const SigninSchema = z.object({
   username: z.string().min(1, "Tên đăng nhập không được để trống"),
   password: z.string().min(1, "Mật khẩu không được để trống"),
 });
 type SigninFormValues = z.infer<typeof SigninSchema>;
-export function SigninPage({
+export function SigninPageAdmin({
   className,
   ...props
 }: React.ComponentProps<"div">) {
@@ -29,13 +27,11 @@ export function SigninPage({
     resolver: zodResolver(SigninSchema),
   });
   const navigate = useNavigate()
-  const signin = useAuthStore((state) => state.signin)
+  const signinAdmin = useAuthStore((state) => state.signinAdmin)
   const {refreshStudents,refreshTeachers ,refreshClasses,refreshNotifications,refreshMenu,refreshStudentBills,refreshTeacherBills,refreshSecurity}= useAdminStore()
-  const {refreshNotifications : rnt, refreshStudents : rstu} = useTeacherStore()
-  const {refreshNotification : refreshNotificationParent} = useParentStore()
   const onSubmit = async (data: SigninFormValues) => {
     const {username, password} = data 
-    await signin(username,password)
+    await signinAdmin(username,password)
     const user =  useAuthStore.getState().user
     if (user) {
         const correctPath = getRedirectPath(user.role as string);
@@ -47,15 +43,6 @@ export function SigninPage({
         await refreshStudentBills()
         await refreshTeacherBills()
         await refreshSecurity()
-        if(user.role === 'teacher')
-        {
-          await rnt(user.userid)
-          await rstu(user.userid)
-        }
-        if(user.role === 'parent')
-        {
-          await refreshNotificationParent(user.userid)
-        }
         navigate(correctPath);
     }
   };
@@ -75,7 +62,7 @@ export function SigninPage({
           
           <form className="space-y-2" onSubmit={handleSubmit(onSubmit)}>
 
-            {/* Tên đăng nhập */}
+          
             <div>
               <Label htmlFor="username" className="text-sm block">
                 Tên đăng nhập
@@ -94,7 +81,7 @@ export function SigninPage({
               )}
             </div>
 
-            {/* Mật khẩu */}
+           
             <div>
               <Label htmlFor="password" className="text-sm block">
                 Mật khẩu
@@ -114,7 +101,7 @@ export function SigninPage({
             </div>
 
            
-            {/* Nút Đăng nhập */}
+           
             <Button
               type="submit"
               className="w-full bg-[#16a34a] hover:bg-[#006f44] mt-4 rounded-2xl transition all focus:bg-[#16a34a] "
@@ -123,24 +110,19 @@ export function SigninPage({
               Đăng nhập
             </Button>
 
-            {/* Link chuyển sang Đăng nhập */}
+          
           </form>
-          <p className="text-center text-sm mt-4">
-            Bạn chưa có tài khoản?{" "}
-            <a href="/signup" className="text-blue-700 font-medium hover:underline">
-              Đăng ký
-            </a>
-          </p>
+          
         </div>
 
-        {/* Cột bên phải: Hình ảnh & Lời chào */}
+
         <div className="hidden md:flex w-1/2 flex-col items-center justify-center p-8 gap-17">
           
 
           <div className="relative w-full max-w-sm h-auto">
-            {/* Thay đổi URL ảnh bên dưới thành ảnh thực tế của bạn */}
+            
             <img
-              src="https://res.cloudinary.com/dhylrhxsa/image/upload/v1770804395/535c4358-c9a9-4d9b-88be-7f33caf74de7-removebg-preview_t7xbgy.png"
+              src="https://res.cloudinary.com/dhylrhxsa/image/upload/v1772292324/f700c5b739cf2fc2e43694b9a4d75c0c-removebg-preview_ebi4ha.png"
               alt="Minh họa giáo viên và học sinh"
               className="rounded-xl w-full h-auto"
             />

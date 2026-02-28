@@ -8,7 +8,6 @@ import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import type { StudentBill } from "@/types/store";
-import { adminService } from "@/services/adminService";
 import { useAdminStore } from "@/stores/useAdminStore";
 import { parentService } from "@/services/parentService";
 import { toast } from "sonner";
@@ -57,13 +56,22 @@ const TuitionCard = ({ tuition }: ITuitionCard) => {
         setOpen(false)
     }
   };
+  const classes = tuition.classes.split(",");
   return (
     <div>
       <li className="flex py-4 px-10 bg-white rounded-2xl shadow-md">
         <div className="flex flex-col space-y-1">
           <h2 className="text-2xl itim-regular"> Tháng {tuition.month}</h2>
           <h2 className="text-xl itim-regular"> Bé: {tuition.studentName}</h2>
-          <h2 className="text-xl itim-regular"> Lớp: {tuition.className}</h2>
+          
+          <h2 className="text-2xl font-bold w-full itim-regular">Lớp học:</h2>
+            <ul className="w-full px-2">{
+                classes.map((classitem,index) =>(
+                    <li key={index} className="text-md font-bold itim-regular">
+                        {classitem}
+                    </li>
+                ))
+                }</ul>
           <h2 className="text-xl itim-regular">
             {" "}
             Số ngày đi học: {tuition.attendance}

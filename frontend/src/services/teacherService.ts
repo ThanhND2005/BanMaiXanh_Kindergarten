@@ -51,12 +51,16 @@ export const teacherService = {
         const res = await api.patch(`/teacher/verifyTeacherBill/${salaryid}`,{},{withCredentials : true})
         return res.data
     },
-    patchTeacher : async (teacherid: string,name: string, dob: Date,address : string, gender: string) =>{
-        const res =  await api.patch(`/teacher/patchTeacher/${teacherid}`,{name,dob,address,gender})
+    patchTeacher : async (teacherid: string,name: string, dob: Date,address : string, gender: string,bank: string, accountbank: string) =>{
+        const res =  await api.patch(`/teacher/patchTeacher/${teacherid}`,{name,dob,address,gender,bank,accountbank},{withCredentials:true})
         return res.data
     },
     getStudentList : async (teacherid : string) =>{
         const res = await api.get(`/teacher/getStudentList/${teacherid}`,{withCredentials: true})
         return res.data.students
+    },
+    getAccountBank : async (userid : string) =>{
+        const res = await api.get(`/teacher/getAccountBank/${userid}`,{withCredentials: true})
+        return res.data.account
     }
 }

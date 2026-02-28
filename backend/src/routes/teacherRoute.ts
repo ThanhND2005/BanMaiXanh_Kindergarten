@@ -1,6 +1,6 @@
 
 import express from 'express'
-import { deleteStudent, deleteTeacher, getMenu, getNotificationList, getTeacherList, patchStudent, patchTeacher, postCheckin, postCheckout, postNotification, postTimeKeeping, verifyTeacherBill,patchAvatar, getStudentList } from '~/controllers/teacherControllers'
+import { deleteStudent, deleteTeacher, getMenu, getNotificationList, getTeacherList, patchStudent, patchTeacher, postCheckin, postCheckout, postNotification, postTimeKeeping, verifyTeacherBill,patchAvatar, getStudentList, getAccountBank } from '~/controllers/teacherControllers'
 import { uploadAvatar } from '~/middlewares/cloudMiddleware'
 
 const router = express.Router()
@@ -18,5 +18,5 @@ router.patch('/patchStudent/:studentid',patchStudent)
 router.post('/postNotification/:teacherid',postNotification)
 router.patch('/verifyTeacherBill/:salaryid',verifyTeacherBill)
 router.get('/getStudentList/:teacherid',getStudentList)
-
+router.get('/getAccountBank/:userid',getAccountBank)
 export default router

@@ -25,22 +25,30 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { teacherService } from "@/services/teacherService";
 import { toast } from "sonner";
+import { useState } from "react";
 const AvatarFormSchema = z.object({
   avatar: z.any().refine((file) => file?.length > 0, {
     message: "Không để trống thông tin",
   }),
 });
+interface Account {
+  bank: string, 
+  accountbank: string
+}
 const UpdateFormSchema = z.object({
   name: z.string().min(1, "Tên không được để trống !"),
   gender: z.string().min(1, "Giới tính không được để trống !"),
   address: z.string().min(1, "Địa chỉ không được để trống !"),
   dob: z.string().date("Ngày sinh không được để trống !"),
+  bank:z.string(),
+  accountbank: z.string()
 });
 type UpdateFormValues = z.infer<typeof UpdateFormSchema>;
 type AvatarFromValues = z.infer<typeof AvatarFormSchema>;
 const HomePageTeacher = () => {
   const { tabActive, setTabActive } = useTabTeacherStore();
   const teacher = useAuthStore((state) => state.user);
+  const [account,setAccount] = useState<Account>()
   
   const navigate = useNavigate();
   const {
@@ -57,11 +65,13 @@ const HomePageTeacher = () => {
     formState: { errors: err, isSubmitting: isSub },
   } = useForm<UpdateFormValues>({
     resolver: zodResolver(UpdateFormSchema),
-    defaultValues: {
-      name: teacher?.name,
+    values: {
+      name: teacher?.name || "",
       dob: new Date(teacher?.dob as Date).toLocaleDateString("en-CA"),
-      gender: teacher?.gender,
-      address: teacher?.address,
+      gender: teacher?.gender || "",
+      address: teacher?.address|| "",  
+      bank : account?.bank ||"",
+      accountbank: account?.accountbank ||""
     },
   });
   
@@ -90,10 +100,18 @@ const HomePageTeacher = () => {
           toast.error("Cập nhập ảnh đại diện thất bại ");
         }
   };
+  const getAccount = async () =>{
+    try {
+      const account = await teacherService.getAccountBank(teacher?.userid as string)
+      setAccount(account)
+    } catch (error) {
+      console.error(error);
+    }
+  }
   const onUpdateInfor = async (data : UpdateFormValues) =>{
-    const {name, dob, gender,address} = data
+    const {name, dob, gender,address,bank,accountbank} = data
       try {
-        await teacherService.patchTeacher(teacher?.userid as string,name,new Date(dob),address,gender)
+        await teacherService.patchTeacher(teacher?.userid as string,name,new Date(dob),address,gender,bank,accountbank)
         await getMe()
         toast.success("Cập nhập thông tin cá nhân thành công !")
       } catch (error) {
@@ -164,12 +182,12 @@ const HomePageTeacher = () => {
             <div className="text-right hidden md:block">
               <Dialog>
                 <DialogTrigger asChild>
-                  <div>
+                  <button onClick={() => getAccount()}>
                     <p className="font-bold text-gray-800 text-sm">
                       {teacher?.name}
                     </p>
                     <p className="text-xs text-gray-500">Giáo viên</p>
-                  </div>
+                  </button>
                 </DialogTrigger>
                 <DialogContent>
                   <form className="flex flex-col justify-center items-center gap-3" onSubmit={had(onUpdateInfor)}>
@@ -209,6 +227,14 @@ const HomePageTeacher = () => {
                       <Label htmlFor="address" className="text-sm block">Địa chỉ</Label>
                       <Input type="text" id="address" className="rounded-xl shadow-md" {...reg("address")}/>
                       {err.address && <p className="text-destructive text-sm">{err.address.message}</p>}
+                    </div>
+                    <div className="w-full">
+                      <Label htmlFor="bank" className="text-sm block">Tên ngân hàng:</Label>
+                      <Input type="text" id="bank" className="rounded-xl shadow-md" {...reg("bank")}/>
+                    </div>
+                    <div className="w-full">
+                      <Label htmlFor="accountbank" className="text-sm block">Số tài khoản:</Label>
+                      <Input type="text" id="accountbank" className="rounded-xl shadow-md" {...reg("accountbank")}/>
                     </div>
                     <div>
                       <Button type="submit" disabled={isSub} className="rounded-2xl shadow-md text-white bg-[#05d988] hover:bg-[#006f44] hover:text-white focus:bg-[#05d988]">Cập nhập</Button>
