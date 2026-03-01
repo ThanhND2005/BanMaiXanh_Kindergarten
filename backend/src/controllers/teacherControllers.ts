@@ -15,7 +15,7 @@ export const getTeacherList = async (req: Request, res: Response) => {
         LEFT JOIN TimeKeeping tk on tk.teacherid = t.userid AND tk.date = @date
         JOIN Account a on a.userid = t.userid AND a.deleted = 'false'
         WHERE t.deleted = 'false'
-        ORDER t.name DESC`
+        ORDER BY t.name DESC`
       )
     const teachers = res1.recordset
     return res.status(200).json({ teachers })

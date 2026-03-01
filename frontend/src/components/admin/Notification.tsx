@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button } from '../ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import {z} from 'zod'
@@ -20,10 +20,11 @@ const NotificationFormSchema = z.object({
 type NotificationFormValues = z.infer<typeof NotificationFormSchema>
 
 const Notification = () => {
-  const {control,register, handleSubmit, formState: {errors, isSubmitting}} = useForm<NotificationFormValues>({
+  const {reset,control,register, handleSubmit, formState: {errors, isSubmitting}} = useForm<NotificationFormValues>({
     resolver : zodResolver(NotificationFormSchema)
   })
   const {refreshNotifications} = useAdminStore()
+  const [open, setOpen] = useState(false)
   const onSubmit2 = async (data: NotificationFormValues) =>{
       const {title,content,receiver} = data;
       try {
@@ -34,6 +35,11 @@ const Notification = () => {
         console.error(error)
         toast.error("Xảy ra lỗi khi tạo thông báo !")
       }
+      finally
+      {
+        reset()
+        setOpen(false)
+      }
       
   }
   const notifications =  useAdminStore((state) => state.notifications)
@@ -41,7 +47,7 @@ const Notification = () => {
     <>
       <div className='flex justify-between '>
       <h1 className='text-2xl font-bold itim-regular'>Các thông báo đã gửi:</h1>
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button variant='outline' className='rounded-2xl bg-[#05D988] text-[#ffffff] hover:bg-[#006f44] hover:text-white focus:bg-[#05D988]  transition all'><div className='flex justify-between gap-1 items-center'>
             <Plus/>
