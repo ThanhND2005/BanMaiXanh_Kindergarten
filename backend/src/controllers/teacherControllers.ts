@@ -160,7 +160,8 @@ export const postCheckin = async (req: Request, res: Response) => {
     const { classid } = req.body
     const getTime = new Date()
     const getDate = new Date()
-    const month = Number(getDate.toISOString().slice(5, 7))
+    const month = new Date().getMonth() + 1
+    const year = new Date().getFullYear()
     const request = new sql.Request()
     await request
       .input('studentid', sql.UniqueIdentifier, studentid)
@@ -168,8 +169,9 @@ export const postCheckin = async (req: Request, res: Response) => {
       .input('date', sql.Date, getDate)
       .input('time', sql.Time, getTime)
       .input('month', sql.Int, month)
+      .input('year',sql.Int,year)
       .query(
-        `INSERT INTO Attendance (studentid, classid, date,check_in_time,month) VALUES (@studentid, @classid,@date,@time,@month)`
+        `INSERT INTO Attendance (studentid, classid, date,check_in_time,month,year) VALUES (@studentid, @classid,@date,@time,@month,@year)`
       )
     return res.sendStatus(201)
   } catch (error) {

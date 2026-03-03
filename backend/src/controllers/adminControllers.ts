@@ -96,7 +96,7 @@ export const postNotification = async (req: Request, res: Response) => {
       await Promise.all(insertPromise)
       return res.status(201).send('Tạo thông báo thành công')
     }
-    else {
+    else if(receiver === 'Tất cả'){
       const request2 = new sql.Request()
       const res2 = await request2.query(`SELECT * FROM Account WHERE userrole != 'admin' AND deleted = 'false'`)
       const users = res2.recordset
@@ -115,7 +115,10 @@ export const postNotification = async (req: Request, res: Response) => {
       await Promise.all(insertPromise)
       return res.status(201).send('Tạo thông báo thành công')
     }
-
+    else{
+      return res.status(404).send('Không tìm thấy đối tượng')
+    }
+    
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')
