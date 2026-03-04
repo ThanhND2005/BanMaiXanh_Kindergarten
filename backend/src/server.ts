@@ -8,6 +8,7 @@ import adminRoute from './routes/adminRoute'
 import parentRoute from './routes/parentRoute'
 import teacherRoute from './routes/teacherRoute'
 import studentRoute from './routes/studentRoute'
+import paymentRoute from './routes/paymentRoute'
 import { protectedRoute } from "./middlewares/authMiddleware";
 const app = express()
 const PORT = process.env.PORT || 5001
@@ -16,7 +17,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 app.use('/api/auth',authRoute)
-
+app.use('/api/payment',paymentRoute)
 app.use(protectedRoute)
 app.use('/api/student',studentRoute)
 app.use('/api/admin',adminRoute)

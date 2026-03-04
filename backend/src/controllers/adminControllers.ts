@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from "express"
 import { sql } from "~/libs/DB"
 import { qrStorage } from "~/middlewares/cloudMiddleware";
 import { Account } from '~/type';
-
+import { randomUUID } from "crypto";
 export const getNotificationList = async (req: Request, res: Response) => {
   try {
     const userid = (req as any).user.userid
@@ -96,7 +96,7 @@ export const postNotification = async (req: Request, res: Response) => {
       await Promise.all(insertPromise)
       return res.status(201).send('Tạo thông báo thành công')
     }
-    else if(receiver === 'Tất cả'){
+    else if (receiver === 'Tất cả') {
       const request2 = new sql.Request()
       const res2 = await request2.query(`SELECT * FROM Account WHERE userrole != 'admin' AND deleted = 'false'`)
       const users = res2.recordset
@@ -115,10 +115,10 @@ export const postNotification = async (req: Request, res: Response) => {
       await Promise.all(insertPromise)
       return res.status(201).send('Tạo thông báo thành công')
     }
-    else{
+    else {
       return res.status(404).send('Không tìm thấy đối tượng')
     }
-    
+
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')
@@ -367,24 +367,25 @@ export const postStudentBill = async (req: Request, res: Response) => {
       if (attendance < 9) {
         amount /= 2
       }
-      if(attendance == 0)
-      {
+      if (attendance == 0) {
         continue
       }
-      const url = `https://img.vietqr.io/image/vpbank-0354445956-print.png?amount=${amount}&addInfo=HOC%20PHI%20THANG%20${month}%20BE%20${students[i].name}&accountName=MAM%20NON%20BAN%20MAI%20XANH`
+      const tuitionid = randomUUID()
+      const url = `https://img.vietqr.io/image/mbbank-0334477715-print.png?amount=${amount}&addInfo=${tuitionid}&accountName=MAM%20NON%20BAN%20MAI%20XANH`
       const qrUrl = await qrStorage(url)
       const request4 = new sql.Request()
       await request4
-      .input('studentid',sql.UniqueIdentifier,students[i].studentid)
-      .input('amount',sql.Int,amount)
-      .input('qrurl',sql.NVarChar,qrUrl)
-      .input('month',sql.Int,month)
-      .input('year',sql.Int,year)
-      .input('classes',sql.NVarChar,classnames)
-      .input('attendance',sql.Int,attendance)
-      .query(
-        `INSERT INTO Tuition (studentid, amount, qrurl, month, year, classes, attendance) VALUES (@studentid, @amount, @qrurl,@month,@year,@classes,@attendance)`
-      )
+        .input('studentid', sql.UniqueIdentifier, students[i].studentid)
+        .input('amount', sql.Int, amount)
+        .input('qrurl', sql.NVarChar, qrUrl)
+        .input('month', sql.Int, month)
+        .input('year', sql.Int, year)
+        .input('classes', sql.NVarChar, classnames)
+        .input('attendance', sql.Int, attendance)
+        .input('tuitionid',sql.UniqueIdentifier,tuitionid)
+        .query(
+          `INSERT INTO Tuition (tuitionid,studentid, amount, qrurl, month, year, classes, attendance) VALUES (@tuitionid,@studentid, @amount, @qrurl,@month,@year,@classes,@attendance)`
+        )
     }
     return res.status(201).send('Tạo hóa đơn học phí thành công')
 

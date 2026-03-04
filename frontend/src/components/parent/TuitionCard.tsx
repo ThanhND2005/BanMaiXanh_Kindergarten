@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -17,21 +17,19 @@ interface ITuitionCard {
 }
 const ComfirmFormSchema = z.object({
   tuitionid: z.string(),
-  billImage: z
-    .any()
-    .refine((file) => file?.length > 0, {
-      message: "Không được để trống thông tin",
-    }),
+  billImage: z.any().refine((file) => file?.length > 0, {
+    message: "Không được để trống thông tin",
+  }),
 });
 type ComfirmFormValues = z.infer<typeof ComfirmFormSchema>;
 const TuitionCard = ({ tuition }: ITuitionCard) => {
   console.log(tuition.status);
-  const [open,setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   const {
     reset,
     register,
     handleSubmit,
-    formState: { errors, isSubmitting},
+    formState: { errors, isSubmitting },
   } = useForm<ComfirmFormValues>({
     resolver: zodResolver(ComfirmFormSchema),
     defaultValues: {
@@ -49,29 +47,50 @@ const TuitionCard = ({ tuition }: ITuitionCard) => {
     } catch (error) {
       console.error(error);
       toast.error("Gửi hóa đơn thất bại !");
-    }
-    finally
-    {
-        reset()
-        setOpen(false)
+    } finally {
+      reset();
+      setOpen(false);
     }
   };
   const classes = tuition.classes.split(",");
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval>;
+    if (tuition.status === null) {
+      interval = setInterval(async () => {
+        try {
+          await refreshStudentBills();
+          const currenttuition = useAdminStore
+            .getState()
+            .studentbills?.find((t) => t.tuitionid === tuition.tuitionid);
+          if (currenttuition && currenttuition?.status !== null) {
+            clearInterval(interval);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }, 3000);
+    }
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [tuition.status, tuition.tuitionid]);
   return (
     <div>
       <li className="flex py-4 px-10 bg-white rounded-2xl shadow-md">
         <div className="flex flex-col space-y-1">
           <h2 className="text-2xl itim-regular"> Tháng {tuition.month}</h2>
           <h2 className="text-xl itim-regular"> Bé: {tuition.studentName}</h2>
-          
+
           <h2 className="text-2xl font-bold w-full itim-regular">Lớp học:</h2>
-            <ul className="w-full px-2">{
-                classes.map((classitem,index) =>(
-                    <li key={index} className="text-md font-bold itim-regular">
-                        {classitem}
-                    </li>
-                ))
-                }</ul>
+          <ul className="w-full px-2">
+            {classes.map((classitem, index) => (
+              <li key={index} className="text-md font-bold itim-regular">
+                {classitem}
+              </li>
+            ))}
+          </ul>
           <h2 className="text-xl itim-regular">
             {" "}
             Số ngày đi học: {tuition.attendance}
@@ -103,7 +122,11 @@ const TuitionCard = ({ tuition }: ITuitionCard) => {
                 <img src={tuition.qrurl} alt="qr" className="object-cover" />
               </DialogTrigger>
               <DialogContent className="flex justify-center items-center">
-                <img src={tuition.qrurl} alt="qr" className="object-fit h-[80%] w-[80%]" />
+                <img
+                  src={tuition.qrurl}
+                  alt="qr"
+                  className="object-fit h-[80%] w-[80%]"
+                />
               </DialogContent>
             </Dialog>
           </div>
