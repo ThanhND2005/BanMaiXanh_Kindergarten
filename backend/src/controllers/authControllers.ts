@@ -59,7 +59,7 @@ export const signin = async (req: Request, res: Response) => {
     const request = new sql.Request()
     const res1 = await request
       .input('username', sql.VarChar, username)
-      .query(`SELECT * FROM Account WHERE username = @username AND deleted ='false' AND userrole <> 'admin'`)
+      .query(`SELECT * FROM Account WHERE username = @username AND deleted ='false' AND userrole = 'parent'`)
     const account = res1.recordset[0]
     if (!account) {
       return res.status(401).send('Thông tin tài khoản hoặc mật khẩu không chính xác !')
@@ -97,6 +97,43 @@ export const signinAdmin = async (req: Request, res: Response) => {
     const res1 = await request
       .input('username', sql.VarChar, username)
       .query(`SELECT * FROM Account WHERE username = @username AND deleted ='false' AND userrole='admin'`)
+    const account = res1.recordset[0]
+    if (!account) {
+      return res.status(401).send('Thông tin tài khoản hoặc mật khẩu không chính xác !')
+    }
+    const passwordCorrect = await bcrypt.compare(password, account.hashpassword)
+    if (!passwordCorrect) {
+      return res.status(401).send('Thông tin tài khoản hoặc mật khẩu không chính xác !')
+    }
+    const accessToken = jwt.sign({ userid: account.userid, role: account.userrole }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '30m' })
+    const refreshToken = cryto.randomBytes(64).toString('hex')
+    const expireAt = new Date()
+    expireAt.setTime(expireAt.getTime() + (8 * 60 * 60 * 1000))
+    await request
+      .input('refreshtoken', sql.VarChar, refreshToken)
+      .input('userid', sql.UniqueIdentifier, account.userid)
+      .input('expireat', sql.DateTime, expireAt)
+      .input('createdat', sql.DateTime, new Date())
+      .query(`INSERT INTO Session (userid, refreshtoken,expireat, createdat) VALUES(@userid, @refreshtoken,@expireat,@createdat)`)
+    res.cookie('refreshtoken', refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 8 * 60 * 60 * 1000
+    })
+    return res.status(200).json({ message: "đăng nhập thành công", accessToken })
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send('Lỗi hệ thống')
+  }
+}
+export const signinTeacher = async (req: Request, res: Response) => {
+  try {
+    const { username, password } = req.body
+    const request = new sql.Request()
+    const res1 = await request
+      .input('username', sql.VarChar, username)
+      .query(`SELECT * FROM Account WHERE username = @username AND deleted ='false' AND userrole='teacher'`)
     const account = res1.recordset[0]
     if (!account) {
       return res.status(401).send('Thông tin tài khoản hoặc mật khẩu không chính xác !')

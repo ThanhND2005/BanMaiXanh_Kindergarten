@@ -14,6 +14,10 @@ export const authService = {
         const res = await api.post('/auth/signinAdmin',{username,password},{withCredentials:true})
         return res.data
     },
+    signinTeacher : async(username : string,password: string) =>{
+        const res = await api.post('/auth/signinTeacher',{username,password},{withCredentials:true})
+        return res.data
+    },
     signOut : async () =>{
         return api.post('/auth/signout',{},{withCredentials: true})
     },

@@ -10,12 +10,14 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { getRedirectPath } from "@/lib/navigation";
 import { useAdminStore } from "@/stores/useAdminStore";
+import { useTeacherStore } from "@/stores/useTeacherStore";
+import { useParentStore } from "@/stores/useParentStore";
 const SigninSchema = z.object({
   username: z.string().min(1, "Tên đăng nhập không được để trống"),
   password: z.string().min(1, "Mật khẩu không được để trống"),
 });
 type SigninFormValues = z.infer<typeof SigninSchema>;
-export function SigninPageAdmin({
+export function SigninPageTeacher({
   className,
   ...props
 }: React.ComponentProps<"div">) {
@@ -27,11 +29,13 @@ export function SigninPageAdmin({
     resolver: zodResolver(SigninSchema),
   });
   const navigate = useNavigate()
-  const signinAdmin = useAuthStore((state) => state.signinAdmin)
+  const signinTeacher = useAuthStore((state) => state.signinTeacher)
   const {refreshStudents,refreshTeachers ,refreshClasses,refreshNotifications,refreshMenu,refreshStudentBills,refreshTeacherBills,refreshSecurity}= useAdminStore()
+  const {refreshNotifications : rnt, refreshStudents : rstu} = useTeacherStore()
+  const {refreshNotification : refreshNotificationParent} = useParentStore()
   const onSubmit = async (data: SigninFormValues) => {
     const {username, password} = data 
-    await signinAdmin(username,password)
+    await signinTeacher(username,password)
     const user =  useAuthStore.getState().user
     if (user) {
         const correctPath = getRedirectPath(user.role as string);
@@ -43,13 +47,18 @@ export function SigninPageAdmin({
         await refreshStudentBills()
         await refreshTeacherBills()
         await refreshSecurity()
+        if(user.role === 'teacher')
+        {
+          await rnt(user.userid)
+          await rstu(user.userid)
+        }
         navigate(correctPath);
     }
   };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="min-h-screen w-full bg-linear-to-b from-[#ffffff] to-[#d1fae5] flex items-center justify-center p-6">
-    
+      
         <div className="w-full md:w-1/2 p-4 md:p-4">
            <h2 className="text-5xl font-bold text-green-700 mb-5 itim-regular">
               Ban Mai Xanh
@@ -62,7 +71,7 @@ export function SigninPageAdmin({
           
           <form className="space-y-2" onSubmit={handleSubmit(onSubmit)}>
 
-          
+           
             <div>
               <Label htmlFor="username" className="text-sm block">
                 Tên đăng nhập
@@ -101,7 +110,7 @@ export function SigninPageAdmin({
             </div>
 
            
-           
+          
             <Button
               type="submit"
               className="w-full bg-[#16a34a] hover:bg-[#006f44] mt-4 rounded-2xl transition all focus:bg-[#16a34a] "
@@ -110,19 +119,24 @@ export function SigninPageAdmin({
               Đăng nhập
             </Button>
 
-          
+           
           </form>
-          
+          <p className="text-center text-sm mt-4">
+            Bạn chưa có tài khoản?{" "}
+            <a href="/signup" className="text-blue-700 font-medium hover:underline">
+              Đăng ký
+            </a>
+          </p>
         </div>
 
-
+   
         <div className="hidden md:flex w-1/2 flex-col items-center justify-center p-8 gap-17">
           
 
           <div className="relative w-full max-w-sm h-auto">
-            
+           
             <img
-              src="https://res.cloudinary.com/dhylrhxsa/image/upload/v1772292324/f700c5b739cf2fc2e43694b9a4d75c0c-removebg-preview_ebi4ha.png"
+              src="https://res.cloudinary.com/dhylrhxsa/image/upload/v1772630893/e3e7c204dc7095656558163c1434c7d0-removebg-preview_farxuk.png"
               alt="Minh họa giáo viên và học sinh"
               className="rounded-xl w-full h-auto"
             />

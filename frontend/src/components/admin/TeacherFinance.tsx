@@ -7,10 +7,10 @@ import { teacherService } from "@/services/teacherService";
 
 const TeacherFinance = () => {
   const teacherbills = useAdminStore((state) => state.teacherbills);
-  const { refreshTeacherBills } = useAdminStore();
+  const { refreshTeacherBills,setLoading } = useAdminStore();
   const onCreate = async (month: number) => {
     try {
-      useAdminStore.setState({ loading: true });
+      setLoading(true)
       await adminService.postTeacherBill(month);
       await refreshTeacherBills();
       toast.success("Tạo hóa đơn thành công !");
@@ -18,7 +18,8 @@ const TeacherFinance = () => {
       console.error(error);
       toast.error("Tạo hóa đơn thất bại !");
     } finally {
-      useAdminStore.setState({ loading: false });
+      setLoading(false)
+
     }
   };
   const onDelete = async (salaryid: string) => {

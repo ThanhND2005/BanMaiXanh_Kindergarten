@@ -16,7 +16,6 @@ export interface Teacher {
 export interface teacherState {
     students : Student[] | null
     notifications: Notification[] |  null
-    loading: boolean
     clearState : () => void
     refreshStudents : (teacherid: string) => void
     refreshNotifications: (teacherid: string) => void

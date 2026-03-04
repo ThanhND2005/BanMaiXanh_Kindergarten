@@ -62,7 +62,7 @@ export function SigninPage({
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="min-h-screen w-full bg-linear-to-b from-[#ffffff] to-[#d1fae5] flex items-center justify-center p-6">
-        {/* Cột bên trái: Form Đăng ký */}
+        
         <div className="w-full md:w-1/2 p-4 md:p-4">
            <h2 className="text-5xl font-bold text-green-700 mb-5 itim-regular">
               Ban Mai Xanh
@@ -75,7 +75,7 @@ export function SigninPage({
           
           <form className="space-y-2" onSubmit={handleSubmit(onSubmit)}>
 
-            {/* Tên đăng nhập */}
+          
             <div>
               <Label htmlFor="username" className="text-sm block">
                 Tên đăng nhập
@@ -94,7 +94,7 @@ export function SigninPage({
               )}
             </div>
 
-            {/* Mật khẩu */}
+          
             <div>
               <Label htmlFor="password" className="text-sm block">
                 Mật khẩu
@@ -114,7 +114,7 @@ export function SigninPage({
             </div>
 
            
-            {/* Nút Đăng nhập */}
+            
             <Button
               type="submit"
               className="w-full bg-[#16a34a] hover:bg-[#006f44] mt-4 rounded-2xl transition all focus:bg-[#16a34a] "

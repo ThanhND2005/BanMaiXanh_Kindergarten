@@ -1,40 +1,46 @@
-import { useState } from 'react';
-import { Dashboard } from '@/components/admin/Dashboard';
-import Class from "@/components/admin/Class"
-import Finance from '@/components/admin/Finance';
-import Menu from '@/components/admin/Menu';
-import Notification from '@/components/admin/Notification';
-import {StudentManagement} from '@/components/admin/StudentManagement';
-import TeacherManagement from '@/components/admin/TeacherManagement';
-import { Home, Bell,School,CircleDollarSign,ShieldUser,CookingPot} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
-import { useTabAdminStore } from '@/stores/useTabStore';
-import TeacherFinance from '@/components/admin/TeacherFinance';
-import StudentFinance from '@/components/admin/StudentFinance';
-import { useAdminStore } from '@/stores/useAdminStore';
-import { useAuthStore } from '@/stores/useAuthStore';
+import { useState } from "react";
+import { Dashboard } from "@/components/admin/Dashboard";
+import Class from "@/components/admin/Class";
+import Finance from "@/components/admin/Finance";
+import Menu from "@/components/admin/Menu";
+import Notification from "@/components/admin/Notification";
+import { StudentManagement } from "@/components/admin/StudentManagement";
+import TeacherManagement from "@/components/admin/TeacherManagement";
+import {
+  Home,
+  Bell,
+  School,
+  CircleDollarSign,
+  ShieldUser,
+  CookingPot,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useTabAdminStore } from "@/stores/useTabStore";
+import TeacherFinance from "@/components/admin/TeacherFinance";
+import StudentFinance from "@/components/admin/StudentFinance";
+import { useAdminStore } from "@/stores/useAdminStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 export default function HomePageAdmin() {
-  const {tabActive,setTabActive} = useTabAdminStore()
-  const navigate = useNavigate()
-  const signout = useAuthStore((state) => state.signout)
-  const onLogout = async () =>{
-    await signout()
-    navigate('/signin')
-  }
+  const { tabActive, setTabActive } = useTabAdminStore();
+  const { loading } = useAdminStore();
+  const navigate = useNavigate();
+  const signout = useAuthStore((state) => state.signout);
+  const onLogout = async () => {
+    await signout();
+    navigate("/signin");
+  };
   const now = new Date();
-    const dateformat = new Intl.DateTimeFormat('vi-VN',{
-      weekday: 'long',
-      day :'2-digit',
-      month:'2-digit',
-      year:'numeric',
-    }).format(now)
-  const final = dateformat.replace(', ',', ngày ')
-  const admin = useAuthStore((state) => state.user)
+  const dateformat = new Intl.DateTimeFormat("vi-VN", {
+    weekday: "long",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(now);
+  const final = dateformat.replace(", ", ", ngày ");
+  const admin = useAuthStore((state) => state.user);
   return (
-    
     <div className="min-h-screen bg-gray-50">
-      
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between">
           <div className="flex items-center gap-3">
@@ -43,11 +49,11 @@ export default function HomePageAdmin() {
             </div>
             <div>
               <h1 className="text-gray-900 font-bold">{admin?.name}</h1>
-              <h2 className='text-sm text-[#828282]'>{admin?.role}</h2>
+              <h2 className="text-sm text-[#828282]">{admin?.role}</h2>
             </div>
           </div>
-          <div className='flex items-center'>
-            <h1 className='text-2xl font-bold'>{final}</h1>
+          <div className="flex items-center">
+            <h1 className="text-2xl font-bold">{final}</h1>
           </div>
         </div>
       </header>
@@ -56,78 +62,98 @@ export default function HomePageAdmin() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-1 overflow-x-auto">
             <button
-              onClick={() => setTabActive('dashboard')}
+              onClick={() => setTabActive("dashboard")}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
-                (tabActive === 'dashboard' || tabActive === 'studentmanagement' || tabActive === 'teachermanagement')
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                tabActive === "dashboard" ||
+                tabActive === "studentmanagement" ||
+                tabActive === "teachermanagement"
+                  ? "border-orange-500 text-orange-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
               <Home className="w-4 h-4" />
               Trang chủ
             </button>
             <button
-              onClick={() => setTabActive('notification')}
+              onClick={() => setTabActive("notification")}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
-                tabActive === 'notification'
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                tabActive === "notification"
+                  ? "border-orange-500 text-orange-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
               <Bell className="w-4 h-4" />
               Thông báo
             </button>
             <button
-              onClick={() => setTabActive('class')}
+              onClick={() => setTabActive("class")}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
-                tabActive === 'class'
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                tabActive === "class"
+                  ? "border-orange-500 text-orange-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
               <School className="w-4 h-4" />
               Lớp học
             </button>
             <button
-              onClick={() => setTabActive('menu')}
+              onClick={() => setTabActive("menu")}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
-                tabActive === 'menu'
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                tabActive === "menu"
+                  ? "border-orange-500 text-orange-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
               <CookingPot className="w-4 h-4" />
               Thực đơn
             </button>
             <button
-              onClick={() => setTabActive('finance')}
+              onClick={() => setTabActive("finance")}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
-                (tabActive === 'finance' || tabActive === 'teacherfinance' || tabActive === 'studentfinance')
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                tabActive === "finance" ||
+                tabActive === "teacherfinance" ||
+                tabActive === "studentfinance"
+                  ? "border-orange-500 text-orange-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
               <CircleDollarSign className="w-4 h-4" />
               Tài chính
             </button>
-            <div className='flex ml-auto items-center'>
-              <Button type='button' onClick={() => onLogout()} className='rounded-2xl bg-[#05d988] hover:bg-[#006f44] focus:bg-[#05d988] transition all '>Đăng xuất</Button>
+            <div className="flex ml-auto items-center">
+              <Button
+                type="button"
+                onClick={() => onLogout()}
+                className="rounded-2xl bg-[#05d988] hover:bg-[#006f44] focus:bg-[#05d988] transition all "
+              >
+                Đăng xuất
+              </Button>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* Main Content */}
-      <main className="w-full min-h-screen p-12 bg-[#f0fdf4]">
-        {tabActive === 'dashboard' && <Dashboard />}
-        {tabActive === 'notification' && <Notification />}
-        {tabActive === 'class' && <Class />}
-        {tabActive === 'menu' && <Menu />}
-        {tabActive === 'finance' && <Finance/>}
-        {tabActive === 'studentmanagement' && <StudentManagement/>}
-        {tabActive === 'teachermanagement' && <TeacherManagement/>}
-        {tabActive === 'teacherfinance' && <TeacherFinance/>}
-        {tabActive === 'studentfinance' && <StudentFinance/>}
+    
+      <main className="w-full min-h-screen p-10 bg-[#f0fdf4]">
+        {loading === true && (
+          <div className="w-full  flex items-center justify-center">
+            <img
+              src="https://res.cloudinary.com/dhylrhxsa/image/upload/v1772633018/output-onlinegiftools_xcitd9.gif"
+              alt="loading..."
+            />
+
+          </div>
+          
+        )}
+        {(tabActive === "dashboard" && loading===false) && <Dashboard />}
+        {(tabActive === "notification" && loading===false)&& <Notification />}
+        {(tabActive === "class" && loading===false)&& <Class />}
+        {(tabActive === "menu" && loading===false)&& <Menu />}
+        {(tabActive === "finance" && loading===false)&& <Finance />}
+        {(tabActive === "studentmanagement" && loading===false)&& <StudentManagement />}
+        {(tabActive === "teachermanagement" && loading===false)&& <TeacherManagement />}
+        {(tabActive === "teacherfinance" && loading===false)&& <TeacherFinance />}
+        {(tabActive === "studentfinance" && loading===false)&& <StudentFinance />}
       </main>
     </div>
   );

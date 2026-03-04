@@ -4,11 +4,14 @@ import { useAdminStore } from "@/stores/useAdminStore";
 import { adminService } from "@/services/adminService";
 import {toast} from 'sonner'
 import StudentFinanceCard from "./StudentFinanceCard";
+
 const StudentFinance = () => {
   const studentbills = useAdminStore((state) => state.studentbills);
-  const {refreshStudentBills} = useAdminStore()
+  const {refreshStudentBills,setLoading} = useAdminStore()
+
   const onCreate = async (month : number) => {
       try {
+        setLoading(true)
         await adminService.postStudentBill(month)
         await refreshStudentBills()
         toast.success("Tạo hóa đơn học phí thành công !")
@@ -16,7 +19,10 @@ const StudentFinance = () => {
         console.log(error)
         toast.error("Tạo hóa đơn học phí không thành công !")
       }
-      
+      finally
+      {
+        setLoading(false)
+      }
   };
   return (
     <>

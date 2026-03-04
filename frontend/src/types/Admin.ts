@@ -27,6 +27,7 @@ export interface adminState {
     students : Student[] | null
     studentbills: StudentBill[] | null
     teacherbills: TeacherBill[] | null
+    setLoading: (loading: boolean) => void
     clearState: () => void
     refreshTeachers : () => void
     refreshNotifications: () => void 

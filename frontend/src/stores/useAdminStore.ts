@@ -33,6 +33,9 @@ export const useAdminStore = create<adminState>((set,get) => ({
             set({loading:false})
         }
     },
+    setLoading: (loading) =>{
+        set({loading})
+    },
     refreshTeachers: async () => {
         try {
             set({loading: true})

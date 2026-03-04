@@ -11,6 +11,9 @@ export const useAuthStore = create<authState>((set, get) => ({
     setAccessToken: (accessToken) => {
         set({ accessToken })
     },
+    setLoading : (loading) =>{
+        set({loading})
+    },
     clearState: () => {
         set({ accessToken: null })
         set({ user: null })
@@ -56,6 +59,22 @@ export const useAuthStore = create<authState>((set, get) => ({
             toast.error("Đăng nhập thất bại !")
         }
         finally {
+            set({ loading: false })
+        }
+    },
+    signinTeacher : async (username, password) =>{
+        try {
+            set({ loading: true })
+            const { accessToken } = await authService.signinTeacher(username, password)
+            set({ accessToken })
+            await get().getMe()
+            toast.success("Đăng nhập thành công !")
+        } catch (error) {
+            console.error(error)
+            toast.error("Đăng nhập thất bại !")
+        }
+        finally
+        {
             set({ loading: false })
         }
     },
