@@ -18,8 +18,8 @@ const Finance = () => {
 
         <div className='bg-[#ffffff] rounded-xl shadow-md flex justify-between p-6'>
           <div className='gap-3 justify-start'>
-            <h1 className='text-md font-bold text-[#828282]'>Số học sinh đã đóng học:</h1>
-            <h1 className='text-4xl font-bold mt-4 flex justify-start'>{studentbills?.filter(studentbill => studentbill.status !== null && studentbill.month === new Date().getMonth()).length}/{studentbills?.length}</h1>
+            <h1 className='text-xl text-[#828282] mali-bold'>Số học sinh đã đóng học:</h1>
+            <h1 className='text-6xl mt-4 flex justify-start mali-bold'>{studentbills?.filter(studentbill => studentbill.status !== null && studentbill.month === new Date().getMonth()).length}/{studentbills?.length}</h1>
           </div>  
           <div className='flex justify-end items-center'>
               <GraduationCap className='w-24 h-24'/>  
@@ -30,8 +30,8 @@ const Finance = () => {
 
         <div className='bg-[#ffffff] rounded-xl shadow-md flex justify-between p-6'>
           <div className='gap-3 justify-start'>
-            <h1 className='text-md font-bold text-[#828282]'>Số giáo viên đã nhận lương:</h1>
-            <h1 className='text-4xl font-bold mt-4 flex justify-start'>{teacherbills?.filter(teacherbill => teacherbill.status !== "Đang thực hiện" && teacherbill.month === new Date().getMonth()).length}/{teacherbills?.length}</h1>
+            <h1 className='text-xl font-bold text-[#828282] mali-bold'>Số giáo viên đã nhận lương:</h1>
+            <h1 className='text-6xl mali-bold mt-4 flex justify-start'>{teacherbills?.filter(teacherbill => teacherbill.status !== null && teacherbill.month === new Date().getMonth()).length}/{teacherbills?.length}</h1>
           </div>  
           <div className='flex justify-end items-center'>
               <HandCoins className='w-24 h-24'/>  

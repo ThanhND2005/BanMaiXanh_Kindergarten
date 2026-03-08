@@ -19,18 +19,18 @@ const StudentCard2 = ({ student }: IStudentProps) => {
       <li>
         <button
           onClick={() => onUpdate(student)}
-          className="flex p-4 gap-4 w-full bg-[#ffffff] rounded-xl shadow-md"
+          className="flex flex-rol p-4 gap-4 w-full bg-[#ffffff] rounded-xl shadow-md "
         >
           <div className="h-30 w-30 rounded-full overflow-hidden">
             <img src={student?.avatarurl} alt="logo" className="w-full object-cover" />
           </div>
 
-          <div className="flex flex-col space-y-2">
-            <h1 className="text-2xl itim-regular"> Bé {student.name}</h1>
-            <h1 className="text-xl itim-regular">
+          <div className="flex flex-col justify-center">
+            <h1 className="text-2xl text-start mali-bold"> Bé {student.name}</h1>
+            <h1 className="text-xl  text-start mali-bold">
               Chiều cao (m): {student.height}
             </h1>
-            <h1 className="text-xl itim-regular">
+            <h1 className="text-xl text-start mali-bold">
               Cân nặng (kg): {student.weight}
             </h1>
           </div>

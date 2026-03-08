@@ -46,7 +46,7 @@ const Notification = () => {
   return (
     <>
       <div className='flex justify-between '>
-      <h1 className='text-2xl font-bold itim-regular'>Các thông báo đã gửi:</h1>
+      <h1 className='text-2xl text-[#006f44] mali-bold'>Các thông báo đã gửi:</h1>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button variant='outline' className='rounded-2xl bg-[#05D988] text-[#ffffff] hover:bg-[#006f44] hover:text-white focus:bg-[#05D988]  transition all'><div className='flex justify-between gap-1 items-center'>
@@ -55,10 +55,10 @@ const Notification = () => {
             </div> </Button>
         </DialogTrigger>
         <DialogContent className='flex flex-wrap justify-center gap-3 p-3'>
-          <h1 className='text-2xl font-bold'>Tạo thông báo</h1>
+          <h1 className='text-2xl mali-bold'>Tạo thông báo</h1>
           <form className='w-full gap-6 flex flex-wrap ' onSubmit={handleSubmit(onSubmit2)}>
 
-            <h2 className='text-lg font-medium'>Người nhận:</h2>
+            <h2 className='text-lg mali-semibold  '>Người nhận:</h2>
             <Controller
             name='receiver'
             control={control}
@@ -82,13 +82,13 @@ const Notification = () => {
             />
          
             <div className='w-full'>
-              <Label htmlFor='title' className='text-sm block font-bold'>Tiêu đề</Label>
+              <Label htmlFor='title' className='text-md block mali-semibold'>Tiêu đề</Label>
               <Input type='text' id='title' placeholder='Nhập tiêu đề' className='shadow-sm' {...register("title")}/>
               {errors.title && <p className='text-destructive text-sm'>{errors.title?.message}</p>}
             </div>
             <div className='w-full'>
-              <Label htmlFor='content' className='text-sm block font-bold'>Nội dung</Label>
-              <Input type='text' id='title' placeholder='Nhập nội dung' className='shadow-sm' {...register("content")}/>
+              <Label htmlFor='content' className='text-md block mali-semibold'>Nội dung</Label>
+              <Input type='text' id='title' placeholder='Nhập nội dung' className='shadow-sm h-20' {...register("content")}/>
               {errors.content && <p className='text-destructive text-sm'>{errors.content?.message}</p>}
             </div>
             <div className='flex justify-center w-full'>

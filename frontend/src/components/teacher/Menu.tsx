@@ -1,5 +1,5 @@
 import React from "react";
-import { UtensilsCrossed } from "lucide-react";
+import { Beef, CookingPot, IceCreamBowl, Soup, UtensilsCrossed } from "lucide-react";
 import { useAdminStore } from "@/stores/useAdminStore";
 
 const Menu = () => {
@@ -9,31 +9,29 @@ const Menu = () => {
       <ul className="grid grid-cols-3 p-4 gap-8">
         {menuday?.map((menu) => (
           <li>
-            <div className="bg-[#ffffff] rounded-xl shadow-md flex flex-col justify-center p-4">
+            <div className="rounded-xl shadow-md flex flex-col justify-center p-4" style={{backgroundColor: menu.color}}>
               <div>
-                <h1 className="text-4xl font-bold text-center">
+                <h1 className="text-4xl mali-bold text-center">
                   Thứ {menu.day}
                 </h1>
               </div>
-              <div>
-                <h2 className="text-2xl font-bold">Bữa trưa:</h2>
-              </div>
+              
               <div className="flex justify-between items-center">
-                <h2 className="text-2xl ">{menu.dish1}</h2>
-                <UtensilsCrossed className="h-6 w-6" />
-              </div>
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl ">{menu.dish2}</h2>
-                <UtensilsCrossed className="h-6 w-6" />
-              </div>
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl ">{menu.dish3}</h2>
-                <UtensilsCrossed className="h-6 w-6" />
-              </div>
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl ">{menu.dish4}</h2>
-                <UtensilsCrossed className="h-6 w-6" />
-              </div>
+                  <h2 className="text-2xl mali-semibold">{menu.dish1}</h2>
+                  <CookingPot className="h-6 w-6 text-gray-500" />
+                </div>
+                <div className="flex justify-between items-center">
+                  <h2 className="text-2xl mali-semibold">{menu.dish2}</h2>
+                  <Soup className="h-6 w-6 text-gray-500" />
+                </div>
+                <div className="flex justify-between items-center">
+                  <h2 className="text-2xl mali-semibold">{menu.dish3}</h2>
+                  <IceCreamBowl className="h-6 w-6 text-gray-500" />
+                </div>
+                <div className="flex justify-between items-center">
+                  <h2 className="text-2xl mali-semibold">{menu.dish4}</h2>
+                  <Beef className="h-6 w-6 text-gray-500" />
+                </div>
             </div>
           </li>
         ))}

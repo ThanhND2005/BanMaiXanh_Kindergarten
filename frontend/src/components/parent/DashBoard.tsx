@@ -78,11 +78,11 @@ const DashBoard = () => {
               className="flex flex-col justify-center gap-3"
               onSubmit={handleSubmit(onCreate)}
             >
-              <h1 className="text-xl font-bold text-center">
+              <h1 className="text-xl mali-bold text-center">
                 Đăng ký thông tin cho học sinh
               </h1>
               <div>
-                <Label htmlFor="name" className="text-sm block">
+                <Label htmlFor="name" className="text-sm block mali-bold">
                   Họ và tên
                 </Label>
                 <Input
@@ -100,7 +100,7 @@ const DashBoard = () => {
               </div>
 
               <div>
-                <Label htmlFor="gender" className="text-sm block">
+                <Label htmlFor="gender" className="text-sm block mali-bold">
                   Giới tính
                 </Label>
                 <Controller
@@ -129,7 +129,7 @@ const DashBoard = () => {
                 />
               </div>
               <div>
-                <Label htmlFor="dob" className="text-sm block">
+                <Label htmlFor="dob" className="text-sm block mali-bold">
                   Ngày sinh
                 </Label>
                 <Input
@@ -146,7 +146,7 @@ const DashBoard = () => {
                 )}
               </div>
               <div>
-                <Label htmlFor="height" className="text-sm block">
+                <Label htmlFor="height" className="text-sm block mali-bold">
                   Chiều cao
                 </Label>
                 <Input
@@ -163,7 +163,7 @@ const DashBoard = () => {
                 )}
               </div>
               <div>
-                <Label htmlFor="weight" className="text-sm block">
+                <Label htmlFor="weight" className="text-sm block mali-bold">
                   Cân nặng
                 </Label>
                 <Input

@@ -6,7 +6,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { Label } from "../ui/label";
-import { Utensils,UtensilsCrossed } from "lucide-react";
+import { Beef, CookingPot, IceCreamBowl, Soup } from "lucide-react";
 import type { Menu } from '@/types/store'
 import { useAdminStore } from "@/stores/useAdminStore";
 import { adminService } from "@/services/adminService";
@@ -61,29 +61,29 @@ const MenuCard = ({menu} : IMenuProps) => {
   return (
     <div>
       <li>
-            <div className="bg-[#ffffff] rounded-xl shadow-md flex flex-col justify-center p-8">
+            <div className={` rounded-xl shadow-md flex flex-col justify-center p-8`} style={{backgroundColor : menu.color}}>
               <div>
-                <h1 className="text-4xl font-bold text-center">
+                <h1 className="text-4xl text-center mali-bold">
                   Thứ {menu.day}
                 </h1>
               </div>
               <div>
-                <h2 className="text-2xl font-bold ">Bữa trưa:</h2>
+                
                 <div className="flex justify-between items-center">
-                  <h2 className="text-2xl ">{menu.dish1}</h2>
-                  <Utensils className="h-6 w-6 text-gray-500" />
+                  <h2 className="text-2xl mali-semibold">{menu.dish1}</h2>
+                  <CookingPot className="h-6 w-6 text-gray-500" />
                 </div>
                 <div className="flex justify-between items-center">
-                  <h2 className="text-2xl ">{menu.dish2}</h2>
-                  <UtensilsCrossed className="h-6 w-6 text-gray-500" />
+                  <h2 className="text-2xl mali-semibold">{menu.dish2}</h2>
+                  <Soup className="h-6 w-6 text-gray-500" />
                 </div>
                 <div className="flex justify-between items-center">
-                  <h2 className="text-2xl ">{menu.dish3}</h2>
-                  <Utensils className="h-6 w-6 text-gray-500" />
+                  <h2 className="text-2xl mali-semibold">{menu.dish3}</h2>
+                  <IceCreamBowl className="h-6 w-6 text-gray-500" />
                 </div>
                 <div className="flex justify-between items-center">
-                  <h2 className="text-2xl ">{menu.dish4}</h2>
-                  <UtensilsCrossed className="h-6 w-6 text-gray-500" />
+                  <h2 className="text-2xl mali-semibold">{menu.dish4}</h2>
+                  <Beef className="h-6 w-6 text-gray-500" />
                 </div>
               </div>
               <div className="flex justify-center">
@@ -98,7 +98,7 @@ const MenuCard = ({menu} : IMenuProps) => {
                   </DialogTrigger>
                   <DialogContent>
                     <div className="flex justify-center">
-                      <h1 className="text-4xl font-bold">Thứ {menu.day}</h1>
+                      <h1 className="text-4xl mali-bold">Thứ {menu.day}</h1>
                     </div>
                     <form
                       className="flex flex-wrap justify-center gap-3"
@@ -106,7 +106,7 @@ const MenuCard = ({menu} : IMenuProps) => {
                     >
                      
                       <div className="w-full">
-                        <Label htmlFor="dish1" className="text-sm block">
+                        <Label htmlFor="dish1" className="text-sm block mali-bold">
                           Món 1
                         </Label>
                         <Input
@@ -122,7 +122,7 @@ const MenuCard = ({menu} : IMenuProps) => {
                         )}
                       </div>
                       <div className="w-full">
-                        <Label htmlFor="dish2" className="text-sm block">
+                        <Label htmlFor="dish2" className="text-sm block mali-bold">
                           Món 2
                         </Label>
                         <Input
@@ -138,7 +138,7 @@ const MenuCard = ({menu} : IMenuProps) => {
                         )}
                       </div>
                       <div className="w-full">
-                        <Label htmlFor="dish3" className="text-sm block">
+                        <Label htmlFor="dish3" className="text-sm block mali-bold">
                           Món 3
                         </Label>
                         <Input
@@ -154,7 +154,7 @@ const MenuCard = ({menu} : IMenuProps) => {
                         )}
                       </div>
                       <div className="w-full">
-                        <Label htmlFor="dish4" className="text-sm block">
+                        <Label htmlFor="dish4" className="text-sm block mali-bold">
                           Món 4
                         </Label>
                         <Input

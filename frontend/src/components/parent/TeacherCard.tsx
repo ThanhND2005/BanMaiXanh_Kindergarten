@@ -67,16 +67,16 @@ const TeacherCard = ({teacher} : ITeacherProps) => {
                 <DialogTrigger asChild>
                   <Button variant='outline' className='rounded-2xl bg-[#1271BF] text-[#ffffff] hover:bg-[#0A5694] hover:text-white focus:bg-[#1271BF]'>Kết nối</Button>
                 </DialogTrigger>
-                <DialogContent>
-                  <h2 className='text-2xl itim-regular '>Phụ huynh nhớ nhập đầy đủ nội dung nhé !</h2>
+                <DialogContent >
+                  <h2 className='text-2xl mali-bold '>Phụ huynh nhớ nhập đầy đủ nội dung nhé !</h2>
                   <form className='flex flex-col justify-center p-4 gap-3'onSubmit={had(onSubmit)} >
                     <div >
-                          <Label htmlFor='title' className='text-sm block'>Tiêu đề</Label>
+                          <Label htmlFor='title' className='text-sm block mali-bold'>Tiêu đề</Label>
                           <Input type='text' id='title' className='rounded-xl shadow-sm' {...reg("title")}/>
                           {err.title && <p className='text-destructive text-sm'>{err.title.message}</p>}
                         </div>
                         <div >
-                          <Label htmlFor='content' className='text-sm block'>Nội dung</Label>
+                          <Label htmlFor='content' className='text-sm block mali-bold'>Nội dung</Label>
                           <Input type='text' id='content' className='rounded-xl shadow-sm' {...reg("content")}/>
                           {err.content && <p className='text-destructive text-sm'>{err.content.message}</p>}
                         </div>

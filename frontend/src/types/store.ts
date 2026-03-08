@@ -20,6 +20,7 @@ export interface Menu {
     dish2: string, 
     dish3: string ,
     dish4: string,
+    color: string,
 }
 export interface StudentBill {
     tuitionid: string, 

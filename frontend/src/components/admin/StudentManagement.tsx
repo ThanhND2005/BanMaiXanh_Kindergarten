@@ -6,7 +6,7 @@ export function StudentManagement() {
   
   return (
     <>
-      <h1 className="text-2xl font-bold text-[#006F44] itim-regular mb-8">
+      <h1 className="text-2xl text-[#006F44] mali-bold mb-8">
         Các học sinh trong hệ thống:
       </h1>
       <ul className="grid grid-cols-3 gap-6">

@@ -17,7 +17,7 @@ const StudentFinance = () => {
         toast.success("Tạo hóa đơn học phí thành công !")
       } catch (error) {
         console.log(error)
-        toast.error("Tạo hóa đơn học phí không thành công !")
+        toast.warning("Hóa đơn học phí tháng này đã được khởi tạo trước đó!")
       }
       finally
       {
@@ -28,7 +28,7 @@ const StudentFinance = () => {
     <>
       <div className="flex justify-between items-center mb-3">
         <div className="flex justify-start items-center">
-          <h1 className="text-2xl itim-regular text-[#05D988]">
+          <h1 className="text-2xl mali-bold text-[#05D988]">
             Hóa đơn tiền học các học sinh trong hệ thống:
           </h1>
         </div>

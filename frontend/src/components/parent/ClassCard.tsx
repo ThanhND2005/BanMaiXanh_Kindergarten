@@ -32,7 +32,7 @@ const ClassCard = ({ classinfor }: IClassProps) => {
       toast.success("Đăng ký lớp cho học sinh thành công");
     } catch (error) {
       console.error(error);
-      toast.error("Đăng ký lớp cho học sinh thất bại");
+      toast.warning("Học sinh đang học lớp này rồi");
     } finally {
       setOpen(false);
     }
@@ -47,17 +47,17 @@ const ClassCard = ({ classinfor }: IClassProps) => {
           />
         </div>
         <div className="space-y-2 p-4">
-          <h2 className="text-lg font-bold">Tên lớp: {classinfor.classname}</h2>
-          <h2 className="text-lg font-bold">
+          <h2 className="text-lg mali-bold">Tên lớp: {classinfor.classname}</h2>
+          <h2 className="text-lg mali-bold">
             Giáo viên: {classinfor.teachername}
           </h2>
-          <h2 className="text-lg font-bold">Độ tuổi: {classinfor.age}</h2>
-          <h2 className="text-lg font-bold">Số lượng: {classinfor.member}</h2>
-          <h2 className="text-lg font-bold">
+          <h2 className="text-lg mali-bold">Độ tuổi: {classinfor.age}</h2>
+          <h2 className="text-lg mali-bold">Số lượng: {classinfor.member}</h2>
+          <h2 className="text-lg mali-bold">
             Trạng thái: {classinfor.currentmember}/{classinfor.member}
           </h2>
-          <h2 className="text-lg font-bold">Học phí: {classinfor.tuition}</h2>
-          <h2 className="text-lg font-bold">Lịch học: {classinfor.schedule}</h2>
+          <h2 className="text-lg mali-bold">Học phí: {classinfor.tuition}</h2>
+          <h2 className="text-lg mali-bold">Lịch học: {classinfor.schedule}</h2>
         </div>
         <div className="flex justify-center mb-3">
           <Dialog open={open} onOpenChange={setOpen}>
@@ -70,7 +70,7 @@ const ClassCard = ({ classinfor }: IClassProps) => {
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <h2 className="w-full text-center text-2xl font-bold">
+              <h2 className="w-full text-center text-2xl mali-bold">
                 Chọn học sinh muốn đăng ký
               </h2>
               <Popover open={open2} onOpenChange={setOpen2}>

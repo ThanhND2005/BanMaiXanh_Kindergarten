@@ -176,36 +176,36 @@ const HomePageTeacher = () => {
       <div className="flex-1 flex flex-col min-w-0">
         <header className="sticky top-0 z-20 w-full bg-white h-20 px-8 flex justify-between items-center shadow-sm border-b border-gray-100">
           <div>
-            <h2 className="text-2xl font-bold text-gray-800">{final}</h2>
+            <h2 className="text-2xl mali-bold text-gray-800">{final}</h2>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right hidden md:block">
               <Dialog>
                 <DialogTrigger asChild>
                   <button onClick={() => getAccount()}>
-                    <p className="font-bold text-gray-800 text-sm">
+                    <p className="text-gray-800 text-md mali-bold">
                       {teacher?.name}
                     </p>
-                    <p className="text-xs text-gray-500">Giáo viên</p>
+                    <p className="text-sm text-gray-500 mali-medium text-end">Giáo viên</p>
                   </button>
                 </DialogTrigger>
                 <DialogContent>
                   <form className="flex flex-col justify-center items-center gap-3" onSubmit={had(onUpdateInfor)}>
                     <div>
-                      <h1 className="text-2xl font-bold">Cập nhập thông tin cá nhân</h1>
+                      <h1 className="text-2xl mali-bold">Cập nhập thông tin cá nhân</h1>
                     </div>
                     <div className="w-full">
-                      <Label htmlFor="name" className="text-sm block">Họ và tên</Label>
+                      <Label htmlFor="name" className="text-sm block mali-bold">Họ và tên</Label>
                       <Input type="text" id="name" className="rounded-xl shadow-md" {...reg("name")}/>
                       {err.name && <p className="text-destructive text-sm">{err.name.message}</p>}
                     </div>
                     <div className="w-full">
-                      <Label htmlFor="dob" className="text-sm block">Ngày sinh</Label>
+                      <Label htmlFor="dob" className="text-sm block mali-bold">Ngày sinh</Label>
                       <Input type="text" id="dob" className="rounded-xl shadow-md" {...reg("dob")}/>
                       {err.dob && <p className="text-destructive text-sm">{err.dob.message}</p>}
                     </div>
                     <div className="w-full">
-                      <Label htmlFor="gender" className="text-sm block">Giới tính</Label>
+                      <Label htmlFor="gender" className="text-sm block mali-bold">Giới tính</Label>
                       <Controller name="gender" control={ctr} defaultValue={teacher?.gender}
                       render={({field}) =>(
                         <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="w-full" {...reg("gender")}>
@@ -224,16 +224,16 @@ const HomePageTeacher = () => {
                       />
                     </div>
                     <div className="w-full">
-                      <Label htmlFor="address" className="text-sm block">Địa chỉ</Label>
+                      <Label htmlFor="address" className="text-sm block mali-bold">Địa chỉ</Label>
                       <Input type="text" id="address" className="rounded-xl shadow-md" {...reg("address")}/>
                       {err.address && <p className="text-destructive text-sm">{err.address.message}</p>}
                     </div>
                     <div className="w-full">
-                      <Label htmlFor="bank" className="text-sm block">Tên ngân hàng:</Label>
+                      <Label htmlFor="bank" className="text-sm block mali-bold">Tên ngân hàng:</Label>
                       <Input type="text" id="bank" className="rounded-xl shadow-md" {...reg("bank")}/>
                     </div>
                     <div className="w-full">
-                      <Label htmlFor="accountbank" className="text-sm block">Số tài khoản:</Label>
+                      <Label htmlFor="accountbank" className="text-sm block mali-bold">Số tài khoản:</Label>
                       <Input type="text" id="accountbank" className="rounded-xl shadow-md" {...reg("accountbank")}/>
                     </div>
                     <div>
@@ -254,7 +254,7 @@ const HomePageTeacher = () => {
                 </div>
               </DialogTrigger>
               <DialogContent>
-                <h1 className="text-2xl text-center font-bold">
+                <h1 className="text-2xl text-center mali-bold">
                   Cập nhập ảnh đại diện
                 </h1>
                 <form
@@ -262,7 +262,7 @@ const HomePageTeacher = () => {
                   className="flex flex-col justify-center gap-3"
                 >
                   <div>
-                    <Label htmlFor="avatar" className="text-sm block">
+                    <Label htmlFor="avatar" className="text-sm block mali-bold">
                       Ảnh đại diện
                     </Label>
                     <Input

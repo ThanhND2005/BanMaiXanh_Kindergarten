@@ -25,6 +25,7 @@ type ComfirmFormValues = z.infer<typeof ComfirmFormSchema>;
 const TuitionCard = ({ tuition }: ITuitionCard) => {
   console.log(tuition.status);
   const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false)
   const {
     reset,
     register,
@@ -63,6 +64,7 @@ const TuitionCard = ({ tuition }: ITuitionCard) => {
             .getState()
             .studentbills?.find((t) => t.tuitionid === tuition.tuitionid);
           if (currenttuition && currenttuition?.status !== null) {
+            setOpen2(false)
             clearInterval(interval);
           }
         } catch (error) {
@@ -80,22 +82,22 @@ const TuitionCard = ({ tuition }: ITuitionCard) => {
     <div>
       <li className="flex py-4 px-10 bg-white rounded-2xl shadow-md">
         <div className="flex flex-col space-y-1">
-          <h2 className="text-2xl itim-regular"> Tháng {tuition.month}</h2>
-          <h2 className="text-xl itim-regular"> Bé: {tuition.studentName}</h2>
+          <h2 className="text-2xl mali-bold"> Tháng {tuition.month}</h2>
+          <h2 className="text-xl mali-bold"> Bé: {tuition.studentName}</h2>
 
-          <h2 className="text-2xl font-bold w-full itim-regular">Lớp học:</h2>
+          <h2 className="text-xl mali-bold w-full itim-regular">Lớp học:</h2>
           <ul className="w-full px-2">
             {classes.map((classitem, index) => (
-              <li key={index} className="text-md font-bold itim-regular">
+              <li key={index} className="text-md mali-bold text-[#828282]">
                 {classitem}
               </li>
             ))}
           </ul>
-          <h2 className="text-xl itim-regular">
+          <h2 className="text-xl mali-bold">
             {" "}
             Số ngày đi học: {tuition.attendance}
           </h2>
-          <h2 className="text-4xl itim-regular text-[#FB3C1A]">
+          <h2 className="text-4xl mali-bold text-[#FB3C1A]">
             {" "}
             Học phí: {tuition.tuition} vnđ
           </h2>
@@ -104,20 +106,20 @@ const TuitionCard = ({ tuition }: ITuitionCard) => {
               <div className="h-5 w-5 bg-[#15803D] rounded-full flex justify-center items-center">
                 <Check className="h-4 w-4 text-white" />
               </div>
-              <h6 className="text-sm text-[#15803D]">Đã hoàn thành</h6>
+              <h6 className="text-sm mali-bold text-[#15803D]">Đã hoàn thành</h6>
             </div>
           ) : (
             <div className="flex gap-2">
               <div className="h-5 w-5 bg-[#EDFF46] rounded-full flex justify-center items-center">
                 <Check className="h-4 w-4 text-white" />
               </div>
-              <h6 className="text-sm text-[#EDFF46]">Đang thực hiện</h6>{" "}
+              <h6 className="text-sm mali-bold text-[#EDFF46]">Đang thực hiện</h6>{" "}
             </div>
           )}
         </div>
         <div className="flex flex-col items-center space-y-2  ml-auto">
           <div className="h-40 w-30 rounded-xl overflow-hidden ">
-            <Dialog>
+            <Dialog open={open2} onOpenChange={setOpen2}>
               <DialogTrigger asChild>
                 <img src={tuition.qrurl} alt="qr" className="object-cover" />
               </DialogTrigger>
@@ -145,7 +147,7 @@ const TuitionCard = ({ tuition }: ITuitionCard) => {
                   className="flex flex-col justify-center space-y-2"
                   onSubmit={handleSubmit(onSubmit)}
                 >
-                  <Label htmlFor="billurl" className="text-sm block">
+                  <Label htmlFor="billurl" className="text-sm block mali-bold">
                     Ảnh hóa đơn
                   </Label>
                   <Input

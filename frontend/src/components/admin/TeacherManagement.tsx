@@ -7,7 +7,7 @@ const TeacherManagement = () => {
   return (
     <>
       <div className="flex justify-between">
-        <h1 className="text-4xl itim-regular mb-4">
+        <h1 className="text-2xl mb-4 mali-bold text-[#006F44]">
           Các giáo viên trong hệ thống:
         </h1>
         

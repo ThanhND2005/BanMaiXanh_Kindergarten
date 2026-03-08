@@ -119,17 +119,14 @@ export const useAdminStore = create<adminState>((set,get) => ({
     },
     refreshTeacherBills: async () => {
         try {
-            set({loading : true})
+            
             const teacherbills = await adminService.getTeacherBill()
             set({teacherbills})
         } catch (error) {
             console.error(error)
             get().clearState()
         }
-        finally
-        {
-            set({loading: false})
-        }
+        
     }
 
 }))

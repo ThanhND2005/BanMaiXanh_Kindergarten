@@ -10,16 +10,16 @@ const Notification = () => {
         {notifications?.map((notification) =>(
           <li key={notification.notificationid} className='w-full flex justify-between items-center bg-[#ffffff] rounded-xl shadow-md py-4 px-6'>
             <div className='flex flex-col space-y-2'>
-              <h2 className='text-md text-[#828282]'>Người gửi: {notification.sendername}</h2>
+              <h2 className='text-md text-[#828282] mali-medium'>Người gửi: {notification.sendername}</h2>
               <div className='flex space-x-3'>
-                <h2 className='text-xl font-bold text-[#15803D]'>Tiêu đề:</h2>
-                <h2 className='text-xl font-bold'>{notification.title}</h2>
+                <h2 className='text-xl mali-bold text-[#15803D]'>Tiêu đề:</h2>
+                <h2 className='text-xl mali-bold'>{notification.title}</h2>
               </div>
               <div className='flex space-x-3 w-150'>
-                <h2 className='text-xl font-bold text-[#15803D] whitespace-nowrap'>Nội dung:</h2>
-                <h2 className='text-xl font-bold'>{notification.content}</h2>
+                <h2 className='text-xl mali-bold text-[#15803D] whitespace-nowrap'>Nội dung:</h2>
+                <h2 className='text-xl mali-bold'>{notification.content}</h2>
               </div>
-              <h2 className='text-md text-[#828282]'>Ngày gửi: {new Date(notification.createdat).toLocaleDateString('vi-VN')}</h2>
+              <h2 className='text-md text-[#828282] mali-medium'>Ngày gửi: {new Date(notification.createdat).toLocaleDateString('vi-VN')}</h2>
             </div>
             <div className='h-30 w-30 rounded-full overflow-hidden flex justify-center items-center bg-[#FB3C1A] opacity-80'>
               <Megaphone className='w-25 h-25 text-white'/>  

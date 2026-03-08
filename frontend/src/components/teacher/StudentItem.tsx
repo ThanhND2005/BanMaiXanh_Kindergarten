@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogTrigger } from "../ui/dialog";
 import { Input } from "../ui/input";
 import type { Student } from "@/types/Student";
 import { useAdminStore } from "@/stores/useAdminStore";
@@ -35,6 +35,7 @@ const StudentItem = ({ student }: StudentItemProps) => {
   const user = useAuthStore.getState().user;
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
+  const [open3,setOpen3] = useState(false)
   const teacher = useAdminStore((state) => state.teachers)?.find(
     (t) => t.userid === user?.userid,
   );
@@ -140,7 +141,7 @@ const StudentItem = ({ student }: StudentItemProps) => {
               />
             </div>
             <div className="w-full flex justify-center">
-              <Dialog open={open2} onOpenChange={setOpen2} >
+              <Dialog open={open2} onOpenChange={setOpen2}>
                 <DialogTrigger asChild>
                   <Button
                     variant="outline"
@@ -149,7 +150,7 @@ const StudentItem = ({ student }: StudentItemProps) => {
                     Chỉnh sửa
                   </Button>
                 </DialogTrigger>
-                <DialogContent >
+                <DialogContent>
                   <form
                     className="flex gap-8"
                     onSubmit={handleSubmit(onUpdate)}
@@ -164,9 +165,9 @@ const StudentItem = ({ student }: StudentItemProps) => {
                       </div>
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold mb-1">{student.name}</h2>
+                      <h2 className="text-xl mali-bold mb-1">{student.name}</h2>
                       <div className="items-center gap-2 mb-1">
-                        <h2 className="text-sm font-bold whitespace-nowrap">
+                        <h2 className="text-sm mali-bold whitespace-nowrap">
                           Chiều cao:
                         </h2>
                         <Input
@@ -182,7 +183,7 @@ const StudentItem = ({ student }: StudentItemProps) => {
                         )}
                       </div>
                       <div className="items-center gap-2 mb-1">
-                        <h2 className="text-sm font-bold whitespace-nowrap">
+                        <h2 className="text-sm mali-bold whitespace-nowrap">
                           Cân nặng:
                         </h2>
                         <Input
@@ -223,17 +224,20 @@ const StudentItem = ({ student }: StudentItemProps) => {
                 </DialogTrigger>
                 <DialogContent>
                   <form onSubmit={had(onNotify)} className="space-y-2">
-                    <h1 className="text-xl font-bold text-center">
+                    <h1 className="text-xl mali-bold text-center">
                       Các thầy cô nhập đủ thông tin nhé !
                     </h1>
                     <div>
-                      <Label htmlFor="title" className="text-sm block">
+                      <Label
+                        htmlFor="title"
+                        className="text-sm block mali-bold"
+                      >
                         Tiêu đề
                       </Label>
                       <Input
                         type="text"
                         id="title"
-                        className="rounded-xl shadow-sm"
+                        className="rounded-xl shadow-sm "
                         {...reg("title")}
                       />
                       {err.title && (
@@ -243,13 +247,16 @@ const StudentItem = ({ student }: StudentItemProps) => {
                       )}
                     </div>
                     <div>
-                      <Label htmlFor="content" className="text-sm block">
+                      <Label
+                        htmlFor="content"
+                        className="text-sm block mali-bold"
+                      >
                         Nội dung
                       </Label>
                       <Input
                         type="text"
                         id="content"
-                        className="rounded-xl shadow-sm"
+                        className="rounded-xl shadow-sm h-20"
                         {...reg("content")}
                       />
                       {err.content && (
@@ -273,19 +280,19 @@ const StudentItem = ({ student }: StudentItemProps) => {
             </div>
           </div>
         </div>
-        <div className="flex flex-wrap space-y-2 items-center">
-          <h1 className="text-2xl font-bold w-full">{student.name}</h1>
-          <h2 className="text-xl font-bold w-full">
+        <div className="flex flex-col space-y-2 items-center justify-center w-full">
+          <h1 className="text-2xl mali-bold w-full">{student.name}</h1>
+          <h2 className="text-xl mali-bold w-full">
             Chiều cao: {student.height} m
           </h2>
-          <h2 className="text-xl font-bold w-full">
+          <h2 className="text-xl mali-bold w-full">
             Cân nặng: {student.weight} kg
           </h2>
-          <h2 className="text-xl font-bold w-full">
+          <h2 className="text-xl mali-bold w-full">
             Họ tên phụ huynh: {student.parentname}
           </h2>
         </div>
-        <div className="flex flex-col justify-center px-4  space-y-3">
+        <div className="flex flex-col justify-center gap-6">
           {student.check_in_time === null ? (
             <Button
               type="button"
@@ -318,16 +325,28 @@ const StudentItem = ({ student }: StudentItemProps) => {
               Đã về
             </Button>
           )}
+          <Dialog open={open3} onOpenChange={setOpen3}>
+            <DialogTrigger asChild>
+              <Button
+                type="button"
+                className={`bg-[#FB3C1A] rounded-2xl shadow-md hover:bg-[#982410]`}
+              >
+                Xóa
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <h1 className="text-2xl mali-bold">Bạn chắc chắn muốn xóa học sinh này khỏi lớp?</h1>
+              <div className="flex w-full justify-end">
+                <div className="flex justify-between w-50">
 
-          <Button
-            type="button"
-            onClick={() =>
-              onDelete(student.studentid, teacher?.classid as string)
-            }
-            className={`bg-[#FB3C1A] rounded-2xl shadow-md hover:bg-[#982410]`}
-          >
-            Xóa
-          </Button>
+              <Button type="button" className="w-20 bg-[#FB3C1A] rounded-2xl shadow-md hover:bg-[#982410]" onClick={() => onDelete(student.studentid,teacher?.classid as string)}>Xóa</Button>
+              <Button type="button" className=" rounded-2xl " onClick={() => setOpen3(false)}>Quay lại</Button>
+                </div>
+              </div>
+            </DialogContent>
+            <DialogFooter>
+            </DialogFooter>
+          </Dialog>
         </div>
       </li>
     </div>

@@ -428,9 +428,10 @@ export const postTeacherBill = async (req: Request, res: Response) => {
       if (teacher.bank === null || teacher.accountbank === null) {
         continue
       }
-      const allowance = 200000
-      const amount = 200000 * timekeeping + allowance
-      const url = `https://img.vietqr.io/image/${teacher.bank}-${teacher.accountbank}-print.png?amount=${amount}&addInfo=LUONG%20THANG%20${month}&accountName=MAM%20NON%20BAN%20MAI%20XANH`
+      const salaryid = randomUUID()
+      const allowance = 2000
+      const amount = 2000 * timekeeping + allowance
+      const url = `https://img.vietqr.io/image/${teacher.bank}-${teacher.accountbank}-print.png?amount=${amount}&addInfo=${salaryid}&accountName=${teacher.name}`
       const qrUrl = await qrStorage(url)
       const request3 = new sql.Request()
       await request3
@@ -441,8 +442,9 @@ export const postTeacherBill = async (req: Request, res: Response) => {
         .input('month', sql.Int, month)
         .input('year', sql.Int, year)
         .input('qrurl', sql.VarChar, qrUrl)
+        .input('salaryid',sql.UniqueIdentifier,salaryid)
         .query(
-          `INSERT INTO Salary (teacherid, allowance, amount, timekeeping, month,year,qrurl) VALUES (@teacherid, @allowance, @amount, @timekeeping, @month,@year,@qrurl)`
+          `INSERT INTO Salary (salaryid,teacherid, allowance, amount, timekeeping, month,year,qrurl) VALUES (@salaryid,@teacherid, @allowance, @amount, @timekeeping, @month,@year,@qrurl)`
         )
     }
 

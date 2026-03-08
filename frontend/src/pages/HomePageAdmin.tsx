@@ -48,12 +48,12 @@ export default function HomePageAdmin() {
               <ShieldUser className="w-10 h-10 text-black" />
             </div>
             <div>
-              <h1 className="text-gray-900 font-bold">{admin?.name}</h1>
-              <h2 className="text-sm text-[#828282]">{admin?.role}</h2>
+              <h1 className="text-gray-900 mali-bold">{admin?.name}</h1>
+              <h2 className="text-sm text-[#828282] mali-regular">{admin?.role}</h2>
             </div>
           </div>
           <div className="flex items-center">
-            <h1 className="text-2xl font-bold">{final}</h1>
+            <h1 className="text-2xl mali-bold">{final}</h1>
           </div>
         </div>
       </header>

@@ -13,6 +13,8 @@ export interface Student {
     dob: Date,
     age : number,
     attendanceid: string,
+    heightChange: number,
+    weightChange:number
 }
 interface Class {
     classid : string ,

@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { VarChar } from "mssql";
 import { sql } from "~/libs/DB";
 
 export const getTeacherList = async (req: Request, res: Response) => {
@@ -15,7 +14,9 @@ export const getTeacherList = async (req: Request, res: Response) => {
         LEFT JOIN TimeKeeping tk on tk.teacherid = t.userid AND tk.date = @date
         JOIN Account a on a.userid = t.userid AND a.deleted = 'false'
         WHERE t.deleted = 'false'
-        ORDER BY t.name DESC`
+        ORDER BY 
+        REVERSE(LEFT(REVERSE(t.name), CHARINDEX(' ', REVERSE(t.name) + ' ') - 1)) ASC,
+        t.name ASC`
       )
     const teachers = res1.recordset
     return res.status(200).json({ teachers })
@@ -45,7 +46,7 @@ export const deleteTeacher = async (req: Request, res: Response) => {
 export const patchTeacher = async (req: Request, res: Response) => {
   try {
     const { teacherid } = req.params
-    const { name, dob, gender, address,bank,accountbank } = req.body
+    const { name, dob, gender, address, bank, accountbank } = req.body
     const request = new sql.Request()
     await request
       .input('userid', sql.UniqueIdentifier, teacherid)
@@ -53,8 +54,8 @@ export const patchTeacher = async (req: Request, res: Response) => {
       .input('dob', sql.Date, dob)
       .input('gender', sql.NVarChar, gender)
       .input('address', sql.NVarChar, address)
-      .input('bank',sql.VarChar,bank)
-      .input('accountbank',sql.VarChar,accountbank)
+      .input('bank', sql.VarChar, bank)
+      .input('accountbank', sql.VarChar, accountbank)
       .query(
         `UPDATE Teacher SET name=@name, dob=@dob,gender=@gender,address=@address,bank=@bank,accountbank = @accountbank
       WHERE userid=@userid`
@@ -123,7 +124,7 @@ export const postTimeKeeping = async (req: Request, res: Response) => {
       .input('code', sql.NVarChar, code)
       .input('month', sql.Int, month)
       .input('day', sql.Date, today)
-      .input('year',sql.Int,year)
+      .input('year', sql.Int, year)
       .query(
         `IF EXISTS (SELECT 1 FROM Security s WHERE s.code = @code AND s.date = @day AND teacherid = @teacherid)
                   BEGIN
@@ -169,7 +170,7 @@ export const postCheckin = async (req: Request, res: Response) => {
       .input('date', sql.Date, getDate)
       .input('time', sql.Time, getTime)
       .input('month', sql.Int, month)
-      .input('year',sql.Int,year)
+      .input('year', sql.Int, year)
       .query(
         `INSERT INTO Attendance (studentid, classid, date,check_in_time,month,year) VALUES (@studentid, @classid,@date,@time,@month,@year)`
       )
@@ -219,13 +220,25 @@ export const patchStudent = async (req: Request, res: Response) => {
   try {
     const { studentid } = req.params
     const { height, weight } = req.body
+    const request0 = new sql.Request()
+    const res1 = await request0
+      .input('studentid', sql.UniqueIdentifier, studentid)
+      .query(
+        `SELECT * FROM Student WHERE studentid = @studentid`
+      )
+    const student = res1.recordset[0]
+    const heightChange = ((height - student.height) / student.height) * 100
+    const weightChange = ((weight - student.weight) / student.weight) * 100
+
     const request = new sql.Request()
     await request
       .input('studentid', sql.UniqueIdentifier, studentid)
       .input('height', sql.Float, height)
       .input('weight', sql.Float, weight)
+      .input('heightChange',sql.Float,heightChange)
+      .input('weightChange',sql.Float,weightChange)
       .query(
-        `UPDATE Student SET height=@height, weight=@weight WHERE studentid =@studentid`
+        `UPDATE Student SET height=@height, weight=@weight,weightChange =@weightChange,heightChange = @heightChange WHERE studentid =@studentid`
       )
     return res.sendStatus(204)
   } catch (error) {

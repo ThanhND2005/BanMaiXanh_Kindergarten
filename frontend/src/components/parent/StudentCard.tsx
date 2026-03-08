@@ -1,5 +1,5 @@
 
-import { Check } from 'lucide-react'
+import { Check, TrendingDown, TrendingUp } from 'lucide-react'
 import React, { useState } from 'react'
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import { Button } from '../ui/button'
@@ -105,7 +105,7 @@ const StudentCard = ({student} : IStudentProps) => {
 
           </DialogTrigger>
           <DialogContent>
-            <h1 className='text-2xl font-bold text-center'>Cập nhập ảnh đại diện cho bé</h1>
+            <h1 className='text-2xl mali-bold text-center'>Cập nhập ảnh đại diện cho bé</h1>
             <form onSubmit={had(onUpdateAvatar)} className='space-y-3'>
                <Input type='file' id='avatarurl' {...reg("avatarurl")}/>
                {err.avatarurl && <p className='text-destructive text-sm'>{err.avatarurl.message as string}</p>}
@@ -116,25 +116,44 @@ const StudentCard = ({student} : IStudentProps) => {
           </DialogContent>
         </Dialog>
         <div className='flex flex-col ml-20 space-y-2'>
-            <h1 className='text-2xl itim-regular'> Bé: {student.name}</h1>
-            <h2 className='text-xl itim-regular'>Chiều cao (m): {student.height}</h2>
-            <h2 className='text-xl itim-regular'>Cân nặng (kg): {student.weight}</h2>
+            <h1 className='text-2xl mali-bold'> Bé: {student.name}</h1>
+            <div className='flex gap-2'>
+            <h2 className='text-xl mali-bold'>Chiều cao (m): {student.height}</h2>
+              {student.heightChange >=0 ? <div className='flex gap-2 bg-[#15803D] items-center rounded-2xl p-1'>
+                <TrendingUp className='h-4 w-4 text-white'/>
+                <h1 className='text-md text-white'>{student.heightChange}%</h1>
+              </div>:<div className='flex gap-2 bg-[#F52121] rounded-2xl p-1 items-center'>
+                <TrendingDown className='h-4 w-4 text-white'/>
+                <h1 className='text-md text-white'>{Math.abs(student.heightChange)}%</h1>
+              </div>}
+            </div>
+            <div className='flex gap-2'>
+            
+            <h2 className='text-xl mali-bold'>Cân nặng (kg): {student.weight}</h2>
+              {student.weightChange >=0 ? <div className='flex gap-2 bg-[#15803D] items-center rounded-2xl p-1'>
+                <TrendingUp className='h-4 w-4 text-white'/>
+                <h1 className='text-md text-white'>{student.weightChange}%</h1>
+              </div>:<div className='flex gap-2 bg-[#F52121] rounded-2xl p-1 items-center'>
+                <TrendingDown className='h-4 w-4 text-white'/>
+                <h1 className='text-md text-white'>{Math.abs(student.weightChange)}%</h1>
+              </div>}
+            </div>
             {(student.check_in_time === null && student.check_out_time === null)
             ? <div className='flex gap-2 items-center '> 
                 <div className='h-5 w-5 bg-[#F52121] rounded-full flex justify-center items-center'>
                     <Check className='h-4 w-4 text-white'/>
                 </div>
-                <h6 className='text-sm text-[#F52121] itim-regular'>Chưa đến trường</h6>
+                <h6 className='text-sm text-[#F52121] mali-bold'>Chưa đến trường</h6>
             </div> : (student.check_out_time === null) ?<div className='flex gap-2 items-center'> 
                 <div className='h-5 w-5 bg-[#15803D] rounded-full flex justify-center items-center'>
                     <Check className='h-4 w-4 text-white'/>
                 </div>
-                <h6 className='text-sm text-[#15803D] itim-regular'>Đã đến trường</h6>
+                <h6 className='text-sm text-[#15803D] mali-bold'>Đã đến trường</h6>
             </div> : <div className='flex gap-2 items-center'> 
                 <div className='h-5 w-5 bg-[#EDFF46] rounded-full flex justify-center items-center'>
                     <Check className='h-4 w-4 text-white'/>
                 </div>
-                <h6 className='text-sm text-[#EDFF46] itim-regular'>Đã được đón</h6>
+                <h6 className='text-sm text-[#EDFF46] mali-bold'>Đã được đón</h6>
             </div>}
         </div>
         <div className='flex ml-auto'>
@@ -144,11 +163,11 @@ const StudentCard = ({student} : IStudentProps) => {
                 </DialogTrigger>
                 <DialogContent>
                     <form className="flex flex-col justify-center gap-3" onSubmit={handleSubmit(onUpdate)}>
-              <h1 className="text-xl font-bold text-center">
+              <h1 className="text-xl mali-bold text-center ">
                 Chỉnh sửa thông tin cho học sinh
               </h1>
               <div>
-                <Label htmlFor="name" className="text-sm block">
+                <Label htmlFor="name" className="text-sm block mali-bold">
                   Họ và tên
                 </Label>
                 <Input
@@ -165,7 +184,7 @@ const StudentCard = ({student} : IStudentProps) => {
                 )}
               </div>
                 <div>
-                <Label htmlFor="dob" className="text-sm block">
+                <Label htmlFor="dob" className="text-sm block mali-bold">
                   Ngày sinh
                 </Label>
                 <Input
@@ -182,7 +201,7 @@ const StudentCard = ({student} : IStudentProps) => {
                 )}
               </div>
               <div>
-                <Label htmlFor="gender" className="text-sm block">
+                <Label htmlFor="gender" className="text-sm block mali-bold">
                   Giới tính
                 </Label>
                 <Controller name='gender' control={control} defaultValue={student.gender}
@@ -209,19 +228,21 @@ const StudentCard = ({student} : IStudentProps) => {
                 />
               </div>
               <div>
-                <Label htmlFor="height" className="text-sm block">Chiều cao (m)</Label>
+                <Label htmlFor="height" className="text-sm block mali-bold">Chiều cao (m)</Label>
                 <Input 
                 type="number" 
                 id="height"
+                step="0.01"
                 className="rounded-2xl shadow-md p-2"
                 
                 {...register("height")} />
                 {errors.height && <p className="text-destructive text-sm">{errors.height.message}</p>}
               </div>
               <div>
-                <Label htmlFor="weight" className="text-sm block">Cân nặng (kg)</Label>
+                <Label htmlFor="weight" className="text-sm block mali-bold">Cân nặng (kg)</Label>
                 <Input 
                 type="number" 
+                step="0.01"
                 id="weight"
                 className="rounded-2xl shadow-md p-2"
                 
@@ -229,7 +250,7 @@ const StudentCard = ({student} : IStudentProps) => {
                 {errors.weight && <p className="text-destructive text-sm">{errors.weight.message}</p>}
               </div>
               <div>
-                <Label htmlFor='classes' className='text-sm block'>Lớp học đang tham gia</Label>
+                <Label htmlFor='classes' className='text-sm block mali-bold'>Lớp học đang tham gia</Label>
                 <ul id= 'classes' className='space-y-2'>
                 {classes?.map((class1) =>(
                   <li key={class1.classid}>

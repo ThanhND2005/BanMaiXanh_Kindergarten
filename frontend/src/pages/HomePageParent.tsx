@@ -169,18 +169,18 @@ const HomePageParent = () => {
       <div className="flex-1 flex flex-col min-w-0">
         <header className="sticky top-0 z-20 w-full bg-white h-20 px-8 flex justify-between items-center shadow-sm border-b border-gray-100">
           <div>
-            <h1 className="text-2xl font-bold ">Xin chào phụ huynh 🌞</h1>
-            <h2 className="text-md font-bold text-[#828282]">{final}</h2>
+            <h1 className="text-2xl mali-bold ">Xin chào phụ huynh 🌞</h1>
+            <h2 className="text-md mali-bold text-[#828282]">{final}</h2>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right hidden md:block">
               <Dialog>
                 <DialogTrigger asChild>
                   <div>
-                    <p className="font-bold text-gray-800 text-sm">
+                    <p className="mali-bold text-gray-800 text-md">
                       {parent?.name}
                     </p>
-                    <p className="text-xs text-gray-500">Phụ huynh</p>
+                    <p className="text-sm text-gray-500 mali-semibold">Phụ huynh</p>
                   </div>
                 </DialogTrigger>
                 <DialogContent>

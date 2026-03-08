@@ -5,7 +5,7 @@ export const getStudentList = async (req: Request, res: Response) => {
     const request = new sql.Request()
     const day = new Date()
     const res1 = await request.input('day', sql.Date, day).query(
-      `SELECT s.studentid, s.dob,s.gender,s.height,s.weight,s.age,s.parentid,p.name as parentname,s.avatarurl,s.name,a.date,a.check_in_time,a.check_out_time,a.attendanceid
+      `SELECT s.studentid,s.heightChange,s.weightChange, s.dob,s.gender,s.height,s.weight,s.age,s.parentid,p.name as parentname,s.avatarurl,s.name,a.date,a.check_in_time,a.check_out_time,a.attendanceid
       FROM Student s
       LEFT JOIN Parent p on p.userid = s.parentid
       LEFT JOIN Attendance a on a.studentid = s.studentid AND a.date=@day
@@ -88,6 +88,16 @@ export const patchStudent = async (req: Request, res: Response) => {
     const { studentid } = req.params
     const { name, dob, gender, height, weight } = req.body
     const age = new Date().getFullYear() - new Date(dob).getFullYear()
+    const request0 = new sql.Request()
+    const res1 = await request0
+    .input('studentid',sql.UniqueIdentifier,studentid)
+    .query(
+      `SELECT * FROM Student WHERE studentid = @studentid`
+    )
+    const student = res1.recordset[0]
+    const heightChange = ((height - student.height) / student.height) * 100
+    const weightChange = ((weight - student.weight) / student.weight) * 100
+    console.log(heightChange)
     const request = new sql.Request()
     await request
       .input('studentid', sql.UniqueIdentifier, studentid)
@@ -97,13 +107,17 @@ export const patchStudent = async (req: Request, res: Response) => {
       .input('gender', sql.NVarChar, gender)
       .input('height', sql.Float, height)
       .input('weight', sql.Float, weight)
+      .input('heightChange',sql.Float,heightChange)
+      .input('weightChange',sql.Float,weightChange)
       .query(
         `UPDATE Student SET name=@name,
       dob =@dob,
       gender=@gender,
       height=@height,
       weight=@weight,
-      age = @age
+      age = @age,
+      heightChange = @heightChange,
+      weightChange = @weightChange
       WHERE studentid = @studentid`
       )
     return res.sendStatus(204)

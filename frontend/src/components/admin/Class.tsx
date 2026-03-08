@@ -81,7 +81,7 @@ const Class = () => {
   return (
     <>
       <div className="flex justify-between">
-        <h1 className="text-2xl itim-regular">Các lớp học trong hệ thống:</h1>
+        <h1 className="text-2xl text-[#006f44] mali-bold">Các lớp học chính khóa:</h1>
         <div>
           <Dialog open={open2} onOpenChange={setOpen2}>
             <DialogTrigger asChild>
@@ -96,13 +96,13 @@ const Class = () => {
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <h1 className="text-2xl font-bold text-center">Tạo lớp học</h1>
+              <h1 className="text-4xl mali-bold text-center">Tạo lớp học</h1>
               <form
                 className="flex flex-col mt-2 gap-2"
                 onSubmit={handleSubmit(onSubmit1)}
               >
                 <div className="w-full">
-                  <Label htmlFor="name" className="text-sm block">
+                  <Label htmlFor="name" className="text-md block mali-semibold">
                     Tên lớp
                   </Label>
                   <Input
@@ -119,7 +119,7 @@ const Class = () => {
                   )}
                 </div>
                 <div className="w-full">
-                  <Label htmlFor="teacherid" className="text-sm block">
+                  <Label htmlFor="teacherid" className="text-md block mali-semibold">
                     Giáo viên
                   </Label>
                   <Popover open={open} onOpenChange={setOpen}>
@@ -166,7 +166,7 @@ const Class = () => {
                   </Popover>
                 </div>
                 <div className="w-full">
-                  <Label htmlFor="age" className="text-sm block">
+                  <Label htmlFor="age" className="text-md block mali-semibold">
                     Độ tuổi
                   </Label>
                   <Input
@@ -183,7 +183,7 @@ const Class = () => {
                   )}
                 </div>
                 <div className="w-full">
-                  <Label htmlFor="members" className="text-sm block">
+                  <Label htmlFor="members" className="text-md block mali-semibold">
                     Sổ trẻ
                   </Label>
                   <Input
@@ -194,13 +194,13 @@ const Class = () => {
                     {...register("members")}
                   />
                   {errors.members && (
-                    <p className="text-destructive text-sm">
+                    <p className="text-destructive text-sm ">
                       {errors.members.message}
                     </p>
                   )}
                 </div>
                 <div className="w-full">
-                  <Label htmlFor="tuition" className="text-sm block">
+                  <Label htmlFor="tuition" className="text-md block mali-semibold">
                     Học phí
                   </Label>
                   <Input
@@ -217,7 +217,7 @@ const Class = () => {
                   )}
                 </div>
                 <div className="w-full">
-                  <Label htmlFor="schedule" className="text-sm block">
+                  <Label htmlFor="schedule" className="text-md block mali-semibold">
                     Lịch học
                   </Label>
                   <Input
@@ -234,7 +234,7 @@ const Class = () => {
                   )}
                 </div>
                 <div className="w-full">
-                  <Label htmlFor="classtype" className="text-sm block">Loại lớp học</Label>
+                  <Label htmlFor="classtype" className="text-md block mali-semibold">Loại lớp học</Label>
                   <Controller name="classtype" control={control} defaultValue="Chính khóa" 
                 render={({field}) => (
 
@@ -272,7 +272,7 @@ const Class = () => {
           <ClassCard key={mainclass.classid} class1={mainclass}/>
         ))}
       </ul>
-      <h2 className="text-2xl itim-regular mt-3">Các lớp học năng khiếu:</h2>
+      <h2 className="text-2xl text-[#006f44] mali-bold mt-6 mb-6">Các lớp học năng khiếu:</h2>
       <ul className="grid grid-cols-4 gap-8">
         {classes?.filter(extraclass => extraclass.type ==='Năng khiếu').map((extraclass) =>(
           <ClassCard key={extraclass.classid} class1={extraclass}/>
