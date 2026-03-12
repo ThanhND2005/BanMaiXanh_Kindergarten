@@ -28,7 +28,7 @@ export default function HomePageAdmin() {
   const signout = useAuthStore((state) => state.signout);
   const onLogout = async () => {
     await signout();
-    navigate("/signin");
+    navigate("/signin/admin");
   };
   const now = new Date();
   const dateformat = new Intl.DateTimeFormat("vi-VN", {

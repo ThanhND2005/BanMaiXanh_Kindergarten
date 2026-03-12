@@ -17,7 +17,7 @@ const ClassCard = ({ class1 }: IClassProps) => {
   return (
     <div>
       <li>
-        <div className="rounded-xl bg-[#ffffff] shadow-md flex flex-col ">
+        <div className="relative rounded-xl bg-[#ffffff] shadow-md flex flex-col ">
           <div className="w-full h-25 overflow-hidden mb-3">
             <img
               src="https://res.cloudinary.com/dhylrhxsa/image/upload/v1769583472/51758c8655e6dbb882f7_dqoijs.jpg"
@@ -50,7 +50,7 @@ const ClassCard = ({ class1 }: IClassProps) => {
             </DialogTrigger>
             <DialogContent>
               <h1 className="text-2xl mali-bold">
-                Bạn chắc chắn muốn xóa thông báo này ?
+                Bạn chắc chắn muốn xóa lớp học này?
               </h1>
               <div className="w-full flex justify-end">
                 <div className="flex justify-between w-35">

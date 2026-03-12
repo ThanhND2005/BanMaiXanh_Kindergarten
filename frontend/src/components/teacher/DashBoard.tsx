@@ -101,7 +101,7 @@ const DashBoard = () => {
           </div>
           <div className='flex justify-end'>
 
-            <div className='bg-[#ffffff] rounded-xl shadow-md flex flex-wrap justify-center py-4 px-8 w-80 '>
+            <div className='rounded-xl shadow-md flex flex-wrap justify-center py-4 px-8 w-80' style={{backgroundColor : menu?.color}}>
               <h1 className='text-[#276749] mali-bold text-xl opacity-60'>Thực đơn hôm nay:</h1>
               <div className='w-full space-y-4  '>
                 <div className="flex justify-between items-center">

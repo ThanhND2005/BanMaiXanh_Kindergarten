@@ -86,7 +86,7 @@ const HomePageTeacher = () => {
   const signout = useAuthStore((state) => state.signout);
   const onLogout = async () => {
     await signout();
-    navigate("/signin");
+    navigate("/signin/teacher");
   };
   const {getMe} = useAuthStore()
   const onUpdate = async (data: AvatarFromValues) => {
