@@ -49,7 +49,9 @@ export default function HomePageAdmin() {
             </div>
             <div>
               <h1 className="text-gray-900 mali-bold">{admin?.name}</h1>
-              <h2 className="text-sm text-[#828282] mali-regular">{admin?.role}</h2>
+              <h2 className="text-sm text-[#828282] mali-regular">
+                {admin?.role}
+              </h2>
             </div>
           </div>
           <div className="flex items-center">
@@ -133,27 +135,33 @@ export default function HomePageAdmin() {
         </div>
       </nav>
 
-    
       <main className="w-full min-h-screen p-10 bg-[#f0fdf4]">
         {loading === true && (
-          <div className="w-full  flex items-center justify-center">
-            <img
-              src="https://res.cloudinary.com/dhylrhxsa/image/upload/v1772633018/output-onlinegiftools_xcitd9.gif"
-              alt="loading..."
-            />
-
+          <div className="w-full h-100 flex items-center justify-center">
+            <div className="flex flex-row gap-2">
+              <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce"></div>
+              <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:-.3s]"></div>
+              <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:-.5s]"></div>
+            </div>
           </div>
-          
         )}
-        {(tabActive === "dashboard" && loading===false) && <Dashboard />}
-        {(tabActive === "notification" && loading===false)&& <Notification />}
-        {(tabActive === "class" && loading===false)&& <Class />}
-        {(tabActive === "menu" && loading===false)&& <Menu />}
-        {(tabActive === "finance" && loading===false)&& <Finance />}
-        {(tabActive === "studentmanagement" && loading===false)&& <StudentManagement />}
-        {(tabActive === "teachermanagement" && loading===false)&& <TeacherManagement />}
-        {(tabActive === "teacherfinance" && loading===false)&& <TeacherFinance />}
-        {(tabActive === "studentfinance" && loading===false)&& <StudentFinance />}
+        {tabActive === "dashboard" && loading === false && <Dashboard />}
+        {tabActive === "notification" && loading === false && <Notification />}
+        {tabActive === "class" && loading === false && <Class />}
+        {tabActive === "menu" && loading === false && <Menu />}
+        {tabActive === "finance" && loading === false && <Finance />}
+        {tabActive === "studentmanagement" && loading === false && (
+          <StudentManagement />
+        )}
+        {tabActive === "teachermanagement" && loading === false && (
+          <TeacherManagement />
+        )}
+        {tabActive === "teacherfinance" && loading === false && (
+          <TeacherFinance />
+        )}
+        {tabActive === "studentfinance" && loading === false && (
+          <StudentFinance />
+        )}
       </main>
     </div>
   );

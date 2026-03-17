@@ -11,7 +11,7 @@ router.patch('/patchAvatar/:teacherid',uploadAvatar.single('avatar'),patchAvatar
 router.get('/getNotifications/:teacherid',getNotificationList)
 router.post('/postTimeKeeping/:teacherid',postTimeKeeping)
 router.get('/getMenu/:day',getMenu)
-router.post('/postCheckin/:studentid',postCheckin)
+router.post('/postCheckin/:studentid',postCheckin)  
 router.patch('/postCheckout/:attendanceid',postCheckout)
 router.patch('/deleteStudent/:studentid',deleteStudent)
 router.patch('/patchStudent/:studentid',patchStudent)

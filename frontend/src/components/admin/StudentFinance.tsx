@@ -35,7 +35,7 @@ const StudentFinance = () => {
         <div className="flex justify-start items-center">
           <Button
             type="button"
-            onClick={() => onCreate(2)}
+            onClick={() => onCreate(new Date().getMonth())}
             className="bg-[#05D988] rounded-2xl shadow-sm hover:bg-[#006f44] focus:bg-[#05D988]"
           >
             Xuất hóa đơn

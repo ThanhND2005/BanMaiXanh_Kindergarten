@@ -43,7 +43,7 @@ export function SigninPageAdmin({
         await refreshStudentBills()
         await refreshTeacherBills()
         await refreshSecurity()
-        navigate(correctPath);
+        navigate(correctPath,{replace: true});
     }
   };
   return (

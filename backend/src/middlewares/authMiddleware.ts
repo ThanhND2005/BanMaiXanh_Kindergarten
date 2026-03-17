@@ -9,66 +9,29 @@ interface AuthRequest extends Request {
   user?: any 
 }
 
-export const protectedRoute = async (req : Request , res : Response,next : NextFunction) =>{
+export const verifyToken = (req : Request, res: Response, next: NextFunction) => {
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(" ")[1]
+  if(!token){
+    return res.status(401).send('Không tìm thấy token !')
+  }
   try {
-    
-    const Headers = req.headers['authorization']
-    const token = Headers && Headers.split(" ")[1]
-    if(!token)
-    {
-      return res.status(401).send('Không tìm thấy accesstoken')
+    const decoded = jwt.verify(token,process.env.ACCESS_TOKEN_SECRET as string) as DecodeToken
+    (req as any).user = {
+      userid: decoded.userid,
+      role: decoded.role
     }
-    const decoded = jwt.verify(token,process.env.ACCESS_TOKEN_SECRET as string, async(err, decodeUser) =>{
-      if (err){
-        console.error(err)
-        return res.status(403).send('Token không hợp lệ hoặc đã hết hạn')
-      }
-      const payload = decodeUser as DecodeToken
-      const request1 = new sql.Request()
-      if(payload.role === 'admin')
-      {
-        const res1 = await request1
-        .input('userid',sql.UniqueIdentifier,payload.userid)
-        .query(`SELECT a.userid, a.userrole as role,ad.name,ad.gender,ad.avatarurl,ad.createdat,ad.address,ad.dob FROM Account a
-          JOIN Admin ad on ad.userid = a.userid
-           WHERE a.userid = @userid AND a.deleted = 'false'`)
-        const user = res1.recordset[0]
-        if(!user){
-          return res.status(404)
-        }
-        (req as any).user = user
-        next()
-      }
-      else if (payload.role === 'teacher')
-      {
-        const res1 = await request1
-        .input('userid',sql.UniqueIdentifier,payload.userid)
-        .query(`SELECT a.userid, a.userrole as role,t.name,t.gender,t.avatarurl,t.dob,t.address,t.createdat FROM Account a
-          JOIN Teacher t on t.userid = a.userid
-           WHERE a.userid = @userid AND a.deleted = 'false'`)
-        const user = res1.recordset[0]
-        if(!user){
-          return res.status(404)
-        }
-        (req as any).user = user
-        next()
-      }
-      else{
-        const res1 = await request1
-        .input('userid',sql.UniqueIdentifier,payload.userid)
-        .query(`SELECT a.userid, a.userrole as role,p.name,p.gender,p.avatarurl,p.dob,p.createdat,p.address FROM Account a
-          JOIN Parent p on p.userid = a.userid
-           WHERE a.userid = @userid AND a.deleted = 'false'`)
-        const user = res1.recordset[0]
-        if(!user){
-          return res.status(404)
-        }
-        (req as any).user = user
-        next()
-      }
-    })
+    next()
   } catch (error) {
-    console.error(error)
-    return res.status(500).send('Lỗi hệ thống')
+    return res.status(403).send('Token không hợp lệ hoặc đã hết hạn !')
+  }
+}
+export const requireRole = (...allowRoles: string[]) =>{
+  return (req : Request, res : Response, next : NextFunction) =>{
+    if(!(req as any).user || !allowRoles.includes((req as any).user.role))
+    {
+      return res.status(403).send('Bạn không có quyền thực hiện hành động này !')
+    }
+    next()
   }
 }

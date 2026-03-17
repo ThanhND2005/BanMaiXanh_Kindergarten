@@ -3,7 +3,7 @@ import cryto from 'crypto'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { sql } from '../libs/DB'
-
+import { randomUUID } from "crypto";
 
 export const signup = async (req: Request, res: Response) => {
   const transaction = new sql.Transaction()
@@ -69,7 +69,7 @@ export const signin = async (req: Request, res: Response) => {
       return res.status(401).send('Thông tin tài khoản hoặc mật khẩu không chính xác !')
     }
     const accessToken = jwt.sign({ userid: account.userid, role: account.userrole }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '30m' })
-    const refreshToken = cryto.randomBytes(64).toString('hex')
+    const refreshToken = randomUUID()
     const expireAt = new Date()
     expireAt.setTime(expireAt.getTime() + (8 * 60 * 60 * 1000))
     await request
@@ -143,7 +143,7 @@ export const signinTeacher = async (req: Request, res: Response) => {
       return res.status(401).send('Thông tin tài khoản hoặc mật khẩu không chính xác !')
     }
     const accessToken = jwt.sign({ userid: account.userid, role: account.userrole }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '30m' })
-    const refreshToken = cryto.randomBytes(64).toString('hex')
+    const refreshToken = randomUUID()
     const expireAt = new Date()
     expireAt.setTime(expireAt.getTime() + (8 * 60 * 60 * 1000))
     await request

@@ -7,7 +7,7 @@ export const adminService = {
     },
     getNotificationList : async() =>{
         const res = await api.get('/admin/getNotificationList',{withCredentials:true})
-        return res.data.notifications
+        return res.data.notification
     },
     getMenu : async() =>{
         const res = await api.get('/admin/getMenu',{withCredentials: true})

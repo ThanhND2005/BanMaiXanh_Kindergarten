@@ -10,60 +10,71 @@ interface Props {
 }
 const ProtectedRoute = ({ allowedRole }: Props) => {
   const { accessToken, user, loading, refresh, getMe } = useAuthStore();
-  const { refreshSecurity,refreshStudents,refreshTeachers,refreshClasses,refreshNotifications,refreshMenu,refreshStudentBills,refreshTeacherBills} =useAdminStore()
-  const {refreshNotifications : rnt,refreshStudents : rstu} = useTeacherStore()
-  const {refreshNotification :refreshNotificationParent} = useParentStore()
-  const [starting, setStarting] = useState(true)
-  const init = async () =>{
-    if(!accessToken)
-    {
-        await refresh()
-        await getMe()
-        await refreshStudents()
-        await refreshTeachers()
-        await refreshClasses()
-        await refreshNotifications()
-        await refreshMenu()
-        await refreshStudentBills()
-        await refreshTeacherBills() 
-        await refreshSecurity()
-        
+  const {
+    refreshSecurity,
+    refreshStudents,
+    refreshTeachers,
+    refreshClasses,
+    refreshNotifications,
+    refreshMenu,
+    refreshStudentBills,
+    refreshTeacherBills,
+  } = useAdminStore();
+  const { refreshNotifications: rnt, refreshStudents: rstu } =
+    useTeacherStore();
+  const { refreshNotification: refreshNotificationParent } = useParentStore();
+  const [starting, setStarting] = useState(true);
+  const init = async () => {
+    if (!accessToken) {
+      await refresh();
+      await getMe();
+      await refreshStudents();
+      await refreshTeachers();
+      await refreshClasses();
+      await refreshNotifications();
+      await refreshMenu();
+      await refreshStudentBills();
+      await refreshTeacherBills();
+      await refreshSecurity();
     }
-    const currentUser = useAuthStore.getState().user
-    if(currentUser?.role === 'teacher')
-        {
-          await rstu(currentUser.userid)
-          await rnt(currentUser.userid)
-        }
-    if(currentUser?.role === 'parent')
-    {
-      await refreshNotificationParent(currentUser.userid)
+    const currentUser = useAuthStore.getState().user;
+    if (currentUser?.role === "admin") {
     }
-    if(accessToken && !user)
-    {
-        await getMe()
+    if (currentUser?.role === "teacher") {
+      await rstu(currentUser.userid);
+      await rnt(currentUser.userid);
     }
-    setStarting(false)
-  }
-  useEffect(()=>{
-      init()
-  },[])
-  if(loading || starting){
+    if (currentUser?.role === "parent") {
+      await refreshNotificationParent(currentUser.userid);
+    }
+    if (accessToken && !user) {
+      await getMe();
+    }
+    setStarting(false);
+  };
+  useEffect(() => {
+    init();
+  }, []);
+  if (loading || starting) {
     return (
-        <div className="flex h-screen items-center justify-center">
-          <img src="https://i.pinimg.com/originals/71/3a/32/713a3272124cc57ba9e9fb7f59e9ab3b.gif" alt="loading..." />
+      <div className="flex h-screen items-center justify-center">
+
+      <div className="flex flex-row gap-2">
+        <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce"></div>
+        <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:-.3s]"></div>
+        <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:-.5s]"></div>
       </div>
-    )
+      </div>
+    );
   }
-  if(!accessToken)
-  {
-    return <Navigate to='/signin' replace/>
+  if (!accessToken) {
+    return <Navigate to="/signin" replace />;
   }
-  
-  if(accessToken && allowedRole !== user?.role){
-    const correctPath = getRedirectPath(user?.role as string)
-    return <Navigate to={correctPath} replace/>
+
+  if (accessToken && allowedRole !== user?.role) {
+    const correctPath = getRedirectPath(user?.role as string);
+    return <Navigate to={correctPath} replace />;
   }
-  return <Outlet/>
+  return <Outlet />;
 };
-export default ProtectedRoute
+export default ProtectedRoute;

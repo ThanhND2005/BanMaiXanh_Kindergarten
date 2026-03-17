@@ -52,7 +52,7 @@ export function SigninPageTeacher({
           await rnt(user.userid)
           await rstu(user.userid)
         }
-        navigate(correctPath);
+        navigate(correctPath,{replace: true});
     }
   };
   return (

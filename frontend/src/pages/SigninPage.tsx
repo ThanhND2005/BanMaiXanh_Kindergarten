@@ -56,7 +56,7 @@ export function SigninPage({
         {
           await refreshNotificationParent(user.userid)
         }
-        navigate(correctPath);
+        navigate(correctPath,{replace: true});
     }
   };
   return (
