@@ -17,7 +17,16 @@ export interface Security{
     date: Date,
     teacherid: string,
 }
+interface Admin{
+    userid: string, 
+    name: string,
+    address: string, 
+    dob: Date,
+    gender: string, 
+    avatarurl: string, 
+}
 export interface adminState {
+    admin: Admin | null
     loading : boolean
     security : Security[] | null
     teachers : Teacher[] | null
@@ -37,4 +46,5 @@ export interface adminState {
     refreshStudentBills: () => void
     refreshTeacherBills: () => void
     refreshSecurity: ()=> void
+    refreshAdmin: (userid : string)=> void 
 }

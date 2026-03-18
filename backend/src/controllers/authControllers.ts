@@ -207,11 +207,9 @@ export const signout = async (req: Request, res: Response) => {
   }
 }
 export const authMe = async (req: Request, res: Response) => {
-  try {
-    const user = (req as any).user
-    return res.status(200).json({ user })
-  } catch (error) {
-    console.error(error)
-    return res.status(500).send('Lỗi hệ thống')
+  const user = (req as any).user
+  if (!user) {
+    return res.status(404).send('Không tìm thấy thông tin người dùng !')
   }
+  return res.status(200).json({ user })
 }

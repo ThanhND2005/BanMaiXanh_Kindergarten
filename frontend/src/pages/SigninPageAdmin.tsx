@@ -28,13 +28,14 @@ export function SigninPageAdmin({
   });
   const navigate = useNavigate()
   const signinAdmin = useAuthStore((state) => state.signinAdmin)
-  const {refreshStudents,refreshTeachers ,refreshClasses,refreshNotifications,refreshMenu,refreshStudentBills,refreshTeacherBills,refreshSecurity}= useAdminStore()
+  const {refreshStudents,refreshTeachers ,refreshClasses,refreshNotifications,refreshMenu,refreshStudentBills,refreshTeacherBills,refreshSecurity,refreshAdmin}= useAdminStore()
   const onSubmit = async (data: SigninFormValues) => {
     const {username, password} = data 
     await signinAdmin(username,password)
     const user =  useAuthStore.getState().user
     if (user) {
         const correctPath = getRedirectPath(user.role as string);
+        await refreshAdmin(user.userid as string)
         await refreshStudents()
         await refreshTeachers()
         await refreshClasses()
@@ -43,6 +44,7 @@ export function SigninPageAdmin({
         await refreshStudentBills()
         await refreshTeacherBills()
         await refreshSecurity()
+        await refreshAdmin(user.userid as string)
         navigate(correctPath,{replace: true});
     }
   };

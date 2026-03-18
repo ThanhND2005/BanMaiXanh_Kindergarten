@@ -30,28 +30,19 @@ export function SigninPageTeacher({
   });
   const navigate = useNavigate()
   const signinTeacher = useAuthStore((state) => state.signinTeacher)
-  const {refreshStudents,refreshTeachers ,refreshClasses,refreshNotifications,refreshMenu,refreshStudentBills,refreshTeacherBills,refreshSecurity}= useAdminStore()
-  const {refreshNotifications : rnt, refreshStudents : rstu} = useTeacherStore()
-  const {refreshNotification : refreshNotificationParent} = useParentStore()
+  
+  const {refreshMenu,refreshNotifications,refreshSalaryBills,refreshStudents,refreshTeacher} = useTeacherStore()
   const onSubmit = async (data: SigninFormValues) => {
     const {username, password} = data 
     await signinTeacher(username,password)
     const user =  useAuthStore.getState().user
     if (user) {
         const correctPath = getRedirectPath(user.role as string);
-        await refreshStudents()
-        await refreshTeachers()
-        await refreshClasses()
-        await refreshNotifications()
         await refreshMenu()
-        await refreshStudentBills()
-        await refreshTeacherBills()
-        await refreshSecurity()
-        if(user.role === 'teacher')
-        {
-          await rnt(user.userid)
-          await rstu(user.userid)
-        }
+        await refreshNotifications(user.userid as string)
+        await refreshSalaryBills(user.userid as string)
+        await refreshStudents(user.userid as string)
+        await refreshTeacher(user.userid as string)
         navigate(correctPath,{replace: true});
     }
   };

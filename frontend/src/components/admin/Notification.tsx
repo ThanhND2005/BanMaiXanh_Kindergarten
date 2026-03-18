@@ -43,6 +43,7 @@ const Notification = () => {
       
   }
   const notifications =  useAdminStore((state) => state.notifications)
+  console.log(notifications)
   return (
     <>
       <div className='flex justify-between '>

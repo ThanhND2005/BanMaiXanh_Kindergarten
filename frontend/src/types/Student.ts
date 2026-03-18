@@ -1,3 +1,6 @@
+import type { Class } from "./Class"
+import type { Teacher } from "./Teacher"
+
 export interface Student {
     studentid: string, 
     gender: string, 
@@ -16,13 +19,12 @@ export interface Student {
     heightChange: number,
     weightChange:number
 }
-interface Class {
-    classid : string ,
-    name : string,
-}
+
 export interface studentState {
     classes : Class[] | null
+    teachers : Teacher[] | null
     loading : boolean
     refreshClasses : (studentid : string) => void
     clearState : () => void
+    refreshTeachers :(classes : Class[]) => void
 }

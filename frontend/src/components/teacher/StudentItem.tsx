@@ -8,8 +8,6 @@ import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogTrigger } from "../ui/dialog";
 import { Input } from "../ui/input";
 import type { Student } from "@/types/Student";
-import { useAdminStore } from "@/stores/useAdminStore";
-import { useAuthStore } from "@/stores/useAuthStore";
 import { teacherService } from "@/services/teacherService";
 import { toast } from "sonner";
 
@@ -32,13 +30,11 @@ const NotificationFormSchema = z.object({
 type UpdateFormValues = z.infer<typeof UpdateFormSchema>;
 type NotificationFormValues = z.infer<typeof NotificationFormSchema>;
 const StudentItem = ({ student }: StudentItemProps) => {
-  const user = useAuthStore.getState().user;
+  
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
   const [open3,setOpen3] = useState(false)
-  const teacher = useAdminStore((state) => state.teachers)?.find(
-    (t) => t.userid === user?.userid,
-  );
+  const teacher = useTeacherStore((state) => state.teacher)
   const {
     register,
     handleSubmit,

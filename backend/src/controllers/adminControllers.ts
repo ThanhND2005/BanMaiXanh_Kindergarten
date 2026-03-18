@@ -505,3 +505,20 @@ export const getCode = async (req: Request, res: Response) => {
     return res.status(500).send('Lỗi hệ thống')
   }
 }
+export const getAdmin = async (req : Request, res : Response) =>{
+  try {
+    const {userid} = req.params
+    console.log(userid)
+    const request1 = new sql.Request()
+    const res1 = await request1
+    .input('userid', sql.UniqueIdentifier,userid)
+    .query(
+      `SELECT * FROM Admin WHERE userid = @userid AND deleted='false'`
+    )
+    const admin = res1.recordset[0]
+    return res.status(200).json({admin})
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send('Lỗi hệ thống !')
+  }
+}

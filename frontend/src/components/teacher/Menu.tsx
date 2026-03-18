@@ -1,9 +1,9 @@
 import React from "react";
-import { Beef, CookingPot, IceCreamBowl, Soup, UtensilsCrossed } from "lucide-react";
-import { useAdminStore } from "@/stores/useAdminStore";
+import { Beef, CookingPot, IceCreamBowl, Soup,  } from "lucide-react";
+import { useTeacherStore } from "@/stores/useTeacherStore";
 
 const Menu = () => {
-  const menuday = useAdminStore((state) => state.menuday)
+  const menuday = useTeacherStore((state) => state.menuday)
   return (
     <div>
       <ul className="grid grid-cols-3 p-4 gap-8">

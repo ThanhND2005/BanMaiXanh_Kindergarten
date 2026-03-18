@@ -149,7 +149,7 @@ const StudentCard = ({ student }: IStudentProps) => {
                     {classes?.map((class1) => (
                       <li key={class1.classid}>
                         <Input
-                          placeholder={class1.name}
+                          placeholder={class1.classname}
                           className="rounded-2xl"
                           readOnly
                         />

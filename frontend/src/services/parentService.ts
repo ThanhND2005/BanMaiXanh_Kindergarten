@@ -24,5 +24,17 @@ export const parentService = {
     patchParent : async (parentid: string, name: string, dob: Date,gender: string, address: string) =>{
         const res = await api.patch(`/parent/patchParent/${parentid}`,{name,dob,gender,address},{withCredentials:true})
         return res.data
+    },
+    getParent : async (userid: string) =>{
+        const res = await api.get(`/parent/getParent/${userid}`,{withCredentials: true})
+        return res.data.parent
+    },
+    getStudents : async (parentid: string) =>{
+        const res = await api.get(`/parent/getStudents/${parentid}`,{withCredentials: true})
+        return res.data.students
+    },
+    getTuitionBill : async(parentid: string) =>{
+        const res = await api.get(`/parent/getTuitionBill/${parentid}`,{withCredentials: true})
+        return res.data.tuitionbills
     }
 }

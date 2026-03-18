@@ -10,7 +10,6 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import StudentCard from "./StudentCard";
 import { useAdminStore } from "@/stores/useAdminStore";
 import { useParentStore } from "@/stores/useParentStore";
-import { useAuthStore } from "@/stores/useAuthStore";
 import { studentService } from "@/services/studentService";
 import { toast } from "sonner";
 
@@ -25,10 +24,8 @@ const RegisterFormSchema = z.object({
 type RegisterFormValues = z.infer<typeof RegisterFormSchema>;
 const DashBoard = () => {
   const [open, setOpen] = useState(false);
-  const parent = useAuthStore((state) => state.user);
-  const students = useAdminStore((state) => state?.students)?.filter(
-    (student) => student.parentid === parent?.userid,
-  );
+  const parent = useParentStore((state)=>state.parent)
+  const students =useParentStore((state) => state.students)
   const {
     control,
     reset,
@@ -38,7 +35,7 @@ const DashBoard = () => {
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(RegisterFormSchema),
   });
-  const { refreshStudents } = useAdminStore();
+  const { refreshStudent } = useParentStore();
   const onCreate = async (data: RegisterFormValues) => {
     const { name, dob, gender, height, weight } = data;
     try {
@@ -50,7 +47,7 @@ const DashBoard = () => {
         height,
         weight,
       );
-      await refreshStudents();
+      await refreshStudent(parent?.userid as string)
       toast.success("Tạo thông tin học sinh thành công");
     } catch (error) {
       console.error(error);

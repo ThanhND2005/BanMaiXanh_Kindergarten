@@ -26,6 +26,34 @@ export const getTeacherList = async (req: Request, res: Response) => {
   }
 }
 
+export const getTeacher = async (req: Request, res: Response) =>{
+  try {
+    const {userid} = req.params
+    const day = new Date()
+    const request1 = new sql.Request()
+    const res1 = await request1
+    .input('userid',sql.UniqueIdentifier,userid)
+    .input('date',sql.Date,day)
+    .query(
+      `SELECT t.userid, t.name,t.dob,t.gender,t.address,c.name as classname,c.classid,t.createdat,t.avatarurl,tk.date as timekeeping
+        FROM Teacher t 
+        LEFT JOIN Class c on c.teacherid = t.userid
+        LEFT JOIN TimeKeeping tk on tk.teacherid = t.userid AND tk.date = @date
+        JOIN Account a on a.userid = t.userid AND a.deleted = 'false'
+        WHERE t.userid = @userid AND t.deleted = 'false'`
+    )
+    const teacher = res1.recordset[0]
+    if(!teacher)
+    {
+      return res.status(404).send('Không tìm thấy thông tin giáo viên !')
+    }
+    return res.status(200).json({teacher})
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send('Lỗi hệ thống !')
+  }
+}
+
 export const deleteTeacher = async (req: Request, res: Response) => {
   try {
     const { teacherid } = req.params
@@ -305,7 +333,7 @@ export const getStudentList = async (req: Request, res: Response) => {
       LEFT JOIN Attendance a on a.studentid = s.studentid AND date = @date
       JOIN ClassManagement cm on cm.studentid = s.studentid 
       JOIN Class c on c.classid = cm.classid 
-      JOIN Teacher t on c.teacherid = t.userid
+      JOIN Teacher t on c.teacherid = t.userid 
       WHERE s.deleted ='false' AND t.userid = @teacherid AND cm.deleted = 'false' `
       )
     const students = res1.recordset
@@ -330,5 +358,41 @@ export const getAccountBank = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')
+  }
+}
+export const getSalaryBills = async (req : Request, res: Response) =>{
+  try {
+    const {teacherid} = req.params
+    const request1 = new sql.Request()
+    const res1 = await request1
+    .input('teacherid',sql.UniqueIdentifier,teacherid)
+    .query(
+      `SELECT
+      t.salaryid,
+      t.teacherid,
+      t.month,
+      tc.name as teacherName,
+      tc.userid,
+      tc.dob,
+      tc.gender,
+      tc.address,
+      c.name as className,
+      t.allowance,
+      t.status,
+      tc.avatarurl,
+      t.amount,
+      t.timekeeping,
+      t.qrurl
+      FROM Salary t
+      JOIN Teacher tc on t.teacherid = tc.userid AND tc.deleted ='false'
+      JOIN Class c on c.teacherid = tc.userid AND c.deleted='false'
+      WHERE t.teacherid = @teacherid AND t.deleted = 'false'
+      ORDER BY t.paidat DESC`
+    )
+    const salarybills = res1.recordset
+    return res.status(200).json({salarybills})
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send('Lỗi hệ thống !')
   }
 }

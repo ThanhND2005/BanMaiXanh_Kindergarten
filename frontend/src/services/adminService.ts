@@ -7,7 +7,7 @@ export const adminService = {
     },
     getNotificationList : async() =>{
         const res = await api.get('/admin/getNotificationList',{withCredentials:true})
-        return res.data.notification
+        return res.data.notifications
     },
     getMenu : async() =>{
         const res = await api.get('/admin/getMenu',{withCredentials: true})
@@ -64,5 +64,9 @@ export const adminService = {
     getCode : async () =>{
         const res = await api.get('/admin/getCode',{withCredentials: true})
         return res.data.security
+    },
+    getAdmin : async (userid: string) =>{
+        const res = await api.get(`/admin/getAdmin/${userid}`,{withCredentials: true})
+        return res.data.admin
     }
 }

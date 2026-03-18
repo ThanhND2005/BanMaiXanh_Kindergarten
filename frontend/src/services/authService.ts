@@ -21,7 +21,7 @@ export const authService = {
     signOut : async () =>{
         return api.post('/auth/signout',{},{withCredentials: true})
     },
-    getMe : async () =>{
+    getMe :async () =>{
         const res = await api.get('/auth/authme',{withCredentials:true})
         return res.data.user 
     },

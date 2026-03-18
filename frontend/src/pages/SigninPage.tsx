@@ -10,8 +10,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { getRedirectPath } from "@/lib/navigation";
 import { useAdminStore } from "@/stores/useAdminStore";
-import { useTeacherStore } from "@/stores/useTeacherStore";
 import { useParentStore } from "@/stores/useParentStore";
+import { useTeacherStore } from "@/stores/useTeacherStore";
 const SigninSchema = z.object({
   username: z.string().min(1, "Tên đăng nhập không được để trống"),
   password: z.string().min(1, "Mật khẩu không được để trống"),
@@ -30,32 +30,21 @@ export function SigninPage({
   });
   const navigate = useNavigate()
   const signin = useAuthStore((state) => state.signin)
-  const {refreshStudents,refreshTeachers ,refreshClasses,refreshNotifications,refreshMenu,refreshStudentBills,refreshTeacherBills,refreshSecurity}= useAdminStore()
-  const {refreshNotifications : rnt, refreshStudents : rstu} = useTeacherStore()
-  const {refreshNotification : refreshNotificationParent} = useParentStore()
+  const {refreshNotification,refreshParent,refreshStudent,refreshTuitionBill} = useParentStore()
+  const {refreshClasses} = useAdminStore()
+  const {refreshMenu} = useTeacherStore()
   const onSubmit = async (data: SigninFormValues) => {
     const {username, password} = data 
     await signin(username,password)
     const user =  useAuthStore.getState().user
     if (user) {
         const correctPath = getRedirectPath(user.role as string);
-        await refreshStudents()
-        await refreshTeachers()
+        await refreshNotification(user.userid as string)
+        await refreshParent(user.userid as string)
+        await refreshStudent(user.userid as string)
+        await refreshTuitionBill(user.userid as string)
         await refreshClasses()
-        await refreshNotifications()
         await refreshMenu()
-        await refreshStudentBills()
-        await refreshTeacherBills()
-        await refreshSecurity()
-        if(user.role === 'teacher')
-        {
-          await rnt(user.userid)
-          await rstu(user.userid)
-        }
-        if(user.role === 'parent')
-        {
-          await refreshNotificationParent(user.userid)
-        }
         navigate(correctPath,{replace: true});
     }
   };

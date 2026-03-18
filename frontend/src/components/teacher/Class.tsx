@@ -1,7 +1,5 @@
-import { useAdminStore } from '@/stores/useAdminStore'
 import StudentItem from './StudentItem'
 import { useTeacherStore } from '@/stores/useTeacherStore'
-import { useAuthStore } from '@/stores/useAuthStore'
 
 
 

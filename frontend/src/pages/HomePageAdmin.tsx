@@ -22,12 +22,14 @@ import StudentFinance from "@/components/admin/StudentFinance";
 import { useAdminStore } from "@/stores/useAdminStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 export default function HomePageAdmin() {
+  const admin  = useAdminStore((state) => state.admin)
   const { tabActive, setTabActive } = useTabAdminStore();
-  const { loading } = useAdminStore();
+
   const navigate = useNavigate();
   const signout = useAuthStore((state) => state.signout);
   const onLogout = async () => {
     await signout();
+    setTabActive("dashboard")
     navigate("/signin/admin");
   };
   const now = new Date();
@@ -38,7 +40,7 @@ export default function HomePageAdmin() {
     year: "numeric",
   }).format(now);
   const final = dateformat.replace(", ", ", ngày ");
-  const admin = useAuthStore((state) => state.user);
+ 
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm border-b">
@@ -50,7 +52,7 @@ export default function HomePageAdmin() {
             <div>
               <h1 className="text-gray-900 mali-bold">{admin?.name}</h1>
               <h2 className="text-sm text-[#828282] mali-regular">
-                {admin?.role}
+                Admin
               </h2>
             </div>
           </div>
@@ -136,30 +138,22 @@ export default function HomePageAdmin() {
       </nav>
 
       <main className="w-full min-h-screen p-10 bg-[#f0fdf4]">
-        {loading === true && (
-          <div className="w-full h-100 flex items-center justify-center">
-            <div className="flex flex-row gap-2">
-              <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce"></div>
-              <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:-.3s]"></div>
-              <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:-.5s]"></div>
-            </div>
-          </div>
-        )}
-        {tabActive === "dashboard" && loading === false && <Dashboard />}
-        {tabActive === "notification" && loading === false && <Notification />}
-        {tabActive === "class" && loading === false && <Class />}
-        {tabActive === "menu" && loading === false && <Menu />}
-        {tabActive === "finance" && loading === false && <Finance />}
-        {tabActive === "studentmanagement" && loading === false && (
+        
+        {tabActive === "dashboard"  && <Dashboard />}
+        {tabActive === "notification"  && <Notification />}
+        {tabActive === "class"  && <Class />}
+        {tabActive === "menu"  && <Menu />}
+        {tabActive === "finance"  && <Finance />}
+        {tabActive === "studentmanagement"  && (
           <StudentManagement />
         )}
-        {tabActive === "teachermanagement" && loading === false && (
+        {tabActive === "teachermanagement"  && (
           <TeacherManagement />
         )}
-        {tabActive === "teacherfinance" && loading === false && (
+        {tabActive === "teacherfinance"  && (
           <TeacherFinance />
         )}
-        {tabActive === "studentfinance" && loading === false && (
+        {tabActive === "studentfinance"  && (
           <StudentFinance />
         )}
       </main>

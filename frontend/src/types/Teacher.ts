@@ -1,4 +1,4 @@
-import type { Notification } from "./store"
+import type { Menu, Notification, TeacherBill } from "./store"
 import type { Student } from "./Student"
 
 export interface Teacher {
@@ -14,9 +14,16 @@ export interface Teacher {
     timekeeping: Date | null,
 }
 export interface teacherState {
+    teacher : Teacher | null
     students : Student[] | null
     notifications: Notification[] |  null
+    menuday: Menu[] | null
+    salarybills: TeacherBill[] | null
+    loading : boolean
     clearState : () => void
+    refreshTeacher: (userid : string) => void
     refreshStudents : (teacherid: string) => void
+    refreshMenu : ()  => void
+    refreshSalaryBills : (teacherid: string) => void
     refreshNotifications: (teacherid: string) => void
 }

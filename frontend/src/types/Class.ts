@@ -1,3 +1,4 @@
+
 export interface Class {
     classid : string, 
     teachername: string,
@@ -10,5 +11,7 @@ export interface Class {
     classname : string, 
     type: string, 
     deleted: string,
-   
+    dob: Date,
+    createdat: Date,
+    avatarurl: string
 }

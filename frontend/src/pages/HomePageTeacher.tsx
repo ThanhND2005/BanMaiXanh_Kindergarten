@@ -26,6 +26,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { teacherService } from "@/services/teacherService";
 import { toast } from "sonner";
 import { useState } from "react";
+import { useTeacherStore } from "@/stores/useTeacherStore";
 const AvatarFormSchema = z.object({
   avatar: z.any().refine((file) => file?.length > 0, {
     message: "Không để trống thông tin",
@@ -47,7 +48,7 @@ type UpdateFormValues = z.infer<typeof UpdateFormSchema>;
 type AvatarFromValues = z.infer<typeof AvatarFormSchema>;
 const HomePageTeacher = () => {
   const { tabActive, setTabActive } = useTabTeacherStore();
-  const teacher = useAuthStore((state) => state.user);
+  const teacher = useTeacherStore((state) => state.teacher);
   const [account,setAccount] = useState<Account>()
   
   const navigate = useNavigate();
@@ -86,14 +87,16 @@ const HomePageTeacher = () => {
   const signout = useAuthStore((state) => state.signout);
   const onLogout = async () => {
     await signout();
+    setTabActive("dashboard")
     navigate("/signin/teacher");
   };
-  const {getMe} = useAuthStore()
+  const user = useAuthStore((state) => state.user)
+  const {refreshTeacher} = useTeacherStore()
   const onUpdate = async (data: AvatarFromValues) => {
     const file = data.avatar[0];
         try {
           await teacherService.patchAvatar(file, teacher?.userid as string);
-          await getMe();
+          await refreshTeacher(user?.userid as string)
           toast.success("Cập nhập ảnh đại diện thành công");
         } catch (error) {
           console.error(error);
@@ -112,7 +115,7 @@ const HomePageTeacher = () => {
     const {name, dob, gender,address,bank,accountbank} = data
       try {
         await teacherService.patchTeacher(teacher?.userid as string,name,new Date(dob),address,gender,bank,accountbank)
-        await getMe()
+        await refreshTeacher(user?.userid as string)
         toast.success("Cập nhập thông tin cá nhân thành công !")
       } catch (error) {
         console.error(error)

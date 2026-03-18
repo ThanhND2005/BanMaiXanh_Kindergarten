@@ -5,8 +5,6 @@ import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Beef, CookingPot, IceCreamBowl, Megaphone, Soup, Users } from 'lucide-react'
-import { useAdminStore } from '@/stores/useAdminStore'
-import { useAuthStore } from '@/stores/useAuthStore'
 import { teacherService } from '@/services/teacherService'
 import {toast} from 'sonner'
 
@@ -17,21 +15,21 @@ type TeacherForm = {
 
 const DashBoard = () => {
   const day = new Date().getDay()
-  const menu = useAdminStore((state) => state.menuday)?.find((t) => t.day === day )
+  const menu = useTeacherStore((state) => state.menuday)?.find((t) => t.day === day )
   const notifications = useTeacherStore((state) => state.notifications)
-  const user = useAuthStore.getState().user
-  const teacher = useAdminStore((state) => state.teachers)?.find((t) => t.userid === user?.userid)
+  const teacher = useTeacherStore((state) => state.teacher)
+  
   
   const students = useTeacherStore((state) => state.students)
-  const {refreshTeachers} = useAdminStore()
+  const {refreshTeacher} = useTeacherStore()
   const {register, handleSubmit, formState :{errors, isSubmitting}} = useForm<TeacherForm>()
   const [open,setOpen]= useState(false)
   const onTimekeeping = async (data : TeacherForm) =>{
         const {teacherid,code} = data
         try {
           await teacherService.postTimeKeeping(teacherid,code)
-          await refreshTeachers()
-          const currentteacher = useAdminStore.getState().teachers?.find((t) => t.userid === user?.userid)
+          await refreshTeacher(teacherid)
+          const currentteacher = useTeacherStore.getState().teacher
           if(currentteacher?.timekeeping === null)
           {
             toast.error("Chấm công thất bại !")

@@ -8,26 +8,25 @@ import { Command, CommandEmpty, CommandItem, CommandList } from "../ui/command";
 import { CommandGroup } from "cmdk";
 import type { Class } from "@/types/Class";
 import { useAdminStore } from "@/stores/useAdminStore";
-import { useAuthStore } from "@/stores/useAuthStore";
 import { studentService } from "@/services/studentService";
 import { toast } from "sonner";
+import { useParentStore } from "@/stores/useParentStore";
 interface IClassProps {
   classinfor: Class;
 }
 
 const ClassCard = ({ classinfor }: IClassProps) => {
-  const parent = useAuthStore((state) => state.user);
-  const students = useAdminStore((state) => state.students)?.filter(
-    (student) => student.parentid === parent?.userid,
-  );
+  const parent = useParentStore((state)=> state.parent)
+  const students = useParentStore((state) => state.students)
   const [open, setOpen] = useState(false);
   const [open2,setOpen2] = useState(false)
   const [studentid, setStudentId] = useState("");
-  const { refreshStudents,refreshClasses} = useAdminStore();
+  const { refreshStudent} = useParentStore();
+  const {refreshClasses} = useAdminStore()
   const onRegister = async (studentid: string, classid: string) => {
     try {
       await studentService.registerClass(studentid, classid);
-      await refreshStudents();
+      await refreshStudent(parent?.userid as string);
       await refreshClasses();
       toast.success("Đăng ký lớp cho học sinh thành công");
     } catch (error) {

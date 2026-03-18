@@ -8,6 +8,7 @@ import { adminService } from '@/services/adminService'
 
 export const useAdminStore = create<adminState>((set,get) => ({
     loading : false,
+    admin : null,
     students: null,
     security : null,
     clearState : () =>{
@@ -53,7 +54,9 @@ export const useAdminStore = create<adminState>((set,get) => ({
         try {
             set({loading: true})
             const notifications = await adminService.getNotificationList()
+            console.log(notifications)
             set({notifications})
+            
         } catch (error) {
             console.error(error)
             get().clearState()
@@ -127,6 +130,14 @@ export const useAdminStore = create<adminState>((set,get) => ({
             get().clearState()
         }
         
+    },
+    refreshAdmin: async (userid: string) =>{
+        try {
+            const admin = await adminService.getAdmin(userid)
+            set({admin})
+        } catch (error) {
+            console.error(error)
+        }
     }
 
 }))

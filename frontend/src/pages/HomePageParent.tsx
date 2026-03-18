@@ -29,6 +29,7 @@ import { parentService } from "@/services/parentService";
 import { toast } from "sonner";
 import Notice from "@/components/parent/Notice";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useParentStore } from "@/stores/useParentStore";
 
 const AvatarFormSchema = z.object({
   avatar: z.any().refine((file) => file?.length > 0, {
@@ -45,8 +46,7 @@ type AvatarFromValues = z.infer<typeof AvatarFormSchema>;
 type UpdateFormValues = z.infer<typeof UpdateFormSchema>;
 const HomePageParent = () => {
   const { tabActive, setTabActive } = useTabParentStore();
-
-  const parent = useAuthStore((state) => state.user);
+  const parent = useParentStore((state) => state.parent)
   const {
     register,
     handleSubmit,
@@ -76,12 +76,13 @@ const HomePageParent = () => {
     year: "numeric",
   }).format(now);
   const final = dateformat.replace(", ", ", ngày ");
-  const { getMe } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
+  const {refreshParent} = useParentStore()
   const onUpdate = async (data: AvatarFromValues) => {
     const file = data.avatar[0];
     try {
       await parentService.patchAvatar(file, parent?.userid as string);
-      await getMe();
+      await refreshParent(user?.userid as string);
       toast.success("Cập nhập ảnh đại diện thành công");
     } catch (error) {
       console.error(error);
@@ -92,7 +93,7 @@ const HomePageParent = () => {
       const {name, dob, gender,address} = data
       try {
         await parentService.patchParent(parent?.userid as string,name,new Date(dob),gender,address)
-        await getMe()
+        await refreshParent(user?.userid as string)
         toast.success("Cập nhập thông tin cá nhân thành công !")
       } catch (error) {
         console.error(error)
@@ -103,6 +104,7 @@ const HomePageParent = () => {
   const signout = useAuthStore((state) => state.signout);
   const onLogout = async () => {
     await signout();
+    setTabActive("dashboard")
     navigate("/signin");
   };
   return (

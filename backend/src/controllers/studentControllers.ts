@@ -1,4 +1,5 @@
 import { Request, Response } from "express"
+import { request } from "http"
 import { sql } from "~/libs/DB"
 export const getStudentList = async (req: Request, res: Response) => {
   try {
@@ -161,15 +162,42 @@ export const getClass = async (req: Request, res: Response) => {
     const res1 = await request
       .input('studentid', sql.UniqueIdentifier, studentid)
       .query(
-        `SELECT c.classid, c.name FROM Class c
+        `SELECT t.avatarurl,c.classid, t.name as teachername, c.teacherid, c.age,c.member, c.currentmember, c.tuition,c.schedule,c.name as classname, c.type,c.deleted,t.dob,t.createdat FROM Class c
+      JOIN Teacher t on t.userid = c.teacherid
       JOIN ClassManagement cm on cm.classid = c.classid
-      JOIN Student s on s.studentid = cm.studentid
-      WHERE s.studentid = @studentid`
+      JOIN Student s on s.studentid = cm.studentid 
+      WHERE c.deleted = 'false' AND s.studentid = @studentid`
       )
     const classes = res1.recordset
     return res.status(200).json({ classes })
   } catch (error) {
     console.error(error)
     return res.status(500).send('Lỗi hệ thống')
+  }
+}
+export const getTeacher = async (req: Request, res: Response) =>{
+  try {
+    const {classes} = req.body
+   
+    let teachers = []
+    for(let i =0 ;i< classes.length;i++)
+    {
+        const request1 = new sql.Request()
+        const res1 = await request1
+        .input('classid', sql.UniqueIdentifier,classes[i].classid)
+        .query(
+          `SELECT t.userid, t.name,t.dob,t.gender,t.address,c.name as classname,c.classid,t.createdat,t.avatarurl,tk.date as timekeeping
+        FROM Teacher t 
+        LEFT JOIN Class c on c.teacherid = t.userid
+        LEFT JOIN TimeKeeping tk on tk.teacherid = t.userid AND tk.date = @date
+        JOIN Account a on a.userid = t.userid AND a.deleted = 'false'
+        WHERE t.deleted = 'false' AND c.classid = @classid`
+        )
+        teachers.push(res1.recordset[0])
+    }
+    return res.status(200).json({teachers})
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send('Lỗi hệ thống !')
   }
 }

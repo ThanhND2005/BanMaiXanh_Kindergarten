@@ -2,10 +2,11 @@ import React from 'react'
 import TuitionCard from './TuitionCard'
 import { useAdminStore } from '@/stores/useAdminStore'
 import { useAuthStore } from '@/stores/useAuthStore'
+import { useParentStore } from '@/stores/useParentStore'
 
 const Tuition = () => {
-  const user = useAuthStore((state) => state.user)
-  const tuitions = useAdminStore((state) => state.studentbills)?.filter((tuition) => tuition.parentid === user?.userid)
+  
+  const tuitions = useParentStore((state) => state.tuitionbills)
   return (
     <div>
       <ul className='flex flex-col gap-4 p-4'>

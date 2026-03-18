@@ -6,13 +6,13 @@ import { Input } from '../ui/input'
 import {z} from 'zod'
 import {useForm} from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Teacher } from '@/types/Teacher'
-import { useAuthStore } from '@/stores/useAuthStore'
 import { parentService } from '@/services/parentService'
 import { toast } from 'sonner'
+import { useParentStore } from '@/stores/useParentStore'
+import type { Class } from '@/types/Class'
 
 interface ITeacherProps {
-  teacher : Teacher
+  teacher : Class
 }
 const NotificationFormSchema = z.object({
   senderid: z.string(),
@@ -25,12 +25,12 @@ type NotificationFormValues = z.infer<typeof NotificationFormSchema>
 
 const TeacherCard = ({teacher} : ITeacherProps) => {
   const [open, setOpen] = useState(false)
-  const parent = useAuthStore((state) => state.user)
+  const parent = useParentStore((state) => state.parent)
   const {reset:re,register : reg ,handleSubmit :had, formState :{errors :err, isSubmitting: isSub}} = useForm<NotificationFormValues>({
         resolver : zodResolver(NotificationFormSchema),
         defaultValues : {
           senderid : parent?.userid,
-          receiverid: teacher.userid,
+          receiverid: teacher.teacherid,
           sendername: parent?.name
         }
       })
@@ -53,7 +53,7 @@ const TeacherCard = ({teacher} : ITeacherProps) => {
     <div>
       <li className='bg-white rounded-xl py-4 px-10 flex w-full shadow-md'>
           <div className='flex flex-col gap-3'>
-            <h2 className='text-4xl itim-regular'>{teacher.name}</h2>
+            <h2 className='text-4xl itim-regular'>{teacher.teachername}</h2>
             <h2 className='text-2xl itim-regular'>Lớp: {teacher.classname}</h2>
             <h2 className='text-2xl itim-regular'>Ngày sinh: {new Date(teacher.dob).toLocaleDateString('vi-VN')}</h2>
             <h2 className='text-2xl itim-regular'>Ngày tham gia: {new Date(teacher.createdat).toLocaleDateString('vi-VN')}</h2>

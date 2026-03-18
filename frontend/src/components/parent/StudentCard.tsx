@@ -10,10 +10,10 @@ import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { RadioGroup,RadioGroupItem } from '../ui/radio-group'
 import type { Student } from '@/types/Student'
-import { useAdminStore } from '@/stores/useAdminStore'
 import { studentService } from '@/services/studentService'
 import { toast } from 'sonner'
 import { useStudentStore } from '@/stores/useStudentStore'
+import { useParentStore } from '@/stores/useParentStore'
 
 interface IStudentProps {
     student : Student
@@ -36,6 +36,7 @@ const UpdateFormSchema = z.object({
 })
 type UpdateFormValues = z.infer<typeof UpdateFormSchema>
 const StudentCard = ({student} : IStudentProps) => {
+  const parent = useParentStore((state)=> state.parent)
   const [open, setOpen] = useState(false)
   const [openAvatarForm, setOpenAvatarForm] = useState(false)
   const {reset,control,register, handleSubmit,formState :{errors,isSubmitting}} = useForm({
@@ -57,11 +58,12 @@ const StudentCard = ({student} : IStudentProps) => {
   } = useForm<UpdateAvatarValues>({
     resolver: zodResolver(UpdateAvatarSchema),
   });
+  const {refreshStudent} = useParentStore()
   const onUpdate = async (data : UpdateFormValues) =>{
       const {name,gender,height,weight,dob} = data
       try {
         await studentService.patchStudent(student.studentid,name,new Date(dob),gender,height,weight)
-        await refreshStudents()
+        await refreshStudent(parent?.userid as string)
         toast.success("Cập nhập thông tin thành công")
       } catch (error) {
         console.error(error)
@@ -72,12 +74,11 @@ const StudentCard = ({student} : IStudentProps) => {
         setOpen(false)
       }
   }
-  const {refreshStudents} = useAdminStore()
   const onUpdateAvatar = async (data: UpdateAvatarValues) => {
     const file = data.avatarurl[0]
     try {
       await studentService.patchAvatar(student.studentid,file)
-      await refreshStudents()
+      await refreshStudent(parent?.userid as string)
       toast.success("Cập nhập ảnh đại diện thành công")
     } catch (error) {
       console.error(error)
@@ -254,7 +255,7 @@ const StudentCard = ({student} : IStudentProps) => {
                 <ul id= 'classes' className='space-y-2'>
                 {classes?.map((class1) =>(
                   <li key={class1.classid}>
-                    <Input type='text' className='rounded-2xl shadow-md p-2' value={class1.name} readOnly/>
+                    <Input type='text' className='rounded-2xl shadow-md p-2' value={class1.classname} readOnly/>
                   </li>
                 ))}
 

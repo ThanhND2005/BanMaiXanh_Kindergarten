@@ -1,22 +1,24 @@
 
 import express from 'express'
-import { deleteStudent, deleteTeacher, getMenu, getNotificationList, getTeacherList, patchStudent, patchTeacher, postCheckin, postCheckout, postNotification, postTimeKeeping, verifyTeacherBill,patchAvatar, getStudentList, getAccountBank } from '~/controllers/teacherControllers'
+import { deleteStudent, deleteTeacher, getMenu, getNotificationList, getTeacherList, patchStudent, patchTeacher, postCheckin, postCheckout, postNotification, postTimeKeeping, verifyTeacherBill, patchAvatar, getStudentList, getAccountBank, getTeacher, getSalaryBills } from '~/controllers/teacherControllers'
 import { uploadAvatar } from '~/middlewares/cloudMiddleware'
-
+import { requireRole } from '~/middlewares/authMiddleware'
 const router = express.Router()
-router.get('/getTeacherList',getTeacherList)
-router.patch('/deleteTeacher/:teacherid',deleteTeacher)
-router.patch('/patchTeacher/:teacherid',patchTeacher)
-router.patch('/patchAvatar/:teacherid',uploadAvatar.single('avatar'),patchAvatar)
-router.get('/getNotifications/:teacherid',getNotificationList)
-router.post('/postTimeKeeping/:teacherid',postTimeKeeping)
-router.get('/getMenu/:day',getMenu)
-router.post('/postCheckin/:studentid',postCheckin)  
-router.patch('/postCheckout/:attendanceid',postCheckout)
-router.patch('/deleteStudent/:studentid',deleteStudent)
-router.patch('/patchStudent/:studentid',patchStudent)
-router.post('/postNotification/:teacherid',postNotification)
-router.patch('/verifyTeacherBill/:salaryid',verifyTeacherBill)
-router.get('/getStudentList/:teacherid',getStudentList)
-router.get('/getAccountBank/:userid',getAccountBank)
+router.get('/getTeacherList', requireRole('teacher','admin'), getTeacherList)
+router.get('/getTeacher/:userid', requireRole('teacher'), getTeacher)
+router.patch('/deleteTeacher/:teacherid', requireRole('teacher'), deleteTeacher)
+router.patch('/patchTeacher/:teacherid', requireRole('teacher'), patchTeacher)
+router.patch('/patchAvatar/:teacherid', requireRole('teacher'), uploadAvatar.single('avatar'), patchAvatar)
+router.get('/getNotifications/:teacherid', requireRole('teacher'), getNotificationList)
+router.post('/postTimeKeeping/:teacherid', requireRole('teacher'), postTimeKeeping)
+router.get('/getMenu/:day', requireRole('teacher','parent'), getMenu)
+router.post('/postCheckin/:studentid', requireRole('teacher'), postCheckin)
+router.patch('/postCheckout/:attendanceid', requireRole('teacher'), postCheckout)
+router.patch('/deleteStudent/:studentid', requireRole('teacher'), deleteStudent)
+router.patch('/patchStudent/:studentid', requireRole('teacher'), patchStudent)
+router.post('/postNotification/:teacherid', requireRole('teacher'), postNotification)
+router.patch('/verifyTeacherBill/:salaryid', requireRole('teacher'), verifyTeacherBill)
+router.get('/getStudentList/:teacherid', requireRole('teacher'), getStudentList)
+router.get('/getAccountBank/:userid', requireRole('teacher'), getAccountBank)
+router.get('/getSalaryBills/:teacherid', requireRole('teacher'), getSalaryBills)
 export default router

@@ -5,6 +5,10 @@ export const teacherService = {
         const res  = await api.get('/teacher/getTeacherList',{withCredentials:true})
         return res.data.teachers
     },
+    getTeacher: async (userid : string) =>{
+        const res = await api.get(`/teacher/getTeacher/${userid}`,{withCredentials: true})
+        return res.data.teacher
+    },
     deleteTeacher : async (teacherid : string) =>{
         const res = await api.patch(`/teacher/deleteTeacher/${teacherid}`,{},{withCredentials: true})
         return res.data.teachers
@@ -62,5 +66,9 @@ export const teacherService = {
     getAccountBank : async (userid : string) =>{
         const res = await api.get(`/teacher/getAccountBank/${userid}`,{withCredentials: true})
         return res.data.account
+    },
+    getSalaryBills : async (teacherid: string) => {
+        const res = await api.get(`/teacher/getSalaryBills/${teacherid}`,{withCredentials: true})
+        return res.data.salarybills
     }
 }

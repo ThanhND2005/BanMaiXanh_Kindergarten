@@ -19,36 +19,47 @@ const ProtectedRoute = ({ allowedRole }: Props) => {
     refreshMenu,
     refreshStudentBills,
     refreshTeacherBills,
+    refreshAdmin
   } = useAdminStore();
-  const { refreshNotifications: rnt, refreshStudents: rstu } =
-    useTeacherStore();
-  const { refreshNotification: refreshNotificationParent } = useParentStore();
+  const { refreshMenu: func1Teacher, refreshNotifications: func2Teacher, refreshSalaryBills: func3Teacher, refreshStudents: func4Teacher, refreshTeacher: func5Teacher} =useTeacherStore();
+  const { refreshNotification: func1Parent, refreshParent: func2Parent, refreshStudent:func3Parent, refreshTuitionBill:func4Parent} = useParentStore();
   const [starting, setStarting] = useState(true);
   const init = async () => {
     if (!accessToken) {
       await refresh();
       await getMe();
-      await refreshStudents();
-      await refreshTeachers();
-      await refreshClasses();
-      await refreshNotifications();
-      await refreshMenu();
-      await refreshStudentBills();
-      await refreshTeacherBills();
-      await refreshSecurity();
-    }
-    const currentUser = useAuthStore.getState().user;
-    if (currentUser?.role === "admin") {
-    }
-    if (currentUser?.role === "teacher") {
-      await rstu(currentUser.userid);
-      await rnt(currentUser.userid);
-    }
-    if (currentUser?.role === "parent") {
-      await refreshNotificationParent(currentUser.userid);
     }
     if (accessToken && !user) {
       await getMe();
+    }
+    const currentUser = useAuthStore.getState().user;
+    if (currentUser?.role === "admin") {
+      await refreshClasses()
+      await refreshStudents()
+      await refreshSecurity()
+      await refreshTeacherBills()
+      await refreshTeachers()
+      await refreshNotifications()
+      await refreshMenu()
+      await refreshStudentBills()
+      await refreshAdmin(currentUser.userid as string)
+      
+    }
+    else if (currentUser?.role === "teacher") {
+      await func1Teacher()
+      await func2Teacher(currentUser.userid as string)
+      await func3Teacher(currentUser.userid as string)
+      await func4Teacher(currentUser.userid as string)
+      await func5Teacher(currentUser.userid as string)
+
+    }
+    else if (currentUser?.role === "parent") {
+      await func1Parent(currentUser.userid as string)
+      await func2Parent(currentUser.userid as string)
+      await func3Parent(currentUser.userid as string)
+      await func4Parent(currentUser.userid as string)
+      await refreshClasses()
+      await func1Teacher()
     }
     setStarting(false);
   };

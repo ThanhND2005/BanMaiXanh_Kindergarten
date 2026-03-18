@@ -1,5 +1,6 @@
 import api from "@/lib/axios";
-import { fi } from "zod/v4/locales";
+import type { Class } from "@/types/Class";
+
 
 
 export const studentService = {
@@ -32,5 +33,9 @@ export const studentService = {
     registerClass : async (studentid: string, classid: string) =>{
         const res = await api.post(`/student/registerClass/${studentid}`,{classid},{withCredentials: true})
         return res.data
+    },
+    getTeacher : async (classes : Class[]) =>{
+        const res = await api.post('/student/getTeacher',{classes},{withCredentials: true})
+        return res.data.teachers
     }
 }

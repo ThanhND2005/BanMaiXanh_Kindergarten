@@ -11,6 +11,7 @@ import type { StudentBill } from "@/types/store";
 import { useAdminStore } from "@/stores/useAdminStore";
 import { parentService } from "@/services/parentService";
 import { toast } from "sonner";
+import { useParentStore } from "@/stores/useParentStore";
 
 interface ITuitionCard {
   tuition: StudentBill;
@@ -23,7 +24,7 @@ const ComfirmFormSchema = z.object({
 });
 type ComfirmFormValues = z.infer<typeof ComfirmFormSchema>;
 const TuitionCard = ({ tuition }: ITuitionCard) => {
-  console.log(tuition.status);
+  const parent = useParentStore((state) => state.parent)
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false)
   const {
@@ -37,13 +38,13 @@ const TuitionCard = ({ tuition }: ITuitionCard) => {
       tuitionid: tuition.tuitionid,
     },
   });
-  const { refreshStudentBills } = useAdminStore();
+  const { refreshTuitionBill } = useParentStore();
   const onSubmit = async (data: ComfirmFormValues) => {
     const file = data.billImage[0];
     const { tuitionid } = data;
     try {
       await parentService.patchStudentBill(tuitionid, file);
-      await refreshStudentBills();
+      await refreshTuitionBill(parent?.userid as string);
       toast.success("Gửi hóa đơn thành công !");
     } catch (error) {
       console.error(error);
@@ -59,7 +60,7 @@ const TuitionCard = ({ tuition }: ITuitionCard) => {
     if (tuition.status === null) {
       interval = setInterval(async () => {
         try {
-          await refreshStudentBills();
+          await refreshTuitionBill(parent?.userid as string);
           const currenttuition = useAdminStore
             .getState()
             .studentbills?.find((t) => t.tuitionid === tuition.tuitionid);
