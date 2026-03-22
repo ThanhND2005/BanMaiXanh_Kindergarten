@@ -21,6 +21,8 @@ import TeacherFinance from "@/components/admin/TeacherFinance";
 import StudentFinance from "@/components/admin/StudentFinance";
 import { useAdminStore } from "@/stores/useAdminStore";
 import { useAuthStore } from "@/stores/useAuthStore";
+import TeacherWaiting from "@/components/admin/TeacherWaiting";
+import TeacherManagement1 from "@/components/admin/TeacherManagement1";
 export default function HomePageAdmin() {
   const admin  = useAdminStore((state) => state.admin)
   const { tabActive, setTabActive } = useTabAdminStore();
@@ -155,6 +157,12 @@ export default function HomePageAdmin() {
         )}
         {tabActive === "studentfinance"  && (
           <StudentFinance />
+        )}
+        {tabActive === "teacherwaiting"  && (
+          <TeacherWaiting />
+        )}
+        {tabActive === "teachermanagement1"  && (
+          <TeacherManagement1 />
         )}
       </main>
     </div>

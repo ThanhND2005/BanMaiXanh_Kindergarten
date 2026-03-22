@@ -6,7 +6,7 @@ import { requireRole } from '~/middlewares/authMiddleware'
 const router = express.Router()
 router.get('/getTeacherList', requireRole('teacher','admin'), getTeacherList)
 router.get('/getTeacher/:userid', requireRole('teacher'), getTeacher)
-router.patch('/deleteTeacher/:teacherid', requireRole('teacher'), deleteTeacher)
+router.patch('/deleteTeacher/:teacherid', requireRole('teacher','admin'), deleteTeacher)
 router.patch('/patchTeacher/:teacherid', requireRole('teacher'), patchTeacher)
 router.patch('/patchAvatar/:teacherid', requireRole('teacher'), uploadAvatar.single('avatar'), patchAvatar)
 router.get('/getNotifications/:teacherid', requireRole('teacher'), getNotificationList)

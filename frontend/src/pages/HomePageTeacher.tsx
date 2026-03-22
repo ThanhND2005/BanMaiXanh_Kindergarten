@@ -50,7 +50,7 @@ const HomePageTeacher = () => {
   const { tabActive, setTabActive } = useTabTeacherStore();
   const teacher = useTeacherStore((state) => state.teacher);
   const [account,setAccount] = useState<Account>()
-  
+  const [open, setOpen] = useState(false)
   const navigate = useNavigate();
   const {
     register,
@@ -101,6 +101,10 @@ const HomePageTeacher = () => {
         } catch (error) {
           console.error(error);
           toast.error("Cập nhập ảnh đại diện thất bại ");
+        }
+        finally
+        {
+          setOpen(false)
         }
   };
   const getAccount = async () =>{
@@ -246,7 +250,7 @@ const HomePageTeacher = () => {
                 </DialogContent>
               </Dialog>
             </div>
-            <Dialog>
+            <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
                 <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-300">
                   <img

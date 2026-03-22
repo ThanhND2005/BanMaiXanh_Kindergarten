@@ -1,24 +1,32 @@
-import type { Teacher } from "@/types/Teacher";
-import { Button } from "../ui/button";
-import { useAdminStore } from "@/stores/useAdminStore";
-import { teacherService } from "@/services/teacherService";
-import { useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import { adminService } from '@/services/adminService';
+import { teacherService } from '@/services/teacherService';
+import { useAdminStore } from '@/stores/useAdminStore';
+import type { Teacher } from '@/types/Teacher';
+import React, { useState } from 'react'
+import { toast } from 'sonner';
+import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog';
+import { Button } from '../ui/button';
+
 interface ITeacher {
   teacher: Teacher;
 }
-
-const TeacherCard = ({ teacher }: ITeacher) => {
-  const [open, setOpen] = useState(false);
-  const { refreshTeachers } = useAdminStore();
-  const security = useAdminStore
-    .getState()
-    .security?.find((t) => t.teacherid === teacher.userid);
+const TeacherCard2 = ({teacher} : ITeacher) => {
+   const {refreshTeachers} = useAdminStore()
+   const [open, setOpen] =useState(false)
+  const onAccept = async (userid : string) =>
+  {
+    try {
+        await adminService.acceptTeacher(userid)
+        refreshTeachers()
+        toast.success('Duyệt thành công !')
+    } catch (error) {
+        console.error(error)
+    }
+  }
   const onDelete = async (userid: string) => {
-    await teacherService.deleteTeacher(userid);
-    await refreshTeachers();
-  };
-  
+      await teacherService.deleteTeacher(userid);
+      await refreshTeachers();
+    };
   return (
     <div>
       <li>
@@ -50,11 +58,9 @@ const TeacherCard = ({ teacher }: ITeacher) => {
               Ngày tham gia:{" "}
               {new Date(teacher.createdat).toLocaleDateString("vi-VN")}
             </div>
-            <div className=" text-base font-medium">
-              Mã bảo mật: {security?.code}
-            </div>
+            
           </div>
-          <div className="flex space-x-10">
+          <div className="flex  space-x-10 justify-between w-full">
             <div>
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
@@ -91,12 +97,19 @@ const TeacherCard = ({ teacher }: ITeacher) => {
                   </div>
                 </DialogContent>
               </Dialog>
+              <Button
+                      type="button"
+                      className="w-20 bg-[#05d988] text-white rounded-2xl shadow-sm  "
+                      onClick={() => onAccept(teacher.userid as string)}
+                    >
+                      Chấp nhận
+                    </Button>
             </div>
           </div>
         </div>
       </li>
     </div>
-  );
-};
+  )
+}
 
-export default TeacherCard;
+export default TeacherCard2

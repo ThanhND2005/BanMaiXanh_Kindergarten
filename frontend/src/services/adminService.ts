@@ -68,5 +68,9 @@ export const adminService = {
     getAdmin : async (userid: string) =>{
         const res = await api.get(`/admin/getAdmin/${userid}`,{withCredentials: true})
         return res.data.admin
+    },
+    acceptTeacher : async(userid: string) =>{
+        const res  = await api.patch(`/admin/acceptTeacher/${userid}`,{},{withCredentials: true})
+        return res.data
     }
 }

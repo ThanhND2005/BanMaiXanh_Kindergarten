@@ -522,3 +522,47 @@ export const getAdmin = async (req : Request, res : Response) =>{
     return res.status(500).send('Lỗi hệ thống !')
   }
 }
+export const acceptTeacher = async (req : Request, res: Response) =>{
+  try {
+    const {userid} = req.params
+    const request1 = new sql.Request()
+    await request1
+    .input('userid',sql.UniqueIdentifier,userid)
+    .query(
+      `UPDATE Teacher SET status = 'ok' WHERE userid = @userid`
+    )
+    return res.sendStatus(201)
+  } catch (error) {
+    console.error(error)
+    return res.sendStatus(500)
+  }
+}
+export const addDish = async (req : Request, res : Response) =>{
+  try {
+    const {name, type} = req.body
+    const request1 = new sql.Request()
+    const res1 = await request1
+    .input('name',sql.NVarChar,name)
+    .input('type',sql.NVarChar,type)
+    .query(
+      `INSERT INTO Dish (name,type) VALUES (@name,@type)`
+    )
+    return res.sendStatus(201)
+  } catch (error) {
+    console.log(error)
+    return res.sendStatus(500)
+  }
+}
+export const addStatDish = async (req : Request, res: Response) => {
+  try {
+    const {dish1, dish2,dish3, dish4} = req.body
+    const date = new Date()
+    date.setDate(date.getDate() -1)
+    
+    const request1 = new sql.Request()
+
+  } catch (error) {
+    console.log(error)
+    return res.sendStatus(500)
+  }
+}

@@ -6,13 +6,30 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { Label } from "../ui/label";
-import { Beef, CookingPot, IceCreamBowl, Soup } from "lucide-react";
-import type { Menu } from '@/types/store'
+import {
+  Beef,
+  ChevronsUpDown,
+  CookingPot,
+  IceCreamBowl,
+  Soup,
+  Check,
+} from "lucide-react";
+import type { Menu } from "@/types/store";
 import { useAdminStore } from "@/stores/useAdminStore";
 import { adminService } from "@/services/adminService";
-import {toast} from 'sonner'
+import { toast } from "sonner";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "../ui/command";
+
 interface IMenuProps {
-    menu : Menu
+  menu: Menu;
 }
 
 const MenuFormSchema = z.object({
@@ -22,170 +39,383 @@ const MenuFormSchema = z.object({
   dish3: z.string().min(1, "Không được để trống món ăn"),
   dish4: z.string().min(1, "Không được để trống món ăn"),
 });
+
 type MenuFormValues = z.infer<typeof MenuFormSchema>;
 
-const MenuCard = ({menu} : IMenuProps) => {
-    const {
+const dis1 = [
+  { id: "001", name: "Trứng luộc" },
+  { id: "002", name: "Trứng rán" },
+  { id: "003", name: "Trứng chiên" },
+];
+const dis2 = [
+  { id: "001", name: "Rau cải" },
+  { id: "002", name: "Rau ngót" },
+  { id: "003", name: "Rau muống" },
+];
+const dis3 = [
+  { id: "001", name: "Kem" },
+  { id: "002", name: "Sữa chua" },
+  { id: "003", name: "Sữa tươi" },
+];
+const dis4 = [
+  { id: "001", name: "Thịt bò xào" },
+  { id: "002", name: "Thịt lợn xào" },
+  { id: "003", name: "Thịt gà luộc" },
+];
+
+const MenuCard = ({ menu }: IMenuProps) => {
+  
+  const {
     reset,
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<MenuFormValues>({
     resolver: zodResolver(MenuFormSchema),
-    defaultValues:{
-        day : menu.day,
-        dish1 : menu.dish1,
-        dish2 : menu.dish2,
-        dish3 : menu.dish3,
-        dish4 : menu.dish4,
+    defaultValues: {
+      day: menu.day,
+      dish1: menu.dish1,
+      dish2: menu.dish2,
+      dish3: menu.dish3,
+      dish4: menu.dish4,
+    },
+  }); 
 
-    }
-  });
-  const [isOpen, setIsOpen] = useState(false)
-  const {refreshMenu} = useAdminStore()
+  const currentDish1 = watch("dish1");
+  const currentDish2 = watch("dish2");
+  const currentDish3 = watch("dish3");
+  const currentDish4 = watch("dish4");
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+  const [open3, setOpen3] = useState(false);
+  const [open4, setOpen4] = useState(false);
+  const { refreshMenu } = useAdminStore();
+
   const onUpdate = async (data: MenuFormValues) => {
-    const {day,dish1,dish2,dish3,dish4} = data
     try {
-      await adminService.patchMenu(day,dish1,dish2,dish3,dish4)
-      await refreshMenu()
-      toast.success("Cập nhập menu thành công !")
+      await adminService.patchMenu(
+        data.day,
+        data.dish1,
+        data.dish2,
+        data.dish3,
+        data.dish4,
+      );
+      await refreshMenu();
+      toast.success("Cập nhập menu thành công!");
+      setIsOpen(false);
     } catch (error) {
-      console.error(error)
-      toast.error("Cập nhập menu thất bại !")
-    }
-    finally{
-      reset()
-      setIsOpen(false)
+      console.error(error);
+      toast.error("Cập nhập menu thất bại!");
     }
   };
+
   return (
     <div>
       <li>
-            <div className={` rounded-xl shadow-md flex flex-col justify-center p-8`} style={{backgroundColor : menu.color}}>
-              <div>
-                <h1 className="text-4xl text-center mali-bold">
-                  Thứ {menu.day}
-                </h1>
-              </div>
-              <div>
-                
-                <div className="flex justify-between items-center">
-                  <h2 className="text-2xl mali-semibold">{menu.dish1}</h2>
-                  <CookingPot className="h-6 w-6 text-gray-500" />
-                </div>
-                <div className="flex justify-between items-center">
-                  <h2 className="text-2xl mali-semibold">{menu.dish2}</h2>
-                  <Soup className="h-6 w-6 text-gray-500" />
-                </div>
-                <div className="flex justify-between items-center">
-                  <h2 className="text-2xl mali-semibold">{menu.dish3}</h2>
-                  <IceCreamBowl className="h-6 w-6 text-gray-500" />
-                </div>
-                <div className="flex justify-between items-center">
-                  <h2 className="text-2xl mali-semibold">{menu.dish4}</h2>
-                  <Beef className="h-6 w-6 text-gray-500" />
-                </div>
-              </div>
-              <div className="flex justify-center">
-                <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="rounded-2xl bg-[#05D988] text-[#ffffff] mt-4 hover:bg-[#006f44] hover:text-white focus:bg-[#05D988]"
-                    >
-                      Chỉnh sửa
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <div className="flex justify-center">
-                      <h1 className="text-4xl mali-bold">Thứ {menu.day}</h1>
-                    </div>
-                    <form
-                      className="flex flex-wrap justify-center gap-3"
-                      onSubmit={handleSubmit(onUpdate)}
-                    >
-                     
-                      <div className="w-full">
-                        <Label htmlFor="dish1" className="text-sm block mali-bold">
-                          Món 1
-                        </Label>
-                        <Input
-                          type="text"
-                          id="dish1"
-                          placeholder={menu.dish1}
-                          {...register("dish1")}
-                        />
-                        {errors.dish1 && (
-                          <p className="text-destructive text-sm">
-                            {errors.dish1.message}
-                          </p>
-                        )}
-                      </div>
-                      <div className="w-full">
-                        <Label htmlFor="dish2" className="text-sm block mali-bold">
-                          Món 2
-                        </Label>
-                        <Input
-                          type="text"
-                          id="dish2"
-                          placeholder={menu.dish2}
-                          {...register("dish2")}
-                        />
-                        {errors.dish2 && (
-                          <p className="text-destructive text-sm">
-                            {errors.dish2.message}
-                          </p>
-                        )}
-                      </div>
-                      <div className="w-full">
-                        <Label htmlFor="dish3" className="text-sm block mali-bold">
-                          Món 3
-                        </Label>
-                        <Input
-                          type="text"
-                          id="dish3"
-                          placeholder={menu.dish3}
-                          {...register("dish3")}
-                        />
-                        {errors.dish3 && (
-                          <p className="text-destructive text-sm">
-                            {errors.dish3.message}
-                          </p>
-                        )}
-                      </div>
-                      <div className="w-full">
-                        <Label htmlFor="dish4" className="text-sm block mali-bold">
-                          Món 4
-                        </Label>
-                        <Input
-                          type="text"
-                          id="dish1"
-                          placeholder={menu.dish4}
-                          {...register("dish4")}
-                        />
-                        {errors.dish4 && (
-                          <p className="text-destructive text-sm">
-                            {errors.dish4.message}
-                          </p>
-                        )}
-                      </div>
-                      <div>
-                        <Button
-                          type="submit"
-                          className="rounded-2xl bg-[#05D988] text-[#ffffff] mt-4 hover:bg-[#006f44] focus:bg-[#05D988]"
-                          disabled={isSubmitting}
-                        >
-                          Cập nhập
-                        </Button>
-                      </div>
-                    </form>
-                  </DialogContent>
-                </Dialog>
-              </div>
+        <div
+          className={` rounded-xl shadow-md flex flex-col justify-center p-8`}
+          style={{ backgroundColor: menu.color }}
+        >
+          <div>
+            <h1 className="text-4xl text-center mali-bold">Thứ {menu.day}</h1>
+          </div>
+          <div>
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl mali-semibold">{menu.dish1}</h2>
+              <CookingPot className="h-6 w-6 text-gray-500" />
             </div>
-          </li>
-    </div>
-  )
-}
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl mali-semibold">{menu.dish2}</h2>
+              <Soup className="h-6 w-6 text-gray-500" />
+            </div>
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl mali-semibold">{menu.dish3}</h2>
+              <IceCreamBowl className="h-6 w-6 text-gray-500" />
+            </div>
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl mali-semibold">{menu.dish4}</h2>
+              <Beef className="h-6 w-6 text-gray-500" />
+            </div>
+          </div>
 
-export default MenuCard
+          <div className="flex justify-center">
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="rounded-2xl bg-[#05D988] text-[#ffffff] mt-4 hover:bg-[#006f44] hover:text-white focus:bg-[#05D988]"
+                >
+                  Chỉnh sửa
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <div className="flex justify-center">
+                  <h1 className="text-4xl mali-bold">Thứ {menu.day}</h1>
+                </div>
+                <form
+                  className="flex flex-wrap justify-center gap-3"
+                  onSubmit={handleSubmit(onUpdate)}
+                >
+                  <div className="w-full flex flex-col gap-1">
+                    <Label htmlFor="dish1" className="text-sm block mali-bold">
+                      Món 1
+                    </Label>
+                    <Popover open={open} onOpenChange={setOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={open}
+                          className="justify-between"
+                        >
+                          {currentDish1 ? currentDish1 : "Chọn món ..."}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[200px] p-0">
+                        <Command>
+                          <CommandList>
+                            <CommandEmpty>
+                              Không tìm thấy món ăn nào.
+                            </CommandEmpty>
+                            <CommandGroup>
+                              {dis1?.map((dish) => (
+                                <CommandItem
+                                  key={dish.id}                                
+                                  value={dish.id}
+                                  onSelect={(currentValue) => {
+                                    
+                                    const selectedDish = dis1.find(
+                                      (d) => d.id === currentValue,
+                                    );
+
+                                    if (selectedDish) {
+                                      
+                                      setValue("dish1", selectedDish.name, {
+                                        shouldValidate: true,
+                                        shouldDirty: true,
+                                      });
+                                    }
+                                    setOpen(false);
+                                  }}
+                                >
+                                  {dish.name}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    {errors.dish1 && (
+                      <p className="text-destructive text-sm">
+                        {errors.dish1.message}
+                      </p>
+                    )}
+                  </div>
+
+              
+                  <div className="w-full flex flex-col gap-1">
+                    <Label htmlFor="dish2" className="text-sm block mali-bold">
+                      Món 2
+                    </Label>
+                    <Popover open={open2} onOpenChange={setOpen2}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={open2}
+                          className="justify-between"
+                        >
+                          {currentDish2 ? currentDish2 : "Chọn món ..."}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[200px] p-0">
+                        <Command>
+                          <CommandInput placeholder="Tìm món ăn..." />
+                          <CommandList>
+                            <CommandEmpty>
+                              Không tìm thấy món ăn nào.
+                            </CommandEmpty>
+                            <CommandGroup>
+                              {dis2?.map((dish) => (
+                                <CommandItem
+                                  key={dish.id}
+                                  
+                                  value={dish.id}
+                                  onSelect={(currentValue) => {
+                                    
+                                    const selectedDish = dis2.find(
+                                      (d) => d.id === currentValue,
+                                    );
+
+                                    if (selectedDish) {
+                                      
+                                      setValue("dish2", selectedDish.name, {
+                                        shouldValidate: true,
+                                        shouldDirty: true,
+                                      });
+                                    }
+                                    setOpen2(false);
+                                  }}
+                                >
+                                  {dish.name}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    {errors.dish2 && (
+                      <p className="text-destructive text-sm">
+                        {errors.dish2.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="w-full flex flex-col gap-1">
+                    <Label htmlFor="dish3" className="text-sm block mali-bold">
+                      Món 3
+                    </Label>
+                    <Popover open={open3} onOpenChange={setOpen3}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={open3}
+                          className="justify-between"
+                        >
+                          {currentDish3 ? currentDish3 : "Chọn món ..."}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[200px] p-0">
+                        <Command>
+                          <CommandInput placeholder="Tìm món ăn..." />
+                          <CommandList>
+                            <CommandEmpty>
+                              Không tìm thấy món ăn nào.
+                            </CommandEmpty>
+                            <CommandGroup>
+                              {dis3?.map((dish) => (
+                                <CommandItem
+                                  key={dish.id}
+                                  
+                                  value={dish.id}
+                                  onSelect={(currentValue) => {
+                                    
+                                    const selectedDish = dis3.find(
+                                      (d) => d.id === currentValue,
+                                    );
+
+                                    if (selectedDish) {
+                                      
+                                      setValue("dish3", selectedDish.name, {
+                                        shouldValidate: true,
+                                        shouldDirty: true,
+                                      });
+                                    }
+                                    setOpen3(false);
+                                  }}
+                                >
+                                  {dish.name}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    {errors.dish3 && (
+                      <p className="text-destructive text-sm">
+                        {errors.dish3.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="w-full flex flex-col gap-1">
+                    <Label htmlFor="dish4" className="text-sm block mali-bold">
+                      Món 4
+                    </Label>
+                    <Popover open={open4} onOpenChange={setOpen4}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={open4}
+                          className="justify-between"
+                        >
+                          {currentDish4 ? currentDish4 : "Chọn món ..."}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[200px] p-0">
+                        <Command>
+                          <CommandInput placeholder="Tìm món ăn..." />
+                          <CommandList>
+                            <CommandEmpty>
+                              Không tìm thấy món ăn nào.
+                            </CommandEmpty>
+                            <CommandGroup>
+                              {dis4?.map((dish) => (
+                                <CommandItem
+                                  key={dish.id}
+                                  
+                                  value={dish.id}
+                                  onSelect={(currentValue) => {
+                                    
+                                    const selectedDish = dis4.find(
+                                      (d) => d.id === currentValue,
+                                    );
+
+                                    if (selectedDish) {
+                                      
+                                      setValue("dish4", selectedDish.name, {
+                                        shouldValidate: true,
+                                        shouldDirty: true,
+                                      });
+                                    }
+                                    setOpen4(false);
+                                  }}
+                                >
+                                  {dish.name}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    {errors.dish4 && (
+                      <p className="text-destructive text-sm">
+                        {errors.dish4.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="w-full flex justify-center mt-2">
+                    <Button
+                      type="submit"
+                      className="rounded-2xl bg-[#05D988] text-[#ffffff] hover:bg-[#006f44] focus:bg-[#05D988]"
+                      disabled={isSubmitting}
+                    >
+                      Cập nhật
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+      </li>
+    </div>
+  );
+};
+
+export default MenuCard;

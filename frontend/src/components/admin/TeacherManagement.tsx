@@ -2,7 +2,7 @@ import { useAdminStore } from "@/stores/useAdminStore";
 import TeacherCard from "./TeacherCard";
 
 const TeacherManagement = () => {
-  const teachers = useAdminStore((state) => state.teachers);
+  const teachers = useAdminStore((state) => state.teachers)?.filter((t) => t.status !== null);
   
   return (
     <>

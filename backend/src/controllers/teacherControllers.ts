@@ -8,7 +8,7 @@ export const getTeacherList = async (req: Request, res: Response) => {
     const res1 = await request
       .input('date', sql.Date, dates)
       .query(
-        `SELECT t.userid, t.name,t.dob,t.gender,t.address,c.name as classname,c.classid,t.createdat,t.avatarurl,tk.date as timekeeping
+        `SELECT t.status, t.userid, t.name,t.dob,t.gender,t.address,c.name as classname,c.classid,t.createdat,t.avatarurl,tk.date as timekeeping
         FROM Teacher t 
         LEFT JOIN Class c on c.teacherid = t.userid
         LEFT JOIN TimeKeeping tk on tk.teacherid = t.userid AND tk.date = @date
@@ -40,7 +40,7 @@ export const getTeacher = async (req: Request, res: Response) =>{
         LEFT JOIN Class c on c.teacherid = t.userid
         LEFT JOIN TimeKeeping tk on tk.teacherid = t.userid AND tk.date = @date
         JOIN Account a on a.userid = t.userid AND a.deleted = 'false'
-        WHERE t.userid = @userid AND t.deleted = 'false'`
+        WHERE t.userid = @userid AND t.deleted = 'false' AND t.status is not null`
     )
     const teacher = res1.recordset[0]
     if(!teacher)
@@ -330,7 +330,7 @@ export const getStudentList = async (req: Request, res: Response) => {
         `SELECT s.studentid, s.dob,s.gender,s.height,s.weight,s.age,s.parentid,p.name as parentname,s.avatarurl,s.name,a.date,a.check_in_time,a.check_out_time,a.attendanceid
       FROM Student s
       JOIN Parent p on p.userid = s.parentid
-      LEFT JOIN Attendance a on a.studentid = s.studentid AND date = @date
+      LEFT JOIN Attendance a on a.studentid = s.studentid AND a.date = @date
       JOIN ClassManagement cm on cm.studentid = s.studentid 
       JOIN Class c on c.classid = cm.classid 
       JOIN Teacher t on c.teacherid = t.userid 

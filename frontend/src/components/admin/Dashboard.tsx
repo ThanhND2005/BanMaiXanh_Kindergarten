@@ -23,7 +23,7 @@ export function Dashboard() {
                     {teachers?.length || 0}
                   </h1>
                 </div>  
-                <button onClick={() => setTabActive("teachermanagement")}>
+                <button onClick={() => setTabActive("teachermanagement1")}>
                   <div className=" bg-blue-500 w-24 h-24 rounded-full flex items-center justify-center hover:shadow-xl">
                     <Users className=" w-12 h-12 text-white" />
                   </div>
