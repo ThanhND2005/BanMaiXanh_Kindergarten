@@ -555,12 +555,69 @@ export const addDish = async (req : Request, res : Response) =>{
 }
 export const addStatDish = async (req : Request, res: Response) => {
   try {
-    const {dish1, dish2,dish3, dish4} = req.body
     const date = new Date()
     date.setDate(date.getDate() -1)
-    
+    const day = date.getDay()
+    if(day == 0 || day == 6)
+    {
+      return res.sendStatus(201)
+    }
     const request1 = new sql.Request()
+    const res1 = await request1
+    .input('day',sql.Int,day)
+    .query(
+      `SELECT * FROM Menu WHERE day=@day`
+    )
+    const menu = res1.recordset[0]
+    const request2 = new sql.Request()
+    const res2 = await request2
+    .input('date',sql.Date,date)
+    .input('dish1',sql.NVarChar,menu.dish1)
+    .input('dish2',sql.NVarChar,menu.dish2)
+    .input('dish3',sql.NVarChar,menu.dish3)
+    .input('dish4',sql.NVarChar,menu.dish4)
+    .input('month',sql.Int,date.getMonth()+1)
+    .input('year',sql.Int,date.getFullYear())
+    .query(
+      `IF NOT EXISTS(SELECT 1 FROM DishStat WHERE date=@date)
+      BEGIN
+        INSERT INTO DishStat (date,dish1,dish2,dish3,dish4,month,year,color) VALUES (@date,@dish1,@dish2,@dish3,@dish4,@month,@year,@color)
+      END`
+    )
+    return res.sendStatus(201)
 
+  } catch (error) {
+    console.log(error)
+    return res.sendStatus(500)
+  }
+}
+export const getStatDish = async (req: Request, res: Response) =>{
+  try {
+    const {month, year} = req.body
+    const request1 = new sql.Request()
+    const res1 = await request1
+    .input('month',sql.Int,month)
+    .input('year',sql.Int,year)
+    .query(
+      `SELECT * FROM DishStat WHERE month=@month AND year=@year
+      ORDER BY date ASC 
+      `
+    )
+    const dishstat = res1.recordset
+    return res.status(200).json({dishstat})
+  } catch (error) {
+    console.log(error)
+    return res.sendStatus(500)
+  }
+}
+export const getDish = async (req: Request, res: Response) =>{
+  try {
+    const request1 = new sql.Request()
+    const res1 = await request1.query(
+      `SELECT * FROM Dish`
+    )
+    const dishes = res1.recordset
+    return res.status(200).json({dishes})
   } catch (error) {
     console.log(error)
     return res.sendStatus(500)

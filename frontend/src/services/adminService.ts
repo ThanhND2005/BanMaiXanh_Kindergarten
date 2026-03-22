@@ -72,5 +72,21 @@ export const adminService = {
     acceptTeacher : async(userid: string) =>{
         const res  = await api.patch(`/admin/acceptTeacher/${userid}`,{},{withCredentials: true})
         return res.data
+    },
+    addDish : async(name: string, type: string) =>{
+        const res = await api.post('/admin/addDish',{name,type},{withCredentials: true})
+        return res.data
+    },
+    addStatDish: async() => {
+        const res = await api.post('/admin/addStatDish',{},{withCredentials: true})
+        return res.data
+    },
+    getStatDish: async(month: number, year: number) =>{
+        const res = await api.post('/admin/getStatDish',{month, year},{withCredentials:true})
+        return res.data.dishstat
+    },
+    getDish: async() =>{
+        const res = await api.get('/admin/getDish',{withCredentials: true})
+        return res.data.dishes
     }
 }

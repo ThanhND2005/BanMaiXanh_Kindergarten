@@ -1,5 +1,5 @@
 import express from 'express'
-import { deleteClass, deleteNotification, deleteStudentBill, deleteTeacherBill, getCode, getClassList, getMenu, getNotificationList, getStudentBill, getTeacherBill, patchMenu, postClass, postNotification, postStudentBill, postTeacherBill, verifyStudentBill, getAdmin, acceptTeacher } from '~/controllers/adminControllers'
+import { deleteClass, deleteNotification, deleteStudentBill, deleteTeacherBill, getCode, getClassList, getMenu, getNotificationList, getStudentBill, getTeacherBill, patchMenu, postClass, postNotification, postStudentBill, postTeacherBill, verifyStudentBill, getAdmin, acceptTeacher, addDish, addStatDish, getStatDish, getDish } from '~/controllers/adminControllers'
 import { requireRole } from '~/middlewares/authMiddleware'
 const router = express.Router()
 router.get('/getNotificationList', requireRole('admin'), getNotificationList)
@@ -20,4 +20,8 @@ router.post('/postTeacherBill/:month', requireRole('admin'), postTeacherBill)
 router.patch('/deleteTeacherBill/:salaryid', requireRole('admin'), deleteTeacherBill)
 router.get('/getAdmin/:userid', requireRole('admin'), getAdmin)
 router.patch('/acceptTeacher/:userid',requireRole('admin'),acceptTeacher)
+router.post('/addDish',requireRole('admin'),addDish)
+router.post('/addStatDish',requireRole('admin'),addStatDish)
+router.post('/getStatDish',requireRole('admin'),getStatDish)
+router.get('/getDish',requireRole('admin'),getDish)
 export default router
