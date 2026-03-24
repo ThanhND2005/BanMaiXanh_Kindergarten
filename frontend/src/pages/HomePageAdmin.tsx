@@ -23,6 +23,7 @@ import { useAdminStore } from "@/stores/useAdminStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import TeacherWaiting from "@/components/admin/TeacherWaiting";
 import TeacherManagement1 from "@/components/admin/TeacherManagement1";
+import Stat from "@/components/admin/Stat";
 export default function HomePageAdmin() {
   const admin  = useAdminStore((state) => state.admin)
   const { tabActive, setTabActive } = useTabAdminStore();
@@ -72,7 +73,9 @@ export default function HomePageAdmin() {
               className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
                 tabActive === "dashboard" ||
                 tabActive === "studentmanagement" ||
-                tabActive === "teachermanagement"
+                tabActive === "teachermanagement" ||
+                tabActive ==='teacherwaiting' ||
+                tabActive === 'teachermanagement1'
                   ? "border-orange-500 text-orange-600"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
@@ -105,7 +108,7 @@ export default function HomePageAdmin() {
             <button
               onClick={() => setTabActive("menu")}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors whitespace-nowrap ${
-                tabActive === "menu"
+                tabActive === "menu" || tabActive === "stat"
                   ? "border-orange-500 text-orange-600"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
@@ -163,6 +166,9 @@ export default function HomePageAdmin() {
         )}
         {tabActive === "teachermanagement1"  && (
           <TeacherManagement1 />
+        )}
+        {tabActive === "stat"  && (
+          <Stat />
         )}
       </main>
     </div>

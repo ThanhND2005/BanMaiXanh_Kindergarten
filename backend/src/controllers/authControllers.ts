@@ -1,3 +1,4 @@
+import { request } from 'http';
 import { Request, Response } from "express";
 import cryto from 'crypto'
 import bcrypt from 'bcrypt'
@@ -133,7 +134,10 @@ export const signinTeacher = async (req: Request, res: Response) => {
     const request = new sql.Request()
     const res1 = await request
       .input('username', sql.VarChar, username)
-      .query(`SELECT * FROM Account WHERE username = @username AND deleted ='false' AND userrole='teacher'`)
+      .query(`SELECT a.*, t.status FROM Account a 
+              JOIN Teacher t on t.userid = a.userid 
+              WHERE a.username = @username AND a.deleted ='false' 
+              AND a.userrole='teacher' AND t.status is not null`)
     const account = res1.recordset[0]
     if (!account) {
       return res.status(401).send('Thông tin tài khoản hoặc mật khẩu không chính xác !')
@@ -146,7 +150,8 @@ export const signinTeacher = async (req: Request, res: Response) => {
     const refreshToken = randomUUID()
     const expireAt = new Date()
     expireAt.setTime(expireAt.getTime() + (8 * 60 * 60 * 1000))
-    await request
+    const request1 = new sql.Request()
+    await request1
       .input('refreshtoken', sql.VarChar, refreshToken)
       .input('userid', sql.UniqueIdentifier, account.userid)
       .input('expireat', sql.DateTime, expireAt)

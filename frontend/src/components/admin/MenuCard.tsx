@@ -42,29 +42,9 @@ const MenuFormSchema = z.object({
 
 type MenuFormValues = z.infer<typeof MenuFormSchema>;
 
-const dis1 = [
-  { id: "001", name: "Trứng luộc" },
-  { id: "002", name: "Trứng rán" },
-  { id: "003", name: "Trứng chiên" },
-];
-const dis2 = [
-  { id: "001", name: "Rau cải" },
-  { id: "002", name: "Rau ngót" },
-  { id: "003", name: "Rau muống" },
-];
-const dis3 = [
-  { id: "001", name: "Kem" },
-  { id: "002", name: "Sữa chua" },
-  { id: "003", name: "Sữa tươi" },
-];
-const dis4 = [
-  { id: "001", name: "Thịt bò xào" },
-  { id: "002", name: "Thịt lợn xào" },
-  { id: "003", name: "Thịt gà luộc" },
-];
 
 const MenuCard = ({ menu }: IMenuProps) => {
-  
+  const dishes = useAdminStore((state) => state.dishes)
   const {
     reset,
     register,
@@ -183,14 +163,14 @@ const MenuCard = ({ menu }: IMenuProps) => {
                               Không tìm thấy món ăn nào.
                             </CommandEmpty>
                             <CommandGroup>
-                              {dis1?.map((dish) => (
+                              {dishes?.filter((t)=> t.type === 1)?.map((dish) => (
                                 <CommandItem
-                                  key={dish.id}                                
-                                  value={dish.id}
+                                  key={dish.dishid}                                
+                                  value={dish.dishid}
                                   onSelect={(currentValue) => {
                                     
-                                    const selectedDish = dis1.find(
-                                      (d) => d.id === currentValue,
+                                    const selectedDish = dishes.filter((t)=> t.type === 1).find(
+                                      (d) => d.dishid === currentValue,
                                     );
 
                                     if (selectedDish) {
@@ -237,21 +217,20 @@ const MenuCard = ({ menu }: IMenuProps) => {
                       </PopoverTrigger>
                       <PopoverContent className="w-[200px] p-0">
                         <Command>
-                          <CommandInput placeholder="Tìm món ăn..." />
                           <CommandList>
                             <CommandEmpty>
                               Không tìm thấy món ăn nào.
                             </CommandEmpty>
                             <CommandGroup>
-                              {dis2?.map((dish) => (
+                              {dishes?.filter((t) => t.type === 2)?.map((dish) => (
                                 <CommandItem
-                                  key={dish.id}
+                                  key={dish.dishid}
                                   
-                                  value={dish.id}
+                                  value={dish.dishid}
                                   onSelect={(currentValue) => {
                                     
-                                    const selectedDish = dis2.find(
-                                      (d) => d.id === currentValue,
+                                    const selectedDish = dishes?.filter((t) => t.type === 2).find(
+                                      (d) => d.dishid === currentValue,
                                     );
 
                                     if (selectedDish) {
@@ -296,22 +275,21 @@ const MenuCard = ({ menu }: IMenuProps) => {
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-[200px] p-0">
-                        <Command>
-                          <CommandInput placeholder="Tìm món ăn..." />
+                        <Command>                       
                           <CommandList>
                             <CommandEmpty>
                               Không tìm thấy món ăn nào.
                             </CommandEmpty>
                             <CommandGroup>
-                              {dis3?.map((dish) => (
+                              {dishes?.filter((t) => t.type === 3)?.map((dish) => (
                                 <CommandItem
-                                  key={dish.id}
+                                  key={dish.dishid}
                                   
-                                  value={dish.id}
+                                  value={dish.dishid}
                                   onSelect={(currentValue) => {
                                     
-                                    const selectedDish = dis3.find(
-                                      (d) => d.id === currentValue,
+                                    const selectedDish = dishes?.filter((t) => t.type === 3).find(
+                                      (d) => d.dishid === currentValue,
                                     );
 
                                     if (selectedDish) {
@@ -357,21 +335,21 @@ const MenuCard = ({ menu }: IMenuProps) => {
                       </PopoverTrigger>
                       <PopoverContent className="w-[200px] p-0">
                         <Command>
-                          <CommandInput placeholder="Tìm món ăn..." />
+                          
                           <CommandList>
                             <CommandEmpty>
                               Không tìm thấy món ăn nào.
                             </CommandEmpty>
                             <CommandGroup>
-                              {dis4?.map((dish) => (
+                              {dishes?.filter((t) => t.type === 4)?.map((dish) => (
                                 <CommandItem
-                                  key={dish.id}
+                                  key={dish.dishid}
                                   
-                                  value={dish.id}
+                                  value={dish.dishid}
                                   onSelect={(currentValue) => {
                                     
-                                    const selectedDish = dis4.find(
-                                      (d) => d.id === currentValue,
+                                    const selectedDish = dishes?.filter((t) => t.type === 4).find(
+                                      (d) => d.dishid === currentValue,
                                     );
 
                                     if (selectedDish) {

@@ -52,16 +52,13 @@ const TeacherCard2 = ({teacher} : ITeacher) => {
               Địa chỉ: {teacher.address}
             </div>
             <div className=" text-base font-medium mali-semibold">
-              Lớp: {teacher.classname}
-            </div>
-            <div className=" text-base font-medium mali-semibold">
               Ngày tham gia:{" "}
               {new Date(teacher.createdat).toLocaleDateString("vi-VN")}
             </div>
             
           </div>
-          <div className="flex  space-x-10 justify-between w-full">
-            <div>
+          <div className="flex space-x-10 justify-between w-full">
+            
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                   <div className="flex justify-end items-center">
@@ -99,13 +96,13 @@ const TeacherCard2 = ({teacher} : ITeacher) => {
               </Dialog>
               <Button
                       type="button"
-                      className="w-20 bg-[#05d988] text-white rounded-2xl shadow-sm  "
+                      className="w-20 bg-[#05d988] text-white rounded-2xl shadow-sm  hover:bg-[#006f44] hover:text-white focus:bg-[#05d988]"
                       onClick={() => onAccept(teacher.userid as string)}
                     >
                       Chấp nhận
                     </Button>
             </div>
-          </div>
+        
         </div>
       </li>
     </div>

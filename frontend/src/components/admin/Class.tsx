@@ -35,7 +35,7 @@ const ClassFormSchema = z.object({
 });
 type ClassFormValues = z.infer<typeof ClassFormSchema>;
 const Class = () => {
-  const teachers = useAdminStore((state) => state.teachers)?.filter((teacher) => teacher.classid === null)
+  const teachers = useAdminStore((state) => state.teachers)?.filter((teacher) => teacher.classid === null && teacher.status !== null)
   const [open, setOpen] = useState(false);
   const [open2,setOpen2] = useState(false)
   const {

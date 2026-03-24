@@ -83,7 +83,7 @@ export const adminService = {
     },
     getStatDish: async(month: number, year: number) =>{
         const res = await api.post('/admin/getStatDish',{month, year},{withCredentials:true})
-        return res.data.dishstat
+        return res.data.statdishes
     },
     getDish: async() =>{
         const res = await api.get('/admin/getDish',{withCredentials: true})

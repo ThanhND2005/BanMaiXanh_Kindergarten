@@ -25,6 +25,22 @@ interface Admin{
     gender: string, 
     avatarurl: string, 
 }
+export interface Dish{
+    dishid : string, 
+    name: string, 
+    type: number
+}
+export interface StatDish{
+    id: string, 
+    date: Date,
+    dish1: string, 
+    dish2: string, 
+    dish3: string, 
+    dish4: string,
+    month: number, 
+    year: number, 
+    color: string
+}
 export interface adminState {
     admin: Admin | null
     loading : boolean
@@ -36,6 +52,8 @@ export interface adminState {
     students : Student[] | null
     studentbills: StudentBill[] | null
     teacherbills: TeacherBill[] | null
+    dishes : Dish[] | null
+    statdishes: StatDish[] | null
     setLoading: (loading: boolean) => void
     clearState: () => void
     refreshTeachers : () => void
@@ -47,4 +65,6 @@ export interface adminState {
     refreshTeacherBills: () => void
     refreshSecurity: ()=> void
     refreshAdmin: (userid : string)=> void 
+    refreshDishes: () => void
+    refreshStatDish: (month: number, year: number) => void
 }

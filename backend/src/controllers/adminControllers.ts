@@ -529,7 +529,7 @@ export const acceptTeacher = async (req : Request, res: Response) =>{
     await request1
     .input('userid',sql.UniqueIdentifier,userid)
     .query(
-      `UPDATE Teacher SET status = 'ok' WHERE userid = @userid`
+      `UPDATE Teacher SET status = '1' WHERE userid = @userid`
     )
     return res.sendStatus(201)
   } catch (error) {
@@ -562,9 +562,10 @@ export const addStatDish = async (req : Request, res: Response) => {
     {
       return res.sendStatus(201)
     }
+   
     const request1 = new sql.Request()
     const res1 = await request1
-    .input('day',sql.Int,day)
+    .input('day',sql.Int,day+1)
     .query(
       `SELECT * FROM Menu WHERE day=@day`
     )
@@ -578,6 +579,7 @@ export const addStatDish = async (req : Request, res: Response) => {
     .input('dish4',sql.NVarChar,menu.dish4)
     .input('month',sql.Int,date.getMonth()+1)
     .input('year',sql.Int,date.getFullYear())
+    .input('color',sql.NVarChar,menu.color)
     .query(
       `IF NOT EXISTS(SELECT 1 FROM DishStat WHERE date=@date)
       BEGIN
@@ -603,8 +605,8 @@ export const getStatDish = async (req: Request, res: Response) =>{
       ORDER BY date ASC 
       `
     )
-    const dishstat = res1.recordset
-    return res.status(200).json({dishstat})
+    const statdishes = res1.recordset
+    return res.status(200).json({statdishes})
   } catch (error) {
     console.log(error)
     return res.sendStatus(500)

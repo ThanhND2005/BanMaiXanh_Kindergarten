@@ -13,6 +13,9 @@ import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { toast } from "sonner";
+import { adminService } from "@/services/adminService";
+import { useTabAdminStore } from "@/stores/useTabStore";
 
 const MenuFormSchema = z.object({
   name : z.string().min(1,"Không được để trống tên món ăn"),
@@ -28,6 +31,8 @@ const Menu = () => {
   const menuday = useAdminStore((state) => state.menuday);
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
+  const {refreshDishes,refreshStatDish} = useAdminStore()
+  const {setTabActive} = useTabAdminStore()
   const {reset,control,register, handleSubmit, formState : {errors, isSubmitting}} = useForm<MenuFormValue>({
     resolver : zodResolver(MenuFormSchema)
   })
@@ -36,10 +41,38 @@ const Menu = () => {
   })
   const onAdd = async (data : MenuFormValue) =>{
     const {name, type} = data 
+    try {
+      await adminService.addDish(name,type)
+      await refreshDishes()
+      toast.success('Thêm món ăn thành công')
+    } catch (error) {
+      console.error(error)
+      toast.error('Thêm món ăn thất bại')
+    }
+    finally
+    {
+      reset()
+      setOpen(false)
+    }
 
   }
   const onStat = async (data: StatFormValue) =>{
     const {month, year} = data
+    try {
+      await refreshStatDish(month, year)
+      const statdishes = useAdminStore.getState().statdishes
+      console.log(statdishes)
+      toast.success('Lấy thông tin thành công')
+      setTabActive('stat')
+    } catch (error) {
+      console.error(error)
+      toast.error('Thao tác không thành công !')
+    }
+    finally
+    {
+      re()
+      setOpen2(false)
+    }
   }
   return (
     <>

@@ -11,6 +11,7 @@ export const useAdminStore = create<adminState>((set,get) => ({
     admin : null,
     students: null,
     security : null,
+    dishes: null,
     clearState : () =>{
         set({students :null,teachers :null,teacherbills :null,studentbills:null,classes: null,loading:false})
     },
@@ -20,6 +21,7 @@ export const useAdminStore = create<adminState>((set,get) => ({
     menuday: null,
     studentbills: null,
     teacherbills: null,
+    statdishes: null,
     refreshSecurity: async () =>{
         try {
             set({loading: true})
@@ -138,6 +140,21 @@ export const useAdminStore = create<adminState>((set,get) => ({
         } catch (error) {
             console.error(error)
         }
+    },
+    refreshDishes: async () =>{
+        try {
+            const dishes =  await adminService.getDish()
+            set({dishes})
+        } catch (error) {
+            console.error(error)
+        }
+    },
+    refreshStatDish: async (month: number,year: number) => {
+        try {
+            const statdishes = await adminService.getStatDish(month,year)
+            set({statdishes})
+        } catch (error) {
+            console.error(error)
+        }
     }
-
 }))

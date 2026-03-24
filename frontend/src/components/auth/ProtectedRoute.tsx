@@ -19,7 +19,8 @@ const ProtectedRoute = ({ allowedRole }: Props) => {
     refreshMenu,
     refreshStudentBills,
     refreshTeacherBills,
-    refreshAdmin
+    refreshAdmin,
+    refreshDishes
   } = useAdminStore();
   const { refreshMenu: func1Teacher, refreshNotifications: func2Teacher, refreshSalaryBills: func3Teacher, refreshStudents: func4Teacher, refreshTeacher: func5Teacher} =useTeacherStore();
   const { refreshNotification: func1Parent, refreshParent: func2Parent, refreshStudent:func3Parent, refreshTuitionBill:func4Parent} = useParentStore();
@@ -43,6 +44,7 @@ const ProtectedRoute = ({ allowedRole }: Props) => {
       await refreshMenu()
       await refreshStudentBills()
       await refreshAdmin(currentUser.userid as string)
+      await refreshDishes()
       
     }
     else if (currentUser?.role === "teacher") {
