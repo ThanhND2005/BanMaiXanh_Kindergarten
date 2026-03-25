@@ -1,12 +1,8 @@
 import { useAdminStore } from "@/stores/useAdminStore";
 import MenuCard from "./MenuCard";
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "../ui/dialog";
-import {z} from 'zod'
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
@@ -16,64 +12,71 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { toast } from "sonner";
 import { adminService } from "@/services/adminService";
 import { useTabAdminStore } from "@/stores/useTabStore";
+import { Beef, CookingPot, IceCreamBowl, Soup } from "lucide-react";
 
 const MenuFormSchema = z.object({
-  name : z.string().min(1,"Không được để trống tên món ăn"),
-  type: z.string()
-})
+  name: z.string().min(1, "Không được để trống tên món ăn"),
+  type: z.string(),
+});
 const StatFormSchema = z.object({
-  month : z.coerce.number().min(0,"Tháng không được để trống"),
-  year :z.coerce.number().min(0,"Năm không được để trống")
-})
-type MenuFormValue = z.infer<typeof MenuFormSchema>
-type StatFormValue = z.infer<typeof StatFormSchema>
+  month: z.coerce.number().min(0, "Tháng không được để trống"),
+  year: z.coerce.number().min(0, "Năm không được để trống"),
+});
+type MenuFormValue = z.infer<typeof MenuFormSchema>;
+type StatFormValue = z.infer<typeof StatFormSchema>;
 const Menu = () => {
   const menuday = useAdminStore((state) => state.menuday);
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
-  const {refreshDishes,refreshStatDish} = useAdminStore()
-  const {setTabActive} = useTabAdminStore()
-  const {reset,control,register, handleSubmit, formState : {errors, isSubmitting}} = useForm<MenuFormValue>({
-    resolver : zodResolver(MenuFormSchema)
-  })
-  const {reset : re, register: reg, handleSubmit: had,formState:{errors:err, isSubmitting:isSub}} = useForm<StatFormValue>({
-    resolver : zodResolver(StatFormSchema)
-  })
-  const onAdd = async (data : MenuFormValue) =>{
-    const {name, type} = data 
+  const { refreshDishes, refreshStatDish } = useAdminStore();
+  const { setTabActive } = useTabAdminStore();
+  const {
+    reset,
+    control,
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<MenuFormValue>({
+    resolver: zodResolver(MenuFormSchema),
+  });
+  const {
+    reset: re,
+    register: reg,
+    handleSubmit: had,
+    formState: { errors: err, isSubmitting: isSub },
+  } = useForm<StatFormValue>({
+    resolver: zodResolver(StatFormSchema),
+  });
+  const onAdd = async (data: MenuFormValue) => {
+    const { name, type } = data;
     try {
-      await adminService.addDish(name,type)
-      await refreshDishes()
-      toast.success('Thêm món ăn thành công')
+      await adminService.addDish(name, type);
+      await refreshDishes();
+      toast.success("Thêm món ăn thành công");
     } catch (error) {
-      console.error(error)
-      toast.error('Thêm món ăn thất bại')
+      console.error(error);
+      toast.error("Thêm món ăn thất bại");
+    } finally {
+      reset();
+      setOpen(false);
     }
-    finally
-    {
-      reset()
-      setOpen(false)
-    }
-
-  }
-  const onStat = async (data: StatFormValue) =>{
-    const {month, year} = data
+  };
+  const onStat = async (data: StatFormValue) => {
+    const { month, year } = data;
     try {
-      await refreshStatDish(month, year)
-      const statdishes = useAdminStore.getState().statdishes
-      console.log(statdishes)
-      toast.success('Lấy thông tin thành công')
-      setTabActive('stat')
+      await refreshStatDish(month, year);
+      const statdishes = useAdminStore.getState().statdishes;
+      console.log(statdishes);
+      toast.success("Lấy thông tin thành công");
+      setTabActive("stat");
     } catch (error) {
-      console.error(error)
-      toast.error('Thao tác không thành công !')
+      console.error(error);
+      toast.error("Thao tác không thành công !");
+    } finally {
+      re();
+      setOpen2(false);
     }
-    finally
-    {
-      re()
-      setOpen2(false)
-    }
-  }
+  };
   return (
     <>
       <div className="w-full flex p-4 gap-8 justify-between items-center">
@@ -86,67 +89,150 @@ const Menu = () => {
               Thêm món ăn +
             </Button>
           </DialogTrigger>
-         
+
           <DialogContent>
             <h1 className="text-4xl mali-bold text-center">Thêm món ăn</h1>
-            <form className="flex flex-col gap-3" onSubmit={handleSubmit(onAdd)}>
-              <div >
-                <Label htmlFor="name" className="text-sm block mali-bold">Tên món ăn</Label>
-                <Input type="text" id="name" className="text-xl rounded-2xl shadow-md" placeholder="Nhập tên món ăn" {...register('name')}/>
-                {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
-              </div> 
+            <form
+              className="flex flex-col gap-3"
+              onSubmit={handleSubmit(onAdd)}
+            >
               <div>
-                <Label htmlFor="type" className="text-sm block mali-bold">Loại món ăn</Label>
-                <Controller name="type" control={control} defaultValue="1"
-                render={({field}) => (
-                  <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="w-full" {...register('type')}>
-                    <div className="flex gap-3">
-                      <div className="flex items-center gap-2">
-                        <RadioGroupItem value="1" id="1"/>
-                        <Label htmlFor="1" className="text-sm mali-bold">Món 1</Label>
+                <Label htmlFor="name" className="text-sm block mali-bold">
+                  Tên món ăn
+                </Label>
+                <Input
+                  type="text"
+                  id="name"
+                  className="text-xl rounded-2xl shadow-md"
+                  placeholder="Nhập tên món ăn"
+                  {...register("name")}
+                />
+                {errors.name && (
+                  <p className="text-sm text-destructive">
+                    {errors.name.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <Label htmlFor="type" className="text-sm block mali-bold">
+                  Loại món ăn
+                </Label>
+                <Controller
+                  name="type"
+                  control={control}
+                  defaultValue="1"
+                  render={({ field }) => (
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="w-full"
+                      {...register("type")}
+                    >
+                      <div className="flex gap-3">
+                        <div className="flex items-center gap-2">
+                          <RadioGroupItem value="1" id="1" />
+                          <div className="flex gap-2 items-center">
+                            <Label htmlFor="1" className="text-sm mali-bold">
+                              Món 1
+                            </Label>
+                            <CookingPot className="h-4 w-4 text-black" />
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <RadioGroupItem value="2" id="2" />
+                          <div className="flex items-center gap-2">
+                            <Label htmlFor="2" className="text-sm mali-bold">
+                              Món 2
+                            </Label>
+                            <Soup className="h-4 w-4 text-black" />
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <RadioGroupItem value="3" id="3" />
+                          <div className="flex items-center gap-2">
+                          <Label htmlFor="3" className="text-sm mali-bold">
+                            Món 3
+                          </Label>
+                          <IceCreamBowl className="h-4 w-4 text-black" />
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <RadioGroupItem value="4" id="4" />
+                          <div className="flex items-center gap-2">
+                          <Label htmlFor="4" className="text-sm mali-bold">
+                            Món 4
+                          </Label>
+                          <Beef className="h-4 w-4 text-black" />
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <RadioGroupItem value="2" id="2"/>
-                        <Label htmlFor="2" className="text-sm mali-bold">Món 2</Label>
+                      <div className="w-full flex justify-center items-center">
+                        <Button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="w-50 rounded-2xl bg-[#05d988] hover:bg-[#006f44]"
+                        >
+                          Thêm
+                        </Button>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <RadioGroupItem value="3" id="3"/>
-                        <Label htmlFor="3" className="text-sm mali-bold">Món 3</Label>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <RadioGroupItem value="4" id="4"/>
-                        <Label htmlFor="4" className="text-sm mali-bold">Món 4</Label>
-                      </div>
-                    </div>
-                    <div className="w-full flex justify-center items-center">
-                      <Button type="submit" disabled={isSubmitting} className="w-50 rounded-2xl bg-[#05d988] hover:bg-[#006f44]">Thêm</Button> 
-                    </div>
-                  </RadioGroup>
-                )}/>
+                    </RadioGroup>
+                  )}
+                />
               </div>
             </form>
           </DialogContent>
         </Dialog>
         <Dialog open={open2} onOpenChange={setOpen2}>
           <DialogTrigger asChild>
-            <Button variant='outline' className="rounded-2xl mali-bold shadow-md text-white bg-[#05d988] hover:text-while hover:bg-[#006f44] focus:bg-[#05d988]">Xem thống kê</Button>
+            <Button
+              variant="outline"
+              className="rounded-2xl mali-bold shadow-md text-white bg-[#05d988] hover:text-while hover:bg-[#006f44] focus:bg-[#05d988]"
+            >
+              Xem thống kê
+            </Button>
           </DialogTrigger>
           <DialogContent>
             <h1 className="text-4xl mali-bold text-center">Thống kê bữa ăn</h1>
-            <form className='flex flex-col gap-3' onSubmit={had(onStat)}> 
-                <div>
-                  <Label htmlFor="month" className="text-sm mali-bold block">Tháng</Label>
-                  <Input id='month' type="number" className="rounded-2xl shadow-md" placeholder="Nhập tháng muốn xem" {...reg('month')}/>
-                  {err.month && <p className='text-sm text-destructive'>err.month.message</p>}
-                </div>
-                <div>
-                  <Label htmlFor="year" className="text-sm mali-bold block">Năm</Label>
-                  <Input id='year' type="number" className="rounded-2xl shadow-md" placeholder="Nhập tháng muốn xem" {...reg('year')}/>
-                  {err.year && <p className='text-sm text-destructive'>err.year.message</p>}
-                </div>
-                <div className="w-full flex justify-center items-center gap-3">
-                  <Button type='submit' disabled={isSub} className="w-50 rounded-2xl mali-bold bg-[#05d988] shadow-md hover:bg-[#006f44]">Xem</Button>
-                </div>
+            <form className="flex flex-col gap-3" onSubmit={had(onStat)}>
+              <div>
+                <Label htmlFor="month" className="text-sm mali-bold block">
+                  Tháng
+                </Label>
+                <Input
+                  id="month"
+                  type="number"
+                  className="rounded-2xl shadow-md"
+                  placeholder="Nhập tháng muốn xem"
+                  {...reg("month")}
+                />
+                {err.month && (
+                  <p className="text-sm text-destructive">err.month.message</p>
+                )}
+              </div>
+              <div>
+                <Label htmlFor="year" className="text-sm mali-bold block">
+                  Năm
+                </Label>
+                <Input
+                  id="year"
+                  type="number"
+                  className="rounded-2xl shadow-md"
+                  placeholder="Nhập tháng muốn xem"
+                  {...reg("year")}
+                />
+                {err.year && (
+                  <p className="text-sm text-destructive">err.year.message</p>
+                )}
+              </div>
+              <div className="w-full flex justify-center items-center gap-3">
+                <Button
+                  type="submit"
+                  disabled={isSub}
+                  className="w-50 rounded-2xl mali-bold bg-[#05d988] shadow-md hover:bg-[#006f44]"
+                >
+                  Xem
+                </Button>
+              </div>
             </form>
           </DialogContent>
         </Dialog>

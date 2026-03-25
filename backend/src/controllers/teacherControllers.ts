@@ -64,6 +64,15 @@ export const deleteTeacher = async (req: Request, res: Response) => {
         `UPDATE Teacher SET deleted='true' WHERE userid = @userid
       UPDATE Account SET deleted = 'true' WHERE userid=@userid`
       )
+    const request1 = new sql.Request()
+    await request1 
+    .input('userid',sql.UniqueIdentifier,teacherid)
+    .query(
+      `IF EXISTS (SELECT 1 FROM Class WHERE teacherid=@userid)
+      BEGIN
+        UPDATE Class SET deleted='true' WHERE teacherid=@userid
+      END `
+    )
     return res.sendStatus(204)
   } catch (error) {
     console.error(error)

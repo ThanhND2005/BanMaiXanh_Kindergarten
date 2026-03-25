@@ -189,7 +189,7 @@ export const deleteClass = async (req: Request, res: Response) => {
         `BEGIN TRANSACTION;
           BEGIN TRY
           UPDATE ClassManagement SET deleted = 'true' WHERE classid =@classid 
-          UPDATE Class SET deleted ='true' WHERE classid = @classid 
+          UPDATE Class SET deleted ='true',teacherid = NULL WHERE classid = @classid 
           COMMIT TRANSACTION;
           END TRY
           BEGIN CATCH            
@@ -197,6 +197,7 @@ export const deleteClass = async (req: Request, res: Response) => {
             THROW; 
           END CATCH`
       )
+   
     return res.status(204).send('Xóa thông báo thành công')
   } catch (error) {
     console.error(error)
@@ -354,7 +355,7 @@ export const postStudentBill = async (req: Request, res: Response) => {
         .input('studentid', sql.UniqueIdentifier, students[i].studentid)
         .query(
           `SELECT cm.classid, c.name, c.tuition FROM ClassManagement cm 
-        JOIN Class c on c.classid = cm.classid AND c.deleted = 'false'
+        JOIN Class c on c.classid = cm.classid
         WHERE cm.deleted = 'false' AND studentid = @studentid`
         )
       const classes = res3.recordset
@@ -364,7 +365,7 @@ export const postStudentBill = async (req: Request, res: Response) => {
         classnames += `${classes[i].name} : ${classes[i].tuition} vnđ,`
         amount += classes[i].tuition
       }
-      if (attendance < 9) {
+      if (attendance < 17) {
         amount /= 2
       }
       if (attendance == 0) {
@@ -384,7 +385,11 @@ export const postStudentBill = async (req: Request, res: Response) => {
         .input('attendance', sql.Int, attendance)
         .input('tuitionid',sql.UniqueIdentifier,tuitionid)
         .query(
-          `INSERT INTO Tuition (tuitionid,studentid, amount, qrurl, month, year, classes, attendance) VALUES (@tuitionid,@studentid, @amount, @qrurl,@month,@year,@classes,@attendance)`
+          `
+          IF NOT EXISTS (SELECT 1 FROM Tuition WHERE studentid=@studentid AND month=@month AND year=@year)
+          BEGIN
+          INSERT INTO Tuition (tuitionid,studentid, amount, qrurl, month, year, classes, attendance) VALUES (@tuitionid,@studentid, @amount, @qrurl,@month,@year,@classes,@attendance)
+          END`
         )
     }
     return res.status(201).send('Tạo hóa đơn học phí thành công')
@@ -412,7 +417,8 @@ export const postTeacherBill = async (req: Request, res: Response) => {
         .input('month', sql.Int, month)
         .input('year', sql.Int, year)
         .query(
-          `SELECT COUNT(*) as timekeeping FROM TimeKeeping WHERE teacherid = @teacherid AND month=@month AND year = @year `
+          `
+          SELECT COUNT(*) as timekeeping FROM TimeKeeping WHERE teacherid = @teacherid AND month=@month AND year = @year `
         )
       const timekeeping = res2.recordset[0].timekeeping
       if (timekeeping == 0) {
@@ -444,7 +450,11 @@ export const postTeacherBill = async (req: Request, res: Response) => {
         .input('qrurl', sql.VarChar, qrUrl)
         .input('salaryid',sql.UniqueIdentifier,salaryid)
         .query(
-          `INSERT INTO Salary (salaryid,teacherid, allowance, amount, timekeeping, month,year,qrurl) VALUES (@salaryid,@teacherid, @allowance, @amount, @timekeeping, @month,@year,@qrurl)`
+          `
+          IF NOT EXISTS (SELECT 1 FROM Salary WHERE teacherid=@teacherid AND month=@month AND year=@year)
+          BEGIN
+          INSERT INTO Salary (salaryid,teacherid, allowance, amount, timekeeping, month,year,qrurl) VALUES (@salaryid,@teacherid, @allowance, @amount, @timekeeping, @month,@year,@qrurl)
+          END`
         )
     }
 

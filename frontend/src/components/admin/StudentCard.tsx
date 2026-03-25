@@ -138,25 +138,7 @@ const StudentCard = ({ student }: IStudentProps) => {
                     readOnly
                   />
                 </div>
-                <div className="w-full">
-                  <Label
-                    htmlFor="classes"
-                    className="text-sm block mali-semibold"
-                  >
-                    Lớp học đang tham gia
-                  </Label>
-                  <ul id="classes" className="space-y-1">
-                    {classes?.map((class1) => (
-                      <li key={class1.classid}>
-                        <Input
-                          placeholder={class1.classname}
-                          className="rounded-2xl"
-                          readOnly
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+              
               </div>
             </DialogContent>
           </Dialog>
